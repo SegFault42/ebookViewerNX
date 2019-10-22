@@ -1,0 +1,7 @@
+*.nacp
+*.nro
+a.out
+*.txt
+.gdb_history
+build
+
