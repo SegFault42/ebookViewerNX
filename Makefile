@@ -63,7 +63,7 @@ LIBS	:=	-lSDL2_image -lSDL2 \
 		-lpng -lz -ljpeg -lwebp \
 		-lglad -lEGL -lglapi -ldrm_nouveau -lstdc++ \
 		-lvorbisidec -logg -lmpg123 -lmodplug \
-		-lnx -lm `freetype-config --libs` -lbz2
+		-lnx -lm `freetype-config --libs` -lmupdf_core -lmupdf_thirdparty -lbz2
 
 
 #---------------------------------------------------------------------------------
