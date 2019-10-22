@@ -41,7 +41,7 @@ TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
-INCLUDES	:=	include
+INCLUDES	:=	include ./mupdf/include ./mupdf/source/fitz
 #ROMFS	:=	romfs
 
 #---------------------------------------------------------------------------------
@@ -63,14 +63,14 @@ LIBS	:=	-lSDL2_image -lSDL2 \
 		-lpng -lz -ljpeg -lwebp \
 		-lglad -lEGL -lglapi -ldrm_nouveau -lstdc++ \
 		-lvorbisidec -logg -lmpg123 -lmodplug \
-		-lnx -lm `freetype-config --libs` -lmupdf_core -lmupdf_thirdparty -lbz2
+		-lnx -lm `freetype-config --libs` -lbz2
 
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX)
+LIBDIRS	:= $(PORTLIBS) $(LIBNX) #$(PWD)/mupdf/build/release
 
 
 #---------------------------------------------------------------------------------
@@ -163,10 +163,7 @@ endif
 .PHONY: $(BUILD) clean all
 
 #---------------------------------------------------------------------------------
-all: mupdf $(BUILD)
-
-mupdf:
-	@ make -C mupdf
+all: $(BUILD)
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
