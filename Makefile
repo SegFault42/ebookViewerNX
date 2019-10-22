@@ -163,7 +163,10 @@ endif
 .PHONY: $(BUILD) clean all
 
 #---------------------------------------------------------------------------------
-all: $(BUILD)
+all: mupdf $(BUILD)
+
+mupdf:
+	@ make -C mupdf
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
