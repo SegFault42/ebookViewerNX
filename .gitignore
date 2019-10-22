@@ -1,5 +1,6 @@
 *.nacp
 *.nro
+*.elf
 a.out
 *.txt
 .gdb_history

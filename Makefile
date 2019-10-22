@@ -41,7 +41,7 @@ TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
-INCLUDES	:=	include
+INCLUDES	:=	include ./mupdf/include ./mupdf/source/fitz
 #ROMFS	:=	romfs
 
 #---------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ LIBS	:=	-lSDL2_image -lSDL2 \
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX)
+LIBDIRS	:= $(PORTLIBS) $(LIBNX) #$(PWD)/mupdf/build/release
 
 
 #---------------------------------------------------------------------------------
