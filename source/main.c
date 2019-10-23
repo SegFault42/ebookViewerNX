@@ -16,7 +16,9 @@ int main(void)
 		SDL_Log("init() [Success]\n");
 	}
 
-	ebook("./book.pdf");
+	if (ebook("./book.pdf", 1050) == NULL) {
+		return (-1);
+	}
 
 	deinit(graphic);
 
