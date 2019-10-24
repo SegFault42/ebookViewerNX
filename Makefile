@@ -57,13 +57,13 @@ CFLAGS	+=	-D__SWITCH__ $(INCLUDE) `sdl2-config --cflags`
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)  -L$(PWD)/$(BUILD)
 
 LIBS	:=	-lSDL2_image -lSDL2 \
 		-lpng -lz -ljpeg -lwebp \
 		-lglad -lEGL -lglapi -ldrm_nouveau -lstdc++ \
-		-lvorbisidec -logg -lmpg123 -lmodplug \
-		-lnx -lm `freetype-config --libs` -lbz2
+		-lvorbisidec -logg -lmpg123 -lmodplug\
+		-lnx -lm `freetype-config --libs` -lmupdf_core -lmupdf_thirdparty -lconfig -lbz2
 
 
 #---------------------------------------------------------------------------------
