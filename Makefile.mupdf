@@ -202,7 +202,6 @@ MUPDF_OBJS += $(MUPDF_OBJS_FONTS:.c=.o)
 NXLIB	:= $(DEVKITPRO)/libnx
 INCLUDES := \
 	-I./$(MUPDF_PATH)/include \
-	-I./$(MUPDF_PATH)/include/mupdf/fitz \
 	-I./$(MUPDF_PATH)/scripts/freetype \
 	-I./$(MUPDF_PATH)/scripts/libjpeg \
 	-I./$(MUPDF_PATH)/thirdparty/freetype/include \
