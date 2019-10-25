@@ -103,7 +103,7 @@ MUPDF_OBJS += $(MUPDF_PATH)/source/fitz/stext-device.o
 #MUPDF_OBJS += $(MUPDF_PATH)/source/fitz/stext-output.o
 MUPDF_OBJS += $(MUPDF_PATH)/source/fitz/stext-search.o
 MUPDF_OBJS += $(MUPDF_PATH)/source/fitz/store.o
-#MUPDF_OBJS += $(MUPDF_PATH)/source/fitz/stream-open.o
+MUPDF_OBJS += $(MUPDF_PATH)/source/fitz/stream-open.o
 MUPDF_OBJS += $(MUPDF_PATH)/source/fitz/stream-prog.o
 MUPDF_OBJS += $(MUPDF_PATH)/source/fitz/stream-read.o
 MUPDF_OBJS += $(MUPDF_PATH)/source/fitz/string.o
@@ -202,6 +202,7 @@ MUPDF_OBJS += $(MUPDF_OBJS_FONTS:.c=.o)
 NXLIB	:= $(DEVKITPRO)/libnx
 INCLUDES := \
 	-I./$(MUPDF_PATH)/include \
+	-I./$(MUPDF_PATH)/include/mupdf/fitz \
 	-I./$(MUPDF_PATH)/scripts/freetype \
 	-I./$(MUPDF_PATH)/scripts/libjpeg \
 	-I./$(MUPDF_PATH)/thirdparty/freetype/include \

@@ -47,30 +47,25 @@ INCLUDES	:=	include ./mupdf/include ./mupdf/source/fitz
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
+ARCH	:=	-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE
 
-CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
+CFLAGS	:=	-g -Wall -O2 -ffunction-sections  `sdl2-config --cflags` `freetype-config --cflags`\
 			$(ARCH) $(DEFINES)
 
-CFLAGS	+=	-D__SWITCH__ $(INCLUDE) `sdl2-config --cflags`
+CFLAGS	+=	-D__SWITCH__ $(INCLUDE)
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)  -L$(PWD)/$(BUILD)
+LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) -L$(PWD)/build
 
-LIBS	:=	-lSDL2_image -lSDL2 \
-		-lpng -lz -ljpeg -lwebp \
-		-lglad -lEGL -lglapi -ldrm_nouveau -lstdc++ \
-		-lvorbisidec -logg -lmpg123 -lmodplug\
-		-lnx -lm `freetype-config --libs` -lmupdf_core -lmupdf_thirdparty -lconfig -lbz2
-
+LIBS	:=	-lSDL2_image -lSDL2 -lpng -lz -ljpeg -lwebp -lglad -lEGL -lglapi -ldrm_nouveau -lstdc++ -lvorbisidec -logg -lmpg123 -lmodplug -lnx -lfreetype -lbz2 -lmupdf_core -lmupdf_thirdparty -lconfig -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX) #$(PWD)/mupdf/build/release
+LIBDIRS	:= $(PORTLIBS) $(LIBNX)
 
 
 #---------------------------------------------------------------------------------
@@ -163,7 +158,10 @@ endif
 .PHONY: $(BUILD) clean all
 
 #---------------------------------------------------------------------------------
-all: $(BUILD)
+all: mupdf $(BUILD)
+
+mupdf:
+	@make -f Makefile.mupdf
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
