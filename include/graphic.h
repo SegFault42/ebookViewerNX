@@ -8,7 +8,7 @@ typedef struct	s_graphic
 }				t_graphic;
 
 t_graphic	*init(void);
-void		deinit(t_graphic *graphic);
-void		draw_ppm(t_graphic *graphic, fz_pixmap *ppm);
+void		deinit(void);
+void		draw_ppm(fz_pixmap *ppm);
 
 #endif

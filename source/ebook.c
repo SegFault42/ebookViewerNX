@@ -1,5 +1,7 @@
 #include "common.h"
 
+extern t_graphic	*graphic;
+
 static fz_context	*init_mupdf(void)
 {
 	fz_context	*ctx = NULL;
@@ -24,6 +26,13 @@ static fz_context	*init_mupdf(void)
 	return (ctx);
 }
 
+static void	deinit_mupdf(fz_context *ctx, fz_document *doc)
+{
+	fz_drop_document(ctx, doc);
+	fz_drop_context(ctx);
+}
+
+
 static fz_document	*open_ebook(char *path, fz_context *ctx)
 {
 	fz_document	*doc = NULL;
@@ -41,7 +50,7 @@ static fz_document	*open_ebook(char *path, fz_context *ctx)
 	return (doc);
 }
 
-static int	count_page_number(fz_context *ctx, fz_document *doc, int page_number)
+static int	count_page_number(fz_context *ctx, fz_document *doc)
 {
 	int	page_count = 0;
 
@@ -51,19 +60,11 @@ static int	count_page_number(fz_context *ctx, fz_document *doc, int page_number)
 	}
 	fz_catch(ctx) {
 		fprintf(stderr, "cannot count number of pages: %s\n", fz_caught_message(ctx));
-		fz_drop_document(ctx, doc);
-		fz_drop_context(ctx);
+		deinit_mupdf(ctx, doc);
 		return (-1);
 	}
 
-	if (page_number < 0 || page_number >= page_count) {
-		fprintf(stderr, "page number out of range: %d (page count %d)\n", page_number + 1, page_count);
-		fz_drop_document(ctx, doc);
-		fz_drop_context(ctx);
-		return (-1);
-	}
-
-	return (page_number);
+	return (page_count);
 }
 
 static fz_pixmap	*convert_page_to_ppm(fz_context *ctx, fz_document *doc, int current_page)
@@ -81,26 +82,19 @@ static fz_pixmap	*convert_page_to_ppm(fz_context *ctx, fz_document *doc, int cur
 	fz_catch(ctx)
 	{
 		fprintf(stderr, "cannot render page: %s\n", fz_caught_message(ctx));
-		fz_drop_document(ctx, doc);
-		fz_drop_context(ctx);
+		deinit_mupdf(ctx, doc);
 		return (NULL);
 	}
 
 	return (ppm);
 }
 
-static void	deinit_mupdf(fz_context *ctx, fz_document *doc)
-{
-	fz_drop_document(ctx, doc);
-	fz_drop_context(ctx);
-}
-
-fz_pixmap	*ebook(char *path, int page_count)
+fz_pixmap	*ebook(char *path, int page_index)
 {
 	fz_context	*ctx = NULL;
 	fz_document	*doc = NULL;
 	fz_pixmap	*ppm = NULL;
-	int			page_number = 0;
+	int			total_page = 0;
 
 	ctx = init_mupdf();
 	if (ctx == NULL) {
@@ -112,15 +106,29 @@ fz_pixmap	*ebook(char *path, int page_count)
 		return (NULL);
 	}
 
-	page_number = count_page_number(ctx, doc, page_count);
-	if (page_number == -1) {
+	total_page = count_page_number(ctx, doc);
+	if (total_page == -1) {
 		return (NULL);
 	}
 
-	ppm = convert_page_to_ppm(ctx, doc, 5);
-	if (doc == NULL) {
+	// check out of range index
+	if (total_page < 0 || page_index >= total_page) {
+		fprintf(stderr, "page number out of range: %d (page count %d)\n", total_page + 1, page_index);
+		deinit_mupdf(ctx, doc);
 		return (NULL);
 	}
+
+	// loop here to naviguate in pdf
+	for (int i = 0; i < 100; i++) {
+		ppm = convert_page_to_ppm(ctx, doc, page_index + i);
+		if (ppm == NULL) {
+			return (NULL);
+		}
+
+		draw_ppm(ppm);
+		fz_drop_pixmap(ctx, ppm);
+	}
+	// end of loop
 
 	deinit_mupdf(ctx, doc);
 

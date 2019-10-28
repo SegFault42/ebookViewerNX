@@ -1,6 +1,8 @@
 #include "common.h"
 
-void	deinit(t_graphic *graphic)
+extern t_graphic	*graphic;
+
+void	deinit(void)
 {
 	SDL_DestroyWindow(graphic->win);
 	SDL_DestroyRenderer(graphic->renderer);
@@ -10,8 +12,6 @@ void	deinit(t_graphic *graphic)
 
 t_graphic	*init(void)
 {
-	t_graphic	*graphic = NULL;
-
 	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
 	if (graphic == NULL) {
 		return (NULL);
@@ -43,7 +43,7 @@ t_graphic	*init(void)
 	return (graphic);
 }
 
-void	draw_ppm(t_graphic *graphic, fz_pixmap *ppm)
+void	draw_ppm(fz_pixmap *ppm)
 {
 	// Convert pix array to surface
 	SDL_Surface *image = SDL_CreateRGBSurfaceFrom(ppm->samples,

@@ -1,37 +1,41 @@
-// To compile linux version :  gcc source/main.c $(pkg-config --cflags --libs sdl2)
+// To compile linux version : gcc source/*.c -I include -L/usr/local/lib -lmupdf -lmupdf-third $(pkg-config --cflags --libs sdl2) -lm
 
 #include <common.h>
 
+t_graphic	*graphic = NULL;
+
 int main(void)
 {
-	t_graphic	*graphic = NULL;
 	fz_pixmap	*ppm;
 
-	socketInitializeDefault();
-	nxlinkStdio();
+	#ifdef __SWITCH__
+		socketInitializeDefault();
+		nxlinkStdio();
+	#endif
 
 	graphic = init();
 
 	if (graphic == NULL) {
 		SDL_Log("init() [Failure]\n");
-		deinit(graphic);
+		deinit();
 		return (-1);
 	} else {
 		SDL_Log("init() [Success]\n");
 	}
 
-	if ((ppm = ebook("/book.pdf", 50)) == NULL) {
-		deinit(graphic);
-		socketExit();
+	if ((ppm = ebook("./book.pdf", 0)) == NULL) {
+		deinit();
+		#ifdef __SWITCH__
+			socketExit();
+		#endif
 		return (-1);
 	}
 
-	draw_ppm(graphic, ppm);
+	deinit();
 
-	sleep(3);
-
-	deinit(graphic);
-	socketExit();
+	#ifdef __SWITCH__
+		socketExit();
+	#endif
 
 	return (0);
 }
