@@ -6,7 +6,9 @@ void	deinit(void)
 {
 	SDL_DestroyWindow(graphic->win);
 	SDL_DestroyRenderer(graphic->renderer);
+
 	free(graphic);
+
 	SDL_Quit();
 }
 

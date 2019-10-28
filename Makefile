@@ -41,7 +41,7 @@ TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
-INCLUDES	:=	include ./mupdf/include ./mupdf/source/fitz
+INCLUDES	:=	include ./extra_lib/mupdf/include ./extra_lib/mupdf/source/fitz
 #ROMFS	:=	romfs
 
 #---------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ CFLAGS	+=	-D__SWITCH__ $(INCLUDE)
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) -L$(PWD)/mupdf/build/release
+LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) -L$(PWD)/extra_lib/mupdf/build/release
 
 LIBS	:=	-lSDL2_image -lSDL2 -lpng -lz -ljpeg -lwebp -lglad -lEGL -lglapi -ldrm_nouveau -lstdc++ -lvorbisidec -logg -lmpg123 -lmodplug -lnx -lfreetype -lbz2 -lmupdf_core -lmupdf_thirdparty -lconfig -lm
 

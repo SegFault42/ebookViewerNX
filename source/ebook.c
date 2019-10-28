@@ -119,15 +119,13 @@ fz_pixmap	*ebook(char *path, int page_index)
 	}
 
 	// loop here to naviguate in pdf
-	for (int i = 0; i < 100; i++) {
-		ppm = convert_page_to_ppm(ctx, doc, page_index + i);
-		if (ppm == NULL) {
-			return (NULL);
-		}
-
-		draw_ppm(ppm);
-		fz_drop_pixmap(ctx, ppm);
+	ppm = convert_page_to_ppm(ctx, doc, page_index);
+	if (ppm == NULL) {
+		return (NULL);
 	}
+
+	draw_ppm(ppm);
+	fz_drop_pixmap(ctx, ppm);
 	// end of loop
 
 	deinit_mupdf(ctx, doc);
