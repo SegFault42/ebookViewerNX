@@ -7,7 +7,8 @@ typedef struct	s_graphic
 	SDL_Renderer *renderer;
 }				t_graphic;
 
-void	deinit(t_graphic *graphic);
 t_graphic	*init(void);
+void		deinit(t_graphic *graphic);
+void		draw_ppm(t_graphic *graphic, fz_pixmap *ppm);
 
 #endif

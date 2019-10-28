@@ -5,6 +5,10 @@
 int main(void)
 {
 	t_graphic	*graphic = NULL;
+	fz_pixmap	*ppm;
+
+	socketInitializeDefault();
+	nxlinkStdio();
 
 	graphic = init();
 
@@ -16,11 +20,18 @@ int main(void)
 		SDL_Log("init() [Success]\n");
 	}
 
-	if (ebook("./book.pdf", 1050) == NULL) {
+	if ((ppm = ebook("/book.pdf", 50)) == NULL) {
+		deinit(graphic);
+		socketExit();
 		return (-1);
 	}
 
+	draw_ppm(graphic, ppm);
+
+	sleep(3);
+
 	deinit(graphic);
+	socketExit();
 
 	return (0);
 }

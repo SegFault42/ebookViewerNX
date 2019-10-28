@@ -43,3 +43,18 @@ t_graphic	*init(void)
 	return (graphic);
 }
 
+void	draw_ppm(t_graphic *graphic, fz_pixmap *ppm)
+{
+	// Convert pix array to surface
+	SDL_Surface *image = SDL_CreateRGBSurfaceFrom(ppm->samples,
+ 			ppm->w, ppm->h, ppm->n * 8, ppm->w * ppm->n,
+ 			0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+
+	// Convert surface to texture
+	SDL_Texture	*texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+
+	SDL_Rect dstrect = {5, 5, ppm->w, ppm->h};
+
+	SDL_RenderCopyEx(graphic->renderer, texture, NULL, &dstrect, 0, NULL, SDL_FLIP_NONE);
+	SDL_RenderPresent(graphic->renderer);
+}

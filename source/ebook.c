@@ -66,16 +66,40 @@ static int	count_page_number(fz_context *ctx, fz_document *doc, int page_number)
 	return (page_number);
 }
 
+static fz_pixmap	*convert_page_to_ppm(fz_context *ctx, fz_document *doc, int current_page)
+{
+	fz_matrix	ctm;
+	fz_pixmap	*ppm = NULL;
+	float zoom = 100, rotate = 0;
+
+	ctm = fz_scale(zoom / 100, zoom / 100);
+	ctm = fz_pre_rotate(ctm, rotate);
+
+	/* Render page to an RGB pixmap. */
+	fz_try(ctx)
+		ppm = fz_new_pixmap_from_page_number(ctx, doc, current_page, ctm, fz_device_rgb(ctx), 0);
+	fz_catch(ctx)
+	{
+		fprintf(stderr, "cannot render page: %s\n", fz_caught_message(ctx));
+		fz_drop_document(ctx, doc);
+		fz_drop_context(ctx);
+		return (NULL);
+	}
+
+	return (ppm);
+}
+
 static void	deinit_mupdf(fz_context *ctx, fz_document *doc)
 {
 	fz_drop_document(ctx, doc);
 	fz_drop_context(ctx);
 }
 
-void	*ebook(char *path, int page_count)
+fz_pixmap	*ebook(char *path, int page_count)
 {
 	fz_context	*ctx = NULL;
 	fz_document	*doc = NULL;
+	fz_pixmap	*ppm = NULL;
 	int			page_number = 0;
 
 	ctx = init_mupdf();
@@ -93,9 +117,12 @@ void	*ebook(char *path, int page_count)
 		return (NULL);
 	}
 
-	printf("page number = %d\n", page_number);
+	ppm = convert_page_to_ppm(ctx, doc, 5);
+	if (doc == NULL) {
+		return (NULL);
+	}
 
 	deinit_mupdf(ctx, doc);
 
-	return ((void *)-1);
+	return (ppm);
 }
