@@ -158,10 +158,10 @@ endif
 .PHONY: $(BUILD) clean all
 
 #---------------------------------------------------------------------------------
-all: mupdf $(BUILD)
+all: $(BUILD)
 
-mupdf:
-	@make -f Makefile.mupdf
+pc:
+	gcc source/*.c -I include -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -o EbookReaderNX_pc
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
