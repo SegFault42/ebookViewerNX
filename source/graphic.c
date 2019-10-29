@@ -10,6 +10,7 @@ void	deinit(void)
 	free(graphic);
 
 	SDL_Quit();
+	log_info("deinit() [Success]");
 }
 
 t_graphic	*init(void)
@@ -59,4 +60,6 @@ void	draw_ppm(fz_pixmap *ppm)
 
 	SDL_RenderCopyEx(graphic->renderer, texture, NULL, &dstrect, 0, NULL, SDL_FLIP_NONE);
 	SDL_RenderPresent(graphic->renderer);
+
+	log_info("draw_ppm() [Success]");
 }

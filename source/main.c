@@ -6,8 +6,6 @@ t_graphic	*graphic = NULL;
 
 int main(void)
 {
-	fz_pixmap	*ppm;
-
 	#ifdef __SWITCH__
 		socketInitializeDefault();
 		nxlinkStdio();
@@ -22,13 +20,7 @@ int main(void)
 		log_info("init() [Success]");
 	}
 
-	if ((ppm = ebook("./book.pdf", 0)) == NULL) {
-		deinit();
-		#ifdef __SWITCH__
-			socketExit();
-		#endif
-		return (-1);
-	}
+	ebook("/book.pdf", 0);
 
 	deinit();
 
@@ -36,5 +28,6 @@ int main(void)
 		socketExit();
 	#endif
 
+	log_info("Quitting ...");
 	return (0);
 }

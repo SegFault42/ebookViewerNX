@@ -3,6 +3,6 @@
 
 #include <mupdf/fitz.h>
 
-fz_pixmap	*ebook(char *path, int page_index);
+void	ebook(char *path, int page_index);
 
 #endif
