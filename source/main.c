@@ -14,13 +14,12 @@ int main(void)
 	#endif
 
 	graphic = init();
-
 	if (graphic == NULL) {
-		SDL_Log("init() [Failure]\n");
+		log_info("init() [Failure]");
 		deinit();
 		return (-1);
 	} else {
-		SDL_Log("init() [Success]\n");
+		log_info("init() [Success]");
 	}
 
 	if ((ppm = ebook("./book.pdf", 0)) == NULL) {

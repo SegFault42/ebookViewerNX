@@ -11,6 +11,8 @@
 	#include <switch.h>
 #endif
 
+#include "log.h"
+
 #include "ebook.h"
 #include "graphic.h"
 

@@ -39,9 +39,9 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source
+SOURCES		:=	source ./libs/log.c/src
 DATA		:=	data
-INCLUDES	:=	include ./extra_lib/mupdf/include ./extra_lib/mupdf/source/fitz
+INCLUDES	:=	include ./libs/log.c/src ./libs/mupdf/include ./libs/mupdf/source/fitz
 #ROMFS	:=	romfs
 
 #---------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ CFLAGS	+=	-D__SWITCH__ $(INCLUDE)
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) -L$(PWD)/extra_lib/mupdf/build/release
+LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) -L$(PWD)/libs/mupdf/build/release
 
 LIBS	:=	-lSDL2_image -lSDL2 -lpng -lz -ljpeg -lwebp -lglad -lEGL -lglapi -ldrm_nouveau -lstdc++ -lvorbisidec -logg -lmpg123 -lmodplug -lnx -lfreetype -lbz2 -lmupdf_core -lmupdf_thirdparty -lconfig -lm
 
@@ -161,7 +161,7 @@ endif
 all: $(BUILD)
 
 pc:
-	gcc source/*.c -I include -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -o EbookReaderNX_pc
+	gcc source/*.c libs/log.c/src/*.c -I include -I ./libs/log.c/src -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -DLOG_USE_COLOR -o EbookReaderNX_pc
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
