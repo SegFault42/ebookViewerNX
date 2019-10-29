@@ -1,3 +1,0 @@
-[submodule "extra_lib/log.c"]
-	path = extra_lib/log.c
-	url = https://github.com/rxi/log.c.git
