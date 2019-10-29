@@ -44,6 +44,14 @@ DATA		:=	data
 INCLUDES	:=	include ./libs/log.c/src ./libs/mupdf/include ./libs/mupdf/source/fitz
 #ROMFS	:=	romfs
 
+MAJOR		:= 0
+MINOR		:= 0
+MICRO		:= 0
+
+APP_TITLE	:=	EbookReaderNX
+APP_AUTHOR	:=	SegFault42
+APP_VERSION	:=	${MAJOR}.${MINOR}.${MICRO}
+
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
