@@ -26,7 +26,7 @@ t_graphic	*init(void)
 		return (NULL);
 	}
 
-	graphic->win = SDL_CreateWindow("", 0, 0, 1280, 720, 0);
+	graphic->win = SDL_CreateWindow("", 0, 0, WIN_WIDTH, WIN_HEIGHT, 0);
 	if (graphic->win == NULL) {
 		SDL_Log("SDL_CreateWindow: %s\n", SDL_GetError());
 		SDL_Quit();
@@ -58,8 +58,11 @@ void	draw_ppm(fz_pixmap *ppm)
 	// Free surface
 	SDL_FreeSurface(image);
 
-	// Create rect
-	SDL_Rect dstrect = {0, 0, ppm->w, ppm->h};
+	// Create rect and move it in the middle in X axis
+	SDL_Rect dstrect = {(WIN_WIDTH - ppm->w) / 2, 0, ppm->w, ppm->h};
+
+	// clear window
+	SDL_RenderClear(graphic->renderer);
 
 	SDL_RenderCopyEx(graphic->renderer, texture, NULL, &dstrect, 0, NULL, SDL_FLIP_NONE);
 	// Free texture

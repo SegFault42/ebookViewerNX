@@ -74,8 +74,17 @@ static fz_pixmap	*convert_page_to_ppm(fz_context *ctx, fz_document *doc, int cur
 {
 	fz_matrix	ctm;
 	fz_pixmap	*ppm = NULL;
-	float zoom = 100, rotate = 0;
+	float zoom = 0, rotate = 0;
 
+	// get size of page
+    fz_page *page = fz_load_page(ctx, doc, current_page);
+	fz_rect	bounds = fz_bound_page(ctx, page);
+	fz_drop_page(ctx, page);
+
+	// calculate to fit in Y (Default zoom)
+	zoom = (WIN_HEIGHT * 100) / bounds.y1;
+
+	// set zoom and rotation
 	ctm = fz_scale(zoom / 100, zoom / 100);
 	ctm = fz_pre_rotate(ctm, rotate);
 
@@ -122,14 +131,17 @@ void	ebook(char *path, int page_index)
 	}
 
 	// loop here to naviguate in pdf
-	ppm = convert_page_to_ppm(ctx, doc, page_index);
-	if (ppm == NULL) {
-		return ;
+	for (int i = 0; i < 15; i++) {
+		ppm = convert_page_to_ppm(ctx, doc, page_index + i);
+		if (ppm == NULL) {
+			return ;
+		}
+	
+		draw_ppm(ppm);
+		// free ppm
+		fz_drop_pixmap(ctx, ppm);
+		sleep(1);
 	}
-
-	draw_ppm(ppm);
-	// free ppm
-	fz_drop_pixmap(ctx, ppm);
 	// end of loop
 
 	deinit_mupdf(ctx, doc);

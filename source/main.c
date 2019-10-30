@@ -21,7 +21,9 @@ int main(void)
 		log_info("init() [Success]");
 	}
 
-	ebook("./book.pdf", 4);
+	ebook("./book.pdf", 0);
+
+	sleep(2);
 
 	deinit();
 
