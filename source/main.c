@@ -9,6 +9,7 @@ int main(void)
 	#ifdef __SWITCH__
 		socketInitializeDefault();
 		nxlinkStdio();
+		twiliInitialize();
 	#endif
 
 	graphic = init();
@@ -26,6 +27,7 @@ int main(void)
 
 	#ifdef __SWITCH__
 		socketExit();
+		twiliExit();
 	#endif
 
 	log_info("Quitting ...");

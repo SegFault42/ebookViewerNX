@@ -133,5 +133,7 @@ void	ebook(char *path, int page_index)
 	fz_drop_pixmap(ctx, ppm);
 	// end of loop
 
+	sleep(1);
+
 	deinit_mupdf(ctx, doc);
 }
