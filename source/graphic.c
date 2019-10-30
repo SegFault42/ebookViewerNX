@@ -55,10 +55,16 @@ void	draw_ppm(fz_pixmap *ppm)
 
 	// Convert surface to texture
 	SDL_Texture	*texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+	// Free surface
+	SDL_FreeSurface(image);
 
-	SDL_Rect dstrect = {5, 5, ppm->w, ppm->h};
+	// Create rect
+	SDL_Rect dstrect = {0, 0, ppm->w, ppm->h};
 
 	SDL_RenderCopyEx(graphic->renderer, texture, NULL, &dstrect, 0, NULL, SDL_FLIP_NONE);
+	// Free texture
+	SDL_DestroyTexture(texture);
+	// Render
 	SDL_RenderPresent(graphic->renderer);
 
 	log_info("draw_ppm() [Success]");
