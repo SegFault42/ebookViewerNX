@@ -6,3 +6,8 @@ a.out
 .gdb_history
 *.pdf
 tags
+*.o
+*.lst
+*.map
+*.d
+EbookReaderNX_pc

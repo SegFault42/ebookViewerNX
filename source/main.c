@@ -1,26 +1,36 @@
-// To compile linux version :  gcc source/main.c $(pkg-config --cflags --libs sdl2)
+// To compile linux version : gcc source/*.c -I include -L/usr/local/lib -lmupdf -lmupdf-third $(pkg-config --cflags --libs sdl2) -lm
 
 #include <common.h>
 
+t_graphic	*graphic = NULL;
+
 int main(void)
 {
-	t_graphic	*graphic = NULL;
+	#ifdef __SWITCH__
+		socketInitializeDefault();
+		nxlinkStdio();
+		/*twiliInitialize();*/
+	#endif
 
 	graphic = init();
-
 	if (graphic == NULL) {
-		SDL_Log("init() [Failure]\n");
-		deinit(graphic);
+		log_info("init() [Failure]");
+		deinit();
 		return (-1);
 	} else {
-		SDL_Log("init() [Success]\n");
+		log_info("init() [Success]");
 	}
 
-	if (ebook("./book.pdf", 1050) == NULL) {
-		return (-1);
-	}
+	ebook("./book.pdf", 4);
 
-	deinit(graphic);
+	deinit();
+
+	log_info("Quitting ...");
+
+	#ifdef __SWITCH__
+		socketExit();
+		/*twiliExit();*/
+	#endif
 
 	return (0);
 }

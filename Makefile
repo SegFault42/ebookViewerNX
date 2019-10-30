@@ -39,10 +39,18 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source
+SOURCES		:=	source ./libs/log.c/src
 DATA		:=	data
-INCLUDES	:=	include ./mupdf/include ./mupdf/source/fitz
+INCLUDES	:=	include ./libs/log.c/src ./libs/mupdf/include ./libs/mupdf/source/fitz
 #ROMFS	:=	romfs
+
+MAJOR		:= 0
+MINOR		:= 0
+MICRO		:= 0
+
+APP_TITLE	:=	EbookReaderNX
+APP_AUTHOR	:=	SegFault42
+APP_VERSION	:=	${MAJOR}.${MINOR}.${MICRO}
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -57,7 +65,7 @@ CFLAGS	+=	-D__SWITCH__ $(INCLUDE)
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) -L$(PWD)/mupdf/build/release
+LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) -L$(PWD)/libs/mupdf/build/release
 
 LIBS	:=	-lSDL2_image -lSDL2 -lpng -lz -ljpeg -lwebp -lglad -lEGL -lglapi -ldrm_nouveau -lstdc++ -lvorbisidec -logg -lmpg123 -lmodplug -lnx -lfreetype -lbz2 -lmupdf_core -lmupdf_thirdparty -lconfig -lm
 
@@ -65,7 +73,7 @@ LIBS	:=	-lSDL2_image -lSDL2 -lpng -lz -ljpeg -lwebp -lglad -lEGL -lglapi -ldrm_n
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX)
+LIBDIRS	:= $(PORTLIBS) $(LIBNX) #/opt/devkitpro/twili-libnx
 
 
 #---------------------------------------------------------------------------------
@@ -158,10 +166,10 @@ endif
 .PHONY: $(BUILD) clean all
 
 #---------------------------------------------------------------------------------
-all: mupdf $(BUILD)
+all: $(BUILD)
 
-mupdf:
-	@make -f Makefile.mupdf
+pc:
+	gcc source/*.c libs/log.c/src/*.c -I include -I ./libs/log.c/src -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -DLOG_USE_COLOR -o EbookReaderNX_pc
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@

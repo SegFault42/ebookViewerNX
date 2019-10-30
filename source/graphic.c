@@ -1,17 +1,20 @@
 #include "common.h"
 
-void	deinit(t_graphic *graphic)
+extern t_graphic	*graphic;
+
+void	deinit(void)
 {
 	SDL_DestroyWindow(graphic->win);
 	SDL_DestroyRenderer(graphic->renderer);
+
 	free(graphic);
+
 	SDL_Quit();
+	log_info("deinit() [Success]");
 }
 
 t_graphic	*init(void)
 {
-	t_graphic	*graphic = NULL;
-
 	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
 	if (graphic == NULL) {
 		return (NULL);
@@ -43,3 +46,20 @@ t_graphic	*init(void)
 	return (graphic);
 }
 
+void	draw_ppm(fz_pixmap *ppm)
+{
+	// Convert pix array to surface
+	SDL_Surface *image = SDL_CreateRGBSurfaceFrom(ppm->samples,
+ 			ppm->w, ppm->h, ppm->n * 8, ppm->w * ppm->n,
+ 			0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+
+	// Convert surface to texture
+	SDL_Texture	*texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+
+	SDL_Rect dstrect = {5, 5, ppm->w, ppm->h};
+
+	SDL_RenderCopyEx(graphic->renderer, texture, NULL, &dstrect, 0, NULL, SDL_FLIP_NONE);
+	SDL_RenderPresent(graphic->renderer);
+
+	log_info("draw_ppm() [Success]");
+}

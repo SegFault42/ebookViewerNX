@@ -3,6 +3,6 @@
 
 #include <mupdf/fitz.h>
 
-void	*ebook(char *path, int page_count);
+void	ebook(char *path, int page_index);
 
 #endif
