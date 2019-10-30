@@ -25,11 +25,12 @@ int main(void)
 
 	deinit();
 
+	log_info("Quitting ...");
+
 	#ifdef __SWITCH__
 		socketExit();
 		/*twiliExit();*/
 	#endif
 
-	log_info("Quitting ...");
 	return (0);
 }
