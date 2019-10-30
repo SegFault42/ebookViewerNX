@@ -9,7 +9,7 @@ int main(void)
 	#ifdef __SWITCH__
 		socketInitializeDefault();
 		nxlinkStdio();
-		twiliInitialize();
+		/*twiliInitialize();*/
 	#endif
 
 	graphic = init();
@@ -21,13 +21,13 @@ int main(void)
 		log_info("init() [Success]");
 	}
 
-	ebook("/book.pdf", 0);
+	ebook("./book.pdf", 4);
 
 	deinit();
 
 	#ifdef __SWITCH__
 		socketExit();
-		twiliExit();
+		/*twiliExit();*/
 	#endif
 
 	log_info("Quitting ...");

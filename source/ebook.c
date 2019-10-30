@@ -82,8 +82,7 @@ static fz_pixmap	*convert_page_to_ppm(fz_context *ctx, fz_document *doc, int cur
 	/* Render page to an RGB pixmap. */
 	fz_try(ctx)
 		ppm = fz_new_pixmap_from_page_number(ctx, doc, current_page, ctm, fz_device_rgb(ctx), 0);
-	fz_catch(ctx)
-	{
+	fz_catch(ctx) {
 		log_fatal("cannot render page: %s\n", fz_caught_message(ctx));
 		deinit_mupdf(ctx, doc);
 		return (NULL);
@@ -132,8 +131,6 @@ void	ebook(char *path, int page_index)
 	// free ppm
 	fz_drop_pixmap(ctx, ppm);
 	// end of loop
-
-	sleep(1);
 
 	deinit_mupdf(ctx, doc);
 }
