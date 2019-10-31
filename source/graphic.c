@@ -2,17 +2,6 @@
 
 extern t_graphic	*graphic;
 
-void	deinit(void)
-{
-	SDL_DestroyWindow(graphic->win);
-	SDL_DestroyRenderer(graphic->renderer);
-
-	free(graphic);
-
-	SDL_Quit();
-	log_info("deinit() [Success]");
-}
-
 t_graphic	*init(void)
 {
 	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
@@ -45,6 +34,18 @@ t_graphic	*init(void)
 
 	return (graphic);
 }
+
+void	deinit(void)
+{
+	SDL_DestroyWindow(graphic->win);
+	SDL_DestroyRenderer(graphic->renderer);
+
+	free(graphic);
+
+	SDL_Quit();
+	log_info("deinit() [Success]");
+}
+
 
 void	draw_ppm(fz_pixmap *ppm)
 {
