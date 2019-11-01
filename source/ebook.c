@@ -42,45 +42,40 @@ void	deinit_mupdf(void)
 }
 
 
-static fz_document	*open_ebook(char *path, fz_context *ctx)
+static bool	open_ebook(char *path)
 {
-	fz_document	*doc = NULL;
-
 	/* Open the document. */
-	fz_try(ctx) {
-		doc = fz_open_document(ctx, path);
+	fz_try(ebook->ctx) {
+		ebook->doc = fz_open_document(ebook->ctx, path);
 	}
-	fz_catch(ctx) {
-		log_fatal("open_ebook(): %s\n", fz_caught_message(ctx));
-		return (NULL);
+	fz_catch(ebook->ctx) {
+		log_fatal("open_ebook(): %s\n", fz_caught_message(ebook->ctx));
+		return (false);
 	}
 
 	log_info("open_ebook() [Success]");
-	return (doc);
+	return (true);
 }
 
-static int	count_page_number(t_ebook *ebook)
+static bool	count_page_number(void)
 {
-	int	page_count = 0;
-
 	/* Count the number of pages. */
 	fz_try(ebook->ctx) {
-		page_count = fz_count_pages(ebook->ctx, ebook->doc);
+		ebook->total_page = fz_count_pages(ebook->ctx, ebook->doc);
 	}
 	fz_catch(ebook->ctx) {
 		log_fatal("cannot count number of pages: %s\n", fz_caught_message(ebook->ctx));
-		return (-1);
+		return (false);
 	}
 
 	log_info("count_page_number() [Success]");
-	return (page_count);
+	return (true);
 }
 
 // TODO: create struct for math
-static fz_pixmap	*convert_page_to_ppm(t_ebook *ebook, int current_page)
+static bool	convert_page_to_ppm(int current_page)
 {
 	fz_matrix	ctm;
-	fz_pixmap	*ppm = NULL;
 	fz_page		*page = NULL;
 	fz_rect		bounds;
 	float		zoom = 0, rotate = 0;
@@ -99,25 +94,23 @@ static fz_pixmap	*convert_page_to_ppm(t_ebook *ebook, int current_page)
 
 	/* Render page to an RGB pixmap. */
 	fz_try(ebook->ctx)
-		ppm = fz_new_pixmap_from_page_number(ebook->ctx, ebook->doc, current_page, ctm, fz_device_rgb(ebook->ctx), 0);
+		ebook->ppm = fz_new_pixmap_from_page_number(ebook->ctx, ebook->doc, current_page, ctm, fz_device_rgb(ebook->ctx), 0);
 	fz_catch(ebook->ctx) {
 		log_fatal("cannot render page: %s\n", fz_caught_message(ebook->ctx));
-		return (NULL);
+		return (false);
 	}
 
 	log_info("convert_page_to_ppm() [Success]");
-	return (ppm);
+	return (true);
 }
 
 void	ebook_reader(char *path, int page_index)
 {
-	ebook->doc = open_ebook(path, ebook->ctx);
-	if (ebook->doc == NULL) {
+	if (open_ebook(path) == false) {
 		return ;
 	}
 
-	ebook->total_page = count_page_number(ebook);
-	if (ebook->total_page == -1) {
+	if (count_page_number() == false) {
 		return ;
 	}
 
@@ -129,8 +122,7 @@ void	ebook_reader(char *path, int page_index)
 
 	// loop here to naviguate in pdf
 
-	ebook->ppm = convert_page_to_ppm(ebook, page_index);
-	if (ebook->ppm == NULL) {
+	if (convert_page_to_ppm(page_index) == false) {
 		return ;
 	}
 
