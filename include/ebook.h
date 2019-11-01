@@ -12,6 +12,8 @@ typedef struct	s_ebook
 	int			page_index; // Current page in book
 }				t_ebook;
 
-void	ebook(char *path, int page_index);
+void	ebook_reader(char *path, int page_index);
+bool	init_mupdf(void);
+void	deinit_mupdf(void);
 
 #endif

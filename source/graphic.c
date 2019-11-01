@@ -2,17 +2,17 @@
 
 extern t_graphic	*graphic;
 
-t_graphic	*init(void)
+bool	init_graphic(void)
 {
 	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
 	if (graphic == NULL) {
-		return (NULL);
+		 return (false);
 	}
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		SDL_Log("SDL_Init: %s\n", SDL_GetError());
 		free(graphic);
-		return (NULL);
+		 return (false);
 	}
 
 	graphic->win = SDL_CreateWindow("", 0, 0, WIN_WIDTH, WIN_HEIGHT, 0);
@@ -20,7 +20,7 @@ t_graphic	*init(void)
 		SDL_Log("SDL_CreateWindow: %s\n", SDL_GetError());
 		SDL_Quit();
 		free(graphic);
-		return (NULL);
+		 return (false);
 	}
 
 	graphic->renderer = SDL_CreateRenderer(graphic->win, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -29,21 +29,23 @@ t_graphic	*init(void)
 		SDL_DestroyWindow(graphic->win);
 		SDL_Quit();
 		free(graphic);
-		return (NULL);
+		 return (false);
 	}
 
-	return (graphic);
+	log_info("init_graphic() [Success]");
+	return (true);
 }
 
-void	deinit(void)
+void	deinit_graphic(void)
 {
 	SDL_DestroyWindow(graphic->win);
 	SDL_DestroyRenderer(graphic->renderer);
 
 	free(graphic);
+	graphic = NULL;
 
 	SDL_Quit();
-	log_info("deinit() [Success]");
+	log_info("deinit_graphic() [Success]");
 }
 
 
