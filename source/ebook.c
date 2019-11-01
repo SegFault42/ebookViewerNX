@@ -7,15 +7,15 @@ bool	init_mupdf(void)
 {
 	ebook = (t_ebook *)calloc(sizeof(t_ebook), 1);
 	if (ebook == NULL) {
-		log_fatal("ebook() : calloc failure");
-		 return (false);
+		log_fatal("init_mupdf() : calloc failure");
+		return (false);
 	}
 
 	/* Create a context to hold the exception stack and various caches. */
 	ebook->ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
 	if (!ebook->ctx) {
 		log_fatal("cannot create mupdf context");
-		 return (false);
+		return (false);
 	}
 
 	/* Register the default file types to handle. */
@@ -25,7 +25,7 @@ bool	init_mupdf(void)
 	fz_catch(ebook->ctx) {
 		log_fatal("cannot register document handlers: %s\n", fz_caught_message(ebook->ctx));
 		fz_drop_context(ebook->ctx);
-		 return (false);
+		return (false);
 	}
 
 	log_info("init_mupdf() [Success]");

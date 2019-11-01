@@ -6,30 +6,31 @@ bool	init_graphic(void)
 {
 	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
 	if (graphic == NULL) {
-		 return (false);
+		log_fatal("init_graphic() : calloc [Failure]");
+		return (false);
 	}
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		SDL_Log("SDL_Init: %s\n", SDL_GetError());
+		log_fatal("SDL_Init: %s\n", SDL_GetError());
 		free(graphic);
-		 return (false);
+		return (false);
 	}
 
 	graphic->win = SDL_CreateWindow("", 0, 0, WIN_WIDTH, WIN_HEIGHT, 0);
 	if (graphic->win == NULL) {
-		SDL_Log("SDL_CreateWindow: %s\n", SDL_GetError());
+		log_fatal("SDL_CreateWindow: %s\n", SDL_GetError());
 		SDL_Quit();
 		free(graphic);
-		 return (false);
+		return (false);
 	}
 
 	graphic->renderer = SDL_CreateRenderer(graphic->win, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (graphic->renderer == NULL) {
-		SDL_Log("SDL_CreateRenderer: %s\n", SDL_GetError());
+		log_fatal("SDL_CreateRenderer: %s\n", SDL_GetError());
 		SDL_DestroyWindow(graphic->win);
 		SDL_Quit();
 		free(graphic);
-		 return (false);
+		return (false);
 	}
 
 	log_info("init_graphic() [Success]");

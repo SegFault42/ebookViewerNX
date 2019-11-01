@@ -15,14 +15,18 @@ static void	init_all(void)
 		deinit_graphic();
 		exit(-1);
 	}
-	/*init_layout();*/
+	if (init_layout() == false) {
+		deinit_graphic();
+		deinit_mupdf();
+		exit (-1);
+	}
 }
 
 static void	deinit_all(void)
 {
 	deinit_graphic();
 	deinit_mupdf();
-	/*deinit_layout();*/
+	deinit_layout();
 }
 
 int main(void)
