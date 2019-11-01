@@ -51,8 +51,7 @@ static fz_document	*open_ebook(char *path, fz_context *ctx)
 		doc = fz_open_document(ctx, path);
 	}
 	fz_catch(ctx) {
-		log_fatal("cannot open document: %s\n", fz_caught_message(ctx));
-		fz_drop_context(ctx);
+		log_fatal("open_ebook(): %s\n", fz_caught_message(ctx));
 		return (NULL);
 	}
 
