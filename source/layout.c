@@ -1,6 +1,7 @@
 #include "common.h"
 
 extern t_transform	*trans;
+extern t_ebook		*ebook;
 
 bool	init_layout(void)
 {
@@ -21,20 +22,21 @@ void	deinit_layout(void)
 	log_info("deinit_layout() [Success]");
 }
 
-/*void	landscape_reset()*/
-/*{*/
+void	landscape_default(void)
+{
+	// calculate to fit in Y (Default zoom)
+	trans->zoom = (WIN_HEIGHT * 100) / trans->bounds.y1;
 
-	/*// get size of page*/
-    /*page = fz_load_page(ebook->ctx, ebook->doc, current_page);*/
-	/*bounds = fz_bound_page(ebook->ctx, page);*/
-	/*fz_drop_page(ebook->ctx, page);*/
+	// set zoom and rotation
+	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
+	trans->ctm = fz_pre_rotate(trans->ctm, trans->rotate);
 
-	/*// calculate to fit in Y (Default zoom)*/
-	/*zoom = (WIN_HEIGHT * 100) / bounds.y1;*/
+	// trans->dstrect = {(WIN_WIDTH - ebook->ppm->w) / 2, 0, ebook->ppm->w, ebook->ppm->h};
+	// init to fit in X
+	/*trans->dstrect.x = (WIN_WIDTH - trans->bounds.x1) / 2;*/
+	/*trans->dstrect.y = 0;*/
+	/*trans->dstrect.w = trans->bounds.x1;*/
+	/*trans->dstrect.h = trans->bounds.y1;*/
 
-	/*// set zoom and rotation*/
-	/*ctm = fz_scale(zoom / 100, zoom / 100);*/
-	/*ctm = fz_pre_rotate(ctm, rotate);*/
-
-	/*SDL_Rect dstrect = {(WIN_WIDTH - ppm->w) / 2, 0, ppm->w, ppm->h};*/
-/*}*/
+	log_info("landscape_default() [Success]");
+}

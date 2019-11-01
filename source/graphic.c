@@ -1,6 +1,7 @@
 #include "common.h"
 
 extern t_graphic	*graphic;
+extern t_transform	*trans;
 
 bool	init_graphic(void)
 {
@@ -62,13 +63,13 @@ void	draw_ppm(fz_pixmap *ppm)
 	// Free surface
 	SDL_FreeSurface(image);
 
-	// Create rect and move it in the middle in X axis
-	SDL_Rect dstrect = {(WIN_WIDTH - ppm->w) / 2, 0, ppm->w, ppm->h};
+	/*// Create rect and move it in the middle in X axis*/
+	/*SDL_Rect dstrect = {(WIN_WIDTH - ppm->w) / 2, 0, ppm->w, ppm->h};*/
 
 	// clear window
 	SDL_RenderClear(graphic->renderer);
 
-	SDL_RenderCopyEx(graphic->renderer, texture, NULL, &dstrect, 0, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(trans->dstrect), 0, NULL, SDL_FLIP_NONE);
 	// Free texture
 	SDL_DestroyTexture(texture);
 	// Render

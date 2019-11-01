@@ -13,5 +13,6 @@ typedef struct	s_transform
 
 bool	init_layout(void);
 void	deinit_layout(void);
+void	landscape_default(void);
 
 #endif
