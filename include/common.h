@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include <SDL2/SDL.h>
 
@@ -16,5 +17,6 @@
 
 #include "ebook.h"
 #include "graphic.h"
+#include "layout.h"
 
 #endif

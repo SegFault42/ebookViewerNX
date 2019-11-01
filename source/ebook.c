@@ -1,85 +1,89 @@
 #include "common.h"
 
 extern t_graphic	*graphic;
+extern t_ebook		*ebook;
 
-static fz_context	*init_mupdf(void)
+bool	init_mupdf(void)
 {
-	fz_context	*ctx = NULL;
+	ebook = (t_ebook *)calloc(sizeof(t_ebook), 1);
+	if (ebook == NULL) {
+		log_fatal("init_mupdf() : calloc failure");
+		return (false);
+	}
 
 	/* Create a context to hold the exception stack and various caches. */
-	ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
-	if (!ctx) {
+	ebook->ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
+	if (!ebook->ctx) {
 		log_fatal("cannot create mupdf context");
-		return (NULL);
+		return (false);
 	}
 
 	/* Register the default file types to handle. */
-	fz_try(ctx) {
-		fz_register_document_handlers(ctx);
+	fz_try(ebook->ctx) {
+		fz_register_document_handlers(ebook->ctx);
 	}
-	fz_catch(ctx) {
-		log_fatal("cannot register document handlers: %s\n", fz_caught_message(ctx));
-		fz_drop_context(ctx);
-		return (NULL);
+	fz_catch(ebook->ctx) {
+		log_fatal("cannot register document handlers: %s\n", fz_caught_message(ebook->ctx));
+		fz_drop_context(ebook->ctx);
+		return (false);
 	}
 
 	log_info("init_mupdf() [Success]");
-	return (ctx);
+	return (true);
 }
 
-static void	deinit_mupdf(fz_context *ctx, fz_document *doc)
+void	deinit_mupdf(void)
 {
-	fz_drop_document(ctx, doc);
-	fz_drop_context(ctx);
+	fz_drop_document(ebook->ctx, ebook->doc);
+	fz_drop_context(ebook->ctx);
+	free(ebook);
+	ebook = NULL;
+	log_info("deinit_mupdf() [Success]");
 }
 
 
-static fz_document	*open_ebook(char *path, fz_context *ctx)
+static bool	open_ebook(char *path)
 {
-	fz_document	*doc = NULL;
-
 	/* Open the document. */
-	fz_try(ctx) {
-		doc = fz_open_document(ctx, path);
+	fz_try(ebook->ctx) {
+		ebook->doc = fz_open_document(ebook->ctx, path);
 	}
-	fz_catch(ctx) {
-		log_fatal("cannot open document: %s\n", fz_caught_message(ctx));
-		fz_drop_context(ctx);
-		return (NULL);
+	fz_catch(ebook->ctx) {
+		log_fatal("open_ebook(): %s\n", fz_caught_message(ebook->ctx));
+		return (false);
 	}
 
 	log_info("open_ebook() [Success]");
-	return (doc);
+	return (true);
 }
 
-static int	count_page_number(fz_context *ctx, fz_document *doc)
+static bool	count_page_number(void)
 {
-	int	page_count = 0;
-
 	/* Count the number of pages. */
-	fz_try(ctx) {
-		page_count = fz_count_pages(ctx, doc);
+	fz_try(ebook->ctx) {
+		ebook->total_page = fz_count_pages(ebook->ctx, ebook->doc);
 	}
-	fz_catch(ctx) {
-		log_fatal("cannot count number of pages: %s\n", fz_caught_message(ctx));
-		deinit_mupdf(ctx, doc);
-		return (-1);
+	fz_catch(ebook->ctx) {
+		log_fatal("cannot count number of pages: %s\n", fz_caught_message(ebook->ctx));
+		return (false);
 	}
 
 	log_info("count_page_number() [Success]");
-	return (page_count);
+	return (true);
 }
 
-static fz_pixmap	*convert_page_to_ppm(fz_context *ctx, fz_document *doc, int current_page)
+// TODO: create struct for math
+static bool	convert_page_to_ppm(int current_page)
 {
 	fz_matrix	ctm;
-	fz_pixmap	*ppm = NULL;
-	float zoom = 0, rotate = 0;
+	fz_page		*page = NULL;
+	fz_rect		bounds;
+	float		zoom = 0, rotate = 0;
 
 	// get size of page
-    fz_page *page = fz_load_page(ctx, doc, current_page);
-	fz_rect	bounds = fz_bound_page(ctx, page);
-	fz_drop_page(ctx, page);
+    page = fz_load_page(ebook->ctx, ebook->doc, current_page);
+	bounds = fz_bound_page(ebook->ctx, page);
+	fz_drop_page(ebook->ctx, page);
 
 	// calculate to fit in Y (Default zoom)
 	zoom = (WIN_HEIGHT * 100) / bounds.y1;
@@ -89,60 +93,41 @@ static fz_pixmap	*convert_page_to_ppm(fz_context *ctx, fz_document *doc, int cur
 	ctm = fz_pre_rotate(ctm, rotate);
 
 	/* Render page to an RGB pixmap. */
-	fz_try(ctx)
-		ppm = fz_new_pixmap_from_page_number(ctx, doc, current_page, ctm, fz_device_rgb(ctx), 0);
-	fz_catch(ctx) {
-		log_fatal("cannot render page: %s\n", fz_caught_message(ctx));
-		deinit_mupdf(ctx, doc);
-		return (NULL);
+	fz_try(ebook->ctx)
+		ebook->ppm = fz_new_pixmap_from_page_number(ebook->ctx, ebook->doc, current_page, ctm, fz_device_rgb(ebook->ctx), 0);
+	fz_catch(ebook->ctx) {
+		log_fatal("cannot render page: %s\n", fz_caught_message(ebook->ctx));
+		return (false);
 	}
 
 	log_info("convert_page_to_ppm() [Success]");
-	return (ppm);
+	return (true);
 }
 
-void	ebook(char *path, int page_index)
+void	ebook_reader(char *path, int page_index)
 {
-	fz_context	*ctx = NULL;
-	fz_document	*doc = NULL;
-	fz_pixmap	*ppm = NULL;
-	int			total_page = 0;
-
-	ctx = init_mupdf();
-	if (ctx == NULL) {
+	if (open_ebook(path) == false) {
 		return ;
 	}
 
-	doc = open_ebook(path, ctx);
-	if (doc == NULL) {
-		return ;
-	}
-
-	total_page = count_page_number(ctx, doc);
-	if (total_page == -1) {
+	if (count_page_number() == false) {
 		return ;
 	}
 
 	// check out of range index
-	if (total_page < 0 || page_index >= total_page) {
-		log_fatal("page number out of range: %d (page count %d)\n", total_page + 1, page_index);
-		deinit_mupdf(ctx, doc);
+	if (ebook->total_page < 0 || page_index >= ebook->total_page) {
+		log_fatal("page number out of range: %d (page count %d)\n", ebook->total_page + 1, page_index);
 		return ;
 	}
 
 	// loop here to naviguate in pdf
-	for (int i = 0; i < 15; i++) {
-		ppm = convert_page_to_ppm(ctx, doc, page_index + i);
-		if (ppm == NULL) {
-			return ;
-		}
-	
-		draw_ppm(ppm);
-		// free ppm
-		fz_drop_pixmap(ctx, ppm);
-		sleep(1);
-	}
-	// end of loop
 
-	deinit_mupdf(ctx, doc);
+	if (convert_page_to_ppm(page_index) == false) {
+		return ;
+	}
+
+	draw_ppm(ebook->ppm);
+	// free ppm
+	fz_drop_pixmap(ebook->ctx, ebook->ppm);
+	// end of loop
 }
