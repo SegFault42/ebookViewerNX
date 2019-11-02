@@ -117,7 +117,7 @@ void	ebook_reader(char *path, int current_page)
 	// loop here to naviguate in pdf
 	get_page_info(current_page);
 
-	landscape_default();
+	portrait_default();
 
 	if (convert_page_to_ppm(current_page) == false) {
 		return ;
