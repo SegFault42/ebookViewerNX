@@ -31,12 +31,11 @@ void	landscape_default(void)
 	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
 	trans->ctm = fz_pre_rotate(trans->ctm, trans->rotate);
 
-	// trans->dstrect = {(WIN_WIDTH - ebook->ppm->w) / 2, 0, ebook->ppm->w, ebook->ppm->h};
-	// init to fit in X
-	/*trans->dstrect.x = (WIN_WIDTH - trans->bounds.x1) / 2;*/
-	/*trans->dstrect.y = 0;*/
-	/*trans->dstrect.w = trans->bounds.x1;*/
-	/*trans->dstrect.h = trans->bounds.y1;*/
+	// Center in middle of the screen X and Y
+	trans->dstrect.x = (WIN_WIDTH - ((trans->zoom /100) * trans->bounds.x1)) / 2;	// calculate middle of X 
+	trans->dstrect.y = 0;															// y pos must to begin in 0 
+	trans->dstrect.w = (trans->zoom / 100) * trans->bounds.x1;						// add zoom percentage
+	trans->dstrect.h = (trans->zoom / 100) * trans->bounds.y1;						// add zoom percentage
 
 	log_info("landscape_default() [Success]");
 }

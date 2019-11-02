@@ -116,19 +116,15 @@ void	ebook_reader(char *path, int current_page)
 
 	// loop here to naviguate in pdf
 	get_page_info(current_page);
+
 	landscape_default();
+
 	if (convert_page_to_ppm(current_page) == false) {
 		return ;
 	}
 
-	// position square
-	trans->dstrect.x = (WIN_WIDTH - ebook->ppm->w) / 2;
-	trans->dstrect.y = 0;
-	trans->dstrect.w = ebook->ppm->w;
-	trans->dstrect.h = ebook->ppm->h;
-
 	draw_ppm(ebook->ppm);
-	// free ppm
+
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
 	// end of loop
 }
