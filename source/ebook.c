@@ -73,7 +73,6 @@ static bool	count_page_number(void)
 	return (true);
 }
 
-// TODO: create struct for math
 static bool	convert_page_to_ppm(int current_page)
 {
 	/* Render page to an RGB pixmap. */

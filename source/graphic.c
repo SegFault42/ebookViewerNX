@@ -53,18 +53,19 @@ void	deinit_graphic(void)
 
 void	draw_ppm(fz_pixmap *ppm)
 {
+	SDL_Surface	*image = NULL;
+	SDL_Texture	*texture = NULL;
+
 	// Convert pix array to surface
-	SDL_Surface *image = SDL_CreateRGBSurfaceFrom(ppm->samples,
- 			ppm->w, ppm->h, ppm->n * 8, ppm->w * ppm->n,
- 			0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+	image = SDL_CreateRGBSurfaceFrom(ppm->samples,
+			ppm->w, ppm->h, ppm->n * 8, ppm->w * ppm->n,
+			0x000000FF, 0x0000FF00, 0x00FF0000, 0);
 
 	// Convert surface to texture
-	SDL_Texture	*texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+	texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+
 	// Free surface
 	SDL_FreeSurface(image);
-
-	/*// Create rect and move it in the middle in X axis*/
-	/*SDL_Rect dstrect = {(WIN_WIDTH - ppm->w) / 2, 0, ppm->w, ppm->h};*/
 
 	// clear window
 	SDL_RenderClear(graphic->renderer);
