@@ -24,15 +24,17 @@ void	deinit_layout(void)
 
 void	portrait_default(void)
 {
-	trans->zoom = 100;
+	trans->zoom = (WIN_HEIGHT * 100) / trans->bounds.x1;
 
 	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
 	trans->ctm = fz_pre_rotate(trans->ctm, 90);
 
-	trans->dstrect.x = WIN_WIDTH - trans->bounds.y1;			// calculate middle of X
-	trans->dstrect.y = 0;					// y pos must to begin in 0
-	trans->dstrect.w = trans->bounds.y1;	// add zoom percentage
-	trans->dstrect.h = trans->bounds.x1;	// add zoom percentage
+	trans->dstrect.x = (WIN_WIDTH - ((trans->zoom /100) * trans->bounds.y1)) / 2;	// calculate middle of X
+	trans->dstrect.y = 0;															// y pos must to begin in 0
+	trans->dstrect.w = (trans->zoom / 100) * trans->bounds.y1;						// add zoom percentage
+	trans->dstrect.h = (trans->zoom / 100) * trans->bounds.x1;						// add zoom percentage
+
+	log_info("portrait_default() [Success]");
 }
 
 void	landscape_default(void)
@@ -42,7 +44,7 @@ void	landscape_default(void)
 
 	// set zoom and rotation
 	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
-	trans->ctm = fz_pre_rotate(trans->ctm, trans->rotate);
+	trans->ctm = fz_pre_rotate(trans->ctm, 0);
 
 	// Center in middle of the screen X and Y
 	trans->dstrect.x = (WIN_WIDTH - ((trans->zoom /100) * trans->bounds.x1)) / 2;	// calculate middle of X
