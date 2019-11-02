@@ -2,6 +2,7 @@
 
 extern t_graphic	*graphic;
 extern t_ebook		*ebook;
+extern t_transform	*trans;
 
 bool	init_mupdf(void)
 {
@@ -75,26 +76,9 @@ static bool	count_page_number(void)
 // TODO: create struct for math
 static bool	convert_page_to_ppm(int current_page)
 {
-	fz_matrix	ctm;
-	fz_page		*page = NULL;
-	fz_rect		bounds;
-	float		zoom = 0, rotate = 0;
-
-	// get size of page
-    page = fz_load_page(ebook->ctx, ebook->doc, current_page);
-	bounds = fz_bound_page(ebook->ctx, page);
-	fz_drop_page(ebook->ctx, page);
-
-	// calculate to fit in Y (Default zoom)
-	zoom = (WIN_HEIGHT * 100) / bounds.y1;
-
-	// set zoom and rotation
-	ctm = fz_scale(zoom / 100, zoom / 100);
-	ctm = fz_pre_rotate(ctm, rotate);
-
 	/* Render page to an RGB pixmap. */
 	fz_try(ebook->ctx)
-		ebook->ppm = fz_new_pixmap_from_page_number(ebook->ctx, ebook->doc, current_page, ctm, fz_device_rgb(ebook->ctx), 0);
+		ebook->ppm = fz_new_pixmap_from_page_number(ebook->ctx, ebook->doc, current_page, trans->ctm, fz_device_rgb(ebook->ctx), 0);
 	fz_catch(ebook->ctx) {
 		log_fatal("cannot render page: %s\n", fz_caught_message(ebook->ctx));
 		return (false);
@@ -104,7 +88,17 @@ static bool	convert_page_to_ppm(int current_page)
 	return (true);
 }
 
-void	ebook_reader(char *path, int page_index)
+void	get_page_info(int current_page)
+{
+	// get size of page
+	trans->page = fz_load_page(ebook->ctx, ebook->doc, current_page);
+	trans->bounds = fz_bound_page(ebook->ctx, trans->page);
+	fz_drop_page(ebook->ctx, trans->page);
+
+	log_info("get_page_info() [Success]");
+}
+
+void	ebook_reader(char *path, int current_page)
 {
 	if (open_ebook(path) == false) {
 		return ;
@@ -115,19 +109,22 @@ void	ebook_reader(char *path, int page_index)
 	}
 
 	// check out of range index
-	if (ebook->total_page < 0 || page_index >= ebook->total_page) {
-		log_fatal("page number out of range: %d (page count %d)\n", ebook->total_page + 1, page_index);
+	if (ebook->total_page < 0 || current_page >= ebook->total_page) {
+		log_fatal("page number out of range: %d (page count %d)\n", ebook->total_page + 1, current_page);
 		return ;
 	}
 
 	// loop here to naviguate in pdf
+	get_page_info(current_page);
 
-	if (convert_page_to_ppm(page_index) == false) {
+	portrait_default();
+
+	if (convert_page_to_ppm(current_page) == false) {
 		return ;
 	}
 
 	draw_ppm(ebook->ppm);
-	// free ppm
+
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
 	// end of loop
 }

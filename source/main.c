@@ -41,7 +41,7 @@ int main(void)
 
 	ebook_reader("./book.pdf", 0);
 
-	sleep(2);
+	sleep(10);
 
 	deinit_all();
 
