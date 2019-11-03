@@ -10,7 +10,10 @@
 
 #ifdef __SWITCH__
 	#include <switch.h>
-	//#include <twili.h>
+#endif
+
+#ifdef __TWILI__
+	#include <twili.h>
 #endif
 
 #include "log.h"

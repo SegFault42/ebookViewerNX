@@ -8,6 +8,15 @@ t_ebook		*ebook = NULL;
 
 static void	init_all(void)
 {
+	#ifdef __SWITCH__
+		socketInitializeDefault();
+		nxlinkStdio();
+	#endif
+
+	#ifdef __TWILI__
+		twiliInitialize();
+	#endif
+
 	if (init_graphic() == false) {
 		exit(-1);
 	}
@@ -31,15 +40,9 @@ static void	deinit_all(void)
 
 int main(void)
 {
-	#ifdef __SWITCH__
-		socketInitializeDefault();
-		nxlinkStdio();
-		/*twiliInitialize();*/
-	#endif
-
 	init_all();
 
-	ebook_reader("./book.pdf", 0);
+	ebook_reader("/book.pdf", 0);
 
 	sleep(3);
 
@@ -49,7 +52,10 @@ int main(void)
 
 	#ifdef __SWITCH__
 		socketExit();
-		/*twiliExit();*/
+	#endif
+
+	#ifdef __TWILI__
+		twiliExit();
 	#endif
 
 	return (0);
