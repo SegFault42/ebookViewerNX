@@ -36,19 +36,6 @@ static void	deinit_all(void)
 	deinit_graphic();
 	deinit_mupdf();
 	deinit_layout();
-}
-
-int main(void)
-{
-	init_all();
-
-	ebook_reader("/book.pdf", 0);
-
-	sleep(3);
-
-	deinit_all();
-
-	log_info("Quitting ...");
 
 	#ifdef __SWITCH__
 		socketExit();
@@ -57,6 +44,19 @@ int main(void)
 	#ifdef __TWILI__
 		twiliExit();
 	#endif
+}
+
+int main(void)
+{
+	init_all();
+
+	ebook_reader("/book.pdf", 4);
+
+	sleep(3);
+
+	deinit_all();
+
+	log_info("Quitting ...");
 
 	return (0);
 }
