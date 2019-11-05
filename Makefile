@@ -67,13 +67,13 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) -L$(PWD)/libs/mupdf/build/release
 
-LIBS	:=	-lSDL2 -lEGL -lglapi -ldrm_nouveau -lstdc++ -lnx -lmupdf_core -lmupdf_thirdparty -lm -ltwili
+LIBS	:=	-lSDL2 -lEGL -lglapi -ldrm_nouveau -lstdc++ -lnx -lmupdf -lmupdf-third -lm -ltwili -lfreetype -ljpeg -lpng -lbz2
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX) /opt/devkitpro/twili-libnx
+LIBDIRS	:= $(PORTLIBS) $(LIBNX) /opt/devkitpro/twili-libnx $(CURDIR)/libs/mupdf
 
 
 #---------------------------------------------------------------------------------
