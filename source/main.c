@@ -8,7 +8,7 @@ t_ebook		*ebook = NULL;
 
 static void	init_all(void)
 {
-	#ifdef __SWITCH__
+	#ifdef __NXLINK__
 		socketInitializeDefault();
 		nxlinkStdio();
 	#endif
@@ -37,7 +37,8 @@ static void	deinit_all(void)
 	deinit_mupdf();
 	deinit_layout();
 
-	#ifdef __SWITCH__
+	log_info("Quitting ...");
+	#ifdef __NXLINK__
 		socketExit();
 	#endif
 
@@ -56,7 +57,6 @@ int main(void)
 
 	deinit_all();
 
-	log_info("Quitting ...");
 
 	return (0);
 }
