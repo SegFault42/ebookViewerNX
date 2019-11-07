@@ -8,6 +8,7 @@
 #include <errno.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #ifdef __NXLINK__
 	#include <switch.h>

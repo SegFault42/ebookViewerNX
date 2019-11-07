@@ -42,7 +42,7 @@ BUILD		:=	build
 SOURCES		:=	source ./libs/log.c/src
 DATA		:=	data
 INCLUDES	:=	include ./libs/log.c/src ./libs/mupdf/include ./libs/mupdf/source/fitz
-#ROMFS	:=	romfs
+ROMFS	:=	romfs
 
 MAJOR		:= 0
 MINOR		:= 0
@@ -67,7 +67,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:=	-lSDL2 -lEGL -lglapi -ldrm_nouveau `sdl2-config --libs` -lstdc++ -lnx -lmupdf -lmupdf-third -lm -ltwili -lfreetype -ljpeg -lpng -lbz2
+LIBS	:=	-lSDL2 -lSDL2_ttf -lEGL -lglapi -ldrm_nouveau `sdl2-config --libs` -lstdc++ -lnx -lmupdf -lmupdf-third -lm -ltwili -lfreetype -ljpeg -lpng -lbz2
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

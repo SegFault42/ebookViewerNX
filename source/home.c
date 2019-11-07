@@ -74,13 +74,13 @@ char	*home_page(void)
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 		u64 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
 
-		draw_ui(books);
+		draw_ui(books[0]);
 
 		if (kDown & KEY_PLUS) {
 			break ;
 		}
 	}
 
-
+	log_info("home_page() [Success]");
 	return (books[0]);
 }
