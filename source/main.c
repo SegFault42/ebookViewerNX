@@ -6,6 +6,13 @@ t_graphic	*graphic = NULL;
 t_transform	*trans = NULL;
 t_ebook		*ebook = NULL;
 
+void	create_requiered_folder(void)
+{
+	if (mkdir("/switch/ebookReaderNX", 0777) != -1) {
+		log_info("/switch/ebookReaderNX created !");
+	}
+}
+
 static void	init_all(void)
 {
 	#ifdef __NXLINK__
@@ -29,6 +36,8 @@ static void	init_all(void)
 		deinit_mupdf();
 		exit (-1);
 	}
+
+	create_requiered_folder();
 }
 
 static void	deinit_all(void)
@@ -53,9 +62,12 @@ int main(void)
 {
 	init_all();
 
+	char *book = home_page();
+
 	ebook_reader("/book.pdf", 0);
 
 	deinit_all();
+
 
 	return (0);
 }

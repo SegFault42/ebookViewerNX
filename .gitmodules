@@ -1,3 +1,6 @@
 [submodule "libs/mupdf"]
 	path = libs/mupdf
 	url = https://github.com/ArtifexSoftware/mupdf.git
+[submodule "libs/log.c"]
+	path = libs/log.c
+	url = https://github.com/rxi/log.c.git

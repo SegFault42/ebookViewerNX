@@ -73,37 +73,33 @@ static bool	count_page_number(void)
 	return (true);
 }
 
-static fz_pixmap	*convert_page_to_ppm(int current_page)
+static bool	convert_page_to_ppm(int current_page)
 {
 	/* Render page to an RGB pixmap. */
-	// fz_try(ebook->ctx)
-		// fz_pixmap	*ppm = fz_new_pixmap_from_page_number(ebook->ctx, ebook->doc, current_page, trans->ctm, fz_device_rgb(ebook->ctx), 0);
-		fz_pixmap	*ppm = fz_new_pixmap_from_page_contents(ebook->ctx, trans->page, trans->ctm, fz_device_rgb(ebook->ctx), 0);
-		fz_drop_page(ebook->ctx, trans->page);
-	// fz_catch(ebook->ctx) {
-	// 	log_fatal("cannot render page: %s\n", fz_caught_message(ebook->ctx));
-	// 	return (false);
-	// }
+	fz_try(ebook->ctx)
+		ebook->ppm = fz_new_pixmap_from_page_number(ebook->ctx, ebook->doc, current_page, trans->ctm, fz_device_rgb(ebook->ctx), 0);
+	fz_catch(ebook->ctx) {
+		log_fatal("cannot render page: %s\n", fz_caught_message(ebook->ctx));
+		return (false);
+	}
 
 	log_info("convert_page_to_ppm() [Success]");
-	return (ppm);
+	return (true);
 }
 
 void	get_page_info(int current_page)
 {
 	// get size of page
-	// trans->page dropped n convert_page_to_ppm()
 	trans->page = fz_load_page(ebook->ctx, ebook->doc, current_page);
 	trans->bounds = fz_bound_page(ebook->ctx, trans->page);
+	fz_drop_page(ebook->ctx, trans->page);
 
 	log_info("get_page_info() [Success]");
 }
 
 void	ebook_reader(char *path, int current_page)
 {
-	fz_pixmap *ppm = NULL;
-
-	for (int i = 0; i <528 ; i++) {
+	for (int i = 0; i < 100; i++) {
 		if (i != 0) {
 			init_mupdf();
 		}
@@ -122,19 +118,19 @@ void	ebook_reader(char *path, int current_page)
 	}
 
 	// loop here to naviguate in pdf
-		get_page_info(current_page+i);
-	
-		portrait_default();
-	
-		if ((ppm = convert_page_to_ppm(current_page+i)) == NULL) {
-			return ;
-		}
-	
-		draw_ppm(ppm);
-	
-		fz_drop_pixmap(ebook->ctx, ppm);
-		printf("%d/%d\n", i, ebook->total_page);
-		deinit_mupdf();
+	get_page_info(current_page+i);
+
+	portrait_default();
+
+	if (convert_page_to_ppm(current_page+i) == false) {
+		return ;
+	}
+
+	draw_ppm(ebook->ppm);
+
+	fz_drop_pixmap(ebook->ctx, ebook->ppm);
+	printf("%d/%d\n", i, ebook->total_page);
+	deinit_mupdf();
 	}
 	// end of loop
 }
