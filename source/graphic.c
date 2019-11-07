@@ -50,7 +50,6 @@ void	deinit_graphic(void)
 	log_info("deinit_graphic() [Success]");
 }
 
-
 void	draw_ppm(fz_pixmap *ppm)
 {
 	SDL_Surface	*image = NULL;
@@ -77,4 +76,20 @@ void	draw_ppm(fz_pixmap *ppm)
 	SDL_RenderPresent(graphic->renderer);
 
 	log_info("draw_ppm() [Success]");
+}
+
+void	draw_ui(char **books)
+{
+	SDL_Surface	*image = NULL;
+	SDL_Rect	rect = {(WIN_WIDTH / 2) - (350 /2) , (WIN_HEIGHT / 2) - (500 / 2), 350, 500};
+
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
+	SDL_RenderClear(graphic->renderer);
+
+	SDL_SetRenderDrawColor(graphic->renderer, 0, 0, 0, 255);
+	SDL_RenderDrawRect(graphic->renderer, &rect);
+
+	SDL_RenderPresent(graphic->renderer);
+
+	log_info("draw_ui() [Success]");
 }

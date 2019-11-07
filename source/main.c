@@ -64,7 +64,7 @@ int main(void)
 
 	char *book = home_page();
 
-	ebook_reader("/book.pdf", 0);
+	/*ebook_reader("/book.pdf", 0);*/
 
 	deinit_all();
 

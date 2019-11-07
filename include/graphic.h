@@ -13,5 +13,6 @@ typedef struct		s_graphic
 bool	init_graphic(void);
 void	deinit_graphic(void);
 void	draw_ppm(fz_pixmap *ppm);
+void	draw_ui(char **books);
 
 #endif
