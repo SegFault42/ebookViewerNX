@@ -8,9 +8,12 @@
 
 #include <SDL2/SDL.h>
 
-#ifdef __SWITCH__
+#ifdef __NXLINK__
 	#include <switch.h>
-	//#include <twili.h>
+#endif
+
+#ifdef __TWILI__
+	#include <twili.h>
 #endif
 
 #include "log.h"

@@ -73,7 +73,6 @@ static bool	count_page_number(void)
 	return (true);
 }
 
-// TODO: create struct for math
 static bool	convert_page_to_ppm(int current_page)
 {
 	/* Render page to an RGB pixmap. */
@@ -115,16 +114,19 @@ void	ebook_reader(char *path, int current_page)
 	}
 
 	// loop here to naviguate in pdf
-	get_page_info(current_page);
+	for (int i = 0; i < ebook->total_page; i++) {
+	get_page_info(current_page+i);
 
 	portrait_default();
 
-	if (convert_page_to_ppm(current_page) == false) {
+	if (convert_page_to_ppm(current_page+i) == false) {
 		return ;
 	}
 
 	draw_ppm(ebook->ppm);
 
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
+	printf("%d/%d\n", i, ebook->total_page);
+	}
 	// end of loop
 }

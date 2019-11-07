@@ -60,20 +60,20 @@ ARCH	:=	-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE
 CFLAGS	:=	-g -Wall -Wextra -O2 -ffunction-sections  `sdl2-config --cflags`\
 			$(ARCH) $(DEFINES)
 
-CFLAGS	+=	-D__SWITCH__ $(INCLUDE)
+CFLAGS	+=	-D__NXLINK__ $(INCLUDE)# -D__TWILI__
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) -L$(PWD)/libs/mupdf/build/release
+LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:=	-lSDL2 -lEGL -lglapi -ldrm_nouveau -lstdc++ -lnx -lmupdf_core -lmupdf_thirdparty -lm
+LIBS	:=	-lSDL2 -lEGL -lglapi -ldrm_nouveau -lstdc++ -lnx -lmupdf -lmupdf-third -lm -ltwili -lfreetype -ljpeg -lpng -lbz2
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX) #/opt/devkitpro/twili-libnx
+LIBDIRS	:= $(PORTLIBS) $(LIBNX) /opt/devkitpro/twili-libnx $(CURDIR)/libs/mupdf
 
 
 #---------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ endif
 all: $(BUILD)
 
 pc:
-	gcc source/*.c libs/log.c/src/*.c -I include -I ./libs/log.c/src -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -DLOG_USE_COLOR -o EbookReaderNX_pc
+	clang source/*.c libs/log.c/src/*.c -I include -I ./libs/log.c/src -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -DLOG_USE_COLOR -o EbookReaderNX_pc
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
