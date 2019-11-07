@@ -55,9 +55,9 @@ APP_VERSION	:=	${MAJOR}.${MINOR}.${MICRO}
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE
+ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 
-CFLAGS	:=	-g -Wall -Wextra -O2 -ffunction-sections  `sdl2-config --cflags`\
+CFLAGS	:=	-g -Wall -Wextra -O2 -ffunction-sections\
 			$(ARCH) $(DEFINES)
 
 CFLAGS	+=	-D__NXLINK__ $(INCLUDE)# -D__TWILI__
@@ -67,7 +67,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:=	-lSDL2 -lEGL -lglapi -ldrm_nouveau -lstdc++ -lnx -lmupdf -lmupdf-third -lm -ltwili -lfreetype -ljpeg -lpng -lbz2
+LIBS	:=	-lSDL2 -lEGL -lglapi -ldrm_nouveau `sdl2-config --libs` -lstdc++ -lnx -lmupdf -lmupdf-third -lm -ltwili -lfreetype -ljpeg -lpng -lbz2
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -169,7 +169,7 @@ endif
 all: $(BUILD)
 
 pc:
-	clang source/*.c libs/log.c/src/*.c -I include -I ./libs/log.c/src -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -DLOG_USE_COLOR -o EbookReaderNX_pc
+	clang -g source/*.c libs/log.c/src/*.c -I include -I ./libs/log.c/src -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -DLOG_USE_COLOR -o EbookReaderNX_pc
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@

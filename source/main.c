@@ -34,7 +34,9 @@ static void	init_all(void)
 static void	deinit_all(void)
 {
 	deinit_graphic();
-	deinit_mupdf();
+	if (ebook != NULL) {
+		deinit_mupdf();
+	}
 	deinit_layout();
 
 	log_info("Quitting ...");
@@ -51,12 +53,9 @@ int main(void)
 {
 	init_all();
 
-	ebook_reader("/book.pdf", 4);
-
-	sleep(3);
+	ebook_reader("/book.pdf", 0);
 
 	deinit_all();
-
 
 	return (0);
 }
