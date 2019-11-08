@@ -164,7 +164,7 @@ void	draw_ui(char *book)
 {
 	SDL_Surface	*image = NULL;
 	SDL_Rect	cover = {(WIN_WIDTH / 2) - (350 /2) , (WIN_HEIGHT / 2) - (500 / 2), 350, 500};
-	SDL_Color	color = {0, 0, 0, 255};
+	SDL_Color	color = {255, 255, 255, 255};
 	int			title_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(book)) / 2));
 	char		page_number[10] = {0};
 

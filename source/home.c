@@ -75,14 +75,14 @@ char	*home_page(void)
 
 	nb_books = count_2d_array(books);
 
+	draw_ui(books[index]);
+
 	while (appletMainLoop()) {
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
 		// Draw the cover and book informations
-		draw_ui(books[index]);
-
 		if (kDown & KEY_PLUS) {
 			break ;
 		}
@@ -99,6 +99,10 @@ char	*home_page(void)
 		} else if (index == -1) {
 			index = nb_books -1;
 		}
+
+		if (kDown)
+			draw_ui(books[index]);
+
 	}
 
 	log_info("home_page() [Success]");
