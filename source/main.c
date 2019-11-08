@@ -31,6 +31,17 @@ static void	init_all(void)
 		exit(-1);
 	}
 
+	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
+	graphic->ttf = (t_ttf *)calloc(sizeof(t_ttf), 1);
+	ebook = (t_ebook *)calloc(sizeof(t_ebook), 1);
+	if (graphic == NULL || graphic->ttf == NULL || ebook == NULL) {
+		free(graphic);
+		free(graphic->ttf);
+		free(ebook);
+		log_fatal("init_all() : calloc [Failure]");
+		return ;
+	}
+
 	if (init_graphic() == false) {
 		exit(-1);
 	}
@@ -58,10 +69,11 @@ static void	deinit_all(void)
 	romfsExit();
 	deinit_ttf();
 	deinit_graphic();
-	if (ebook != NULL) {
-		deinit_mupdf();
-	}
 	deinit_layout();
+
+	free(graphic->ttf);
+	free(graphic);
+	free(ebook);
 
 	log_info("Quitting ...");
 	#ifdef __NXLINK__

@@ -6,12 +6,6 @@ extern t_transform	*trans;
 
 bool	init_mupdf(void)
 {
-	ebook = (t_ebook *)calloc(sizeof(t_ebook), 1);
-	if (ebook == NULL) {
-		log_fatal("init_mupdf() : calloc failure");
-		return (false);
-	}
-
 	/* Create a context to hold the exception stack and various caches. */
 	ebook->ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
 	if (!ebook->ctx) {
@@ -37,8 +31,6 @@ void	deinit_mupdf(void)
 {
 	fz_drop_document(ebook->ctx, ebook->doc);
 	fz_drop_context(ebook->ctx);
-	free(ebook);
-	ebook = NULL;
 	log_info("deinit_mupdf() [Success]");
 }
 
@@ -126,7 +118,7 @@ static void	load_page(char *book, int current_page)
 		return ;
 	}
 	// check out of range index
-	if (ebook->total_page < 0 || current_page >= ebook->total_page || current_page == -1) {
+	if (ebook->total_page < 0 || current_page >= ebook->total_page) {
 		log_fatal("page number out of range: %d (page count %d)\n", ebook->total_page + 1, current_page);
 		deinit_mupdf();
 		return ;
@@ -145,7 +137,7 @@ static void	load_page(char *book, int current_page)
 	draw_ppm(ebook->ppm);
 
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
-	printf("%d/%d\n", current_page, ebook->total_page);
+	printf("%d/%d\n", current_page+1, ebook->total_page);
 	deinit_mupdf();
 
 	log_info("load_page() [Success]");
@@ -161,22 +153,23 @@ void	ebook_reader(char *path, int current_page)
 
 		if (kDown & KEY_DRIGHT) {
 			current_page++;
+			if (current_page == ebook->total_page) {
+				current_page = 0;
+			}
 			load_page(path, current_page);
 		}
 		if (kDown & KEY_DLEFT) {
 			current_page--;
 			if (current_page == -1) {
-				current_page = 0;
-			} else {
-				load_page(path, current_page);
+				current_page = ebook->total_page -1;
 			}
+			load_page(path, current_page);
 		}
 
 		if (kDown & KEY_PLUS) {
 			break;
 		}
 		SDL_RenderPresent(graphic->renderer);
-		printf("current_page = %d\n", current_page);
 	}
 
 	log_info("ebook_reader() [Success]");

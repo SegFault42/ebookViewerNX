@@ -6,12 +6,6 @@ extern t_ebook		*ebook;
 
 bool	init_ttf(void)
 {
-	graphic->ttf = (t_ttf *)calloc(sizeof(t_ttf), 1);
-	if (graphic->ttf == NULL) {
-		log_fatal("init_ttf() : calloc [failure]");
-		return (false);
-	}
-
 	if (TTF_Init() == -1) {
 		log_fatal("TTF_Init(): %s\n", TTF_GetError());
 		free(graphic->ttf);
@@ -42,20 +36,11 @@ void	deinit_ttf(void)
 
 	TTF_Quit();
 
-	free(graphic->ttf);
-	graphic->ttf = NULL;
-
 	log_info("init_ttf() [Failure]");
 }
 
 bool	init_graphic(void)
 {
-	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
-	if (graphic == NULL) {
-		log_fatal("init_graphic() : calloc [Failure]");
-		return (false);
-	}
-
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		log_fatal("SDL_Init(): %s\n", SDL_GetError());
 		free(graphic);
@@ -87,9 +72,6 @@ void	deinit_graphic(void)
 {
 	SDL_DestroyWindow(graphic->win);
 	SDL_DestroyRenderer(graphic->renderer);
-
-	free(graphic);
-	graphic = NULL;
 
 	SDL_Quit();
 
