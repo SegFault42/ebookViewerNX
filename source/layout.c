@@ -33,10 +33,6 @@ void	portrait_default(void)
 	trans->dstrect.y = 0;															// y pos must to begin in 0
 	trans->dstrect.w = (trans->zoom / 100) * trans->bounds.y1;						// add zoom percentage
 	trans->dstrect.h = (trans->zoom / 100) * trans->bounds.x1;						// add zoom percentage
-	printf("%d\n", trans->dstrect.x);
-	printf("%d\n", trans->dstrect.y);
-	printf("%d\n", trans->dstrect.w);
-	printf("%d\n", trans->dstrect.h);
 
 	log_info("portrait_default() [Success]");
 }

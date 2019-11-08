@@ -5,8 +5,10 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <errno.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #ifdef __NXLINK__
 	#include <switch.h>
@@ -21,5 +23,7 @@
 #include "ebook.h"
 #include "graphic.h"
 #include "layout.h"
+#include "home.h"
+#include "array.h"
 
 #endif

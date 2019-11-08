@@ -6,8 +6,17 @@ t_graphic	*graphic = NULL;
 t_transform	*trans = NULL;
 t_ebook		*ebook = NULL;
 
+void	create_requiered_folder(void)
+{
+	if (mkdir("/switch/ebookReaderNX", 0777) != -1) {
+		log_info("/switch/ebookReaderNX created !");
+	}
+}
+
 static void	init_all(void)
 {
+	Result	ret = 0;
+
 	#ifdef __NXLINK__
 		socketInitializeDefault();
 		nxlinkStdio();
@@ -17,24 +26,41 @@ static void	init_all(void)
 		twiliInitialize();
 	#endif
 
+	if (R_FAILED(ret = romfsInit())) {
+		log_fatal("romfsInit() [Failure]");
+		exit(-1);
+	}
+
 	if (init_graphic() == false) {
 		exit(-1);
 	}
-	if (init_mupdf() == false) {
+	if (init_ttf() == false) {
 		deinit_graphic();
 		exit(-1);
 	}
+	/*if (init_mupdf() == false) {*/
+		/*deinit_graphic();*/
+		/*deinit_ttf();*/
+		/*exit(-1);*/
+	/*}*/
 	if (init_layout() == false) {
 		deinit_graphic();
-		deinit_mupdf();
+		deinit_ttf();
+		/*deinit_mupdf();*/
 		exit (-1);
 	}
+
+	create_requiered_folder();
 }
 
 static void	deinit_all(void)
 {
+	romfsExit();
+	deinit_ttf();
 	deinit_graphic();
-	deinit_mupdf();
+	if (ebook != NULL) {
+		deinit_mupdf();
+	}
 	deinit_layout();
 
 	log_info("Quitting ...");
@@ -51,9 +77,7 @@ int main(void)
 {
 	init_all();
 
-	ebook_reader("/book.pdf", 4);
-
-	sleep(3);
+	home_page();
 
 	deinit_all();
 
