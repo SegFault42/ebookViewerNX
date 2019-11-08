@@ -2,6 +2,7 @@
 
 extern t_graphic	*graphic;
 extern t_transform	*trans;
+extern t_ebook		*ebook;
 
 bool	init_ttf(void)
 {
@@ -165,6 +166,7 @@ void	draw_ui(char *book)
 	SDL_Rect	cover = {(WIN_WIDTH / 2) - (350 /2) , (WIN_HEIGHT / 2) - (500 / 2), 350, 500};
 	SDL_Color	color = {0, 0, 0, 255};
 	int			title_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(book)) / 2));
+	char		page_number[10] = {0};
 
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
 	SDL_RenderClear(graphic->renderer);
@@ -172,7 +174,12 @@ void	draw_ui(char *book)
 	SDL_SetRenderDrawColor(graphic->renderer, 0xff, 0xff, 0xff, 0xff);
 	SDL_RenderDrawRect(graphic->renderer, &cover);
 
-	draw_text(graphic->renderer, title_x, 25, book, graphic->ttf->font_large, color);
+	// Title
+	draw_text(graphic->renderer, title_x, 30, book, graphic->ttf->font_large, color);
+	// Page number
+	draw_text(graphic->renderer, 850, 130, "Pages number :", graphic->ttf->font_medium, color);
+	sprintf(page_number, "%d", ebook->total_page);
+	draw_text(graphic->renderer, 1100, 130, page_number, graphic->ttf->font_medium, color);
 
 	SDL_RenderPresent(graphic->renderer);
 
