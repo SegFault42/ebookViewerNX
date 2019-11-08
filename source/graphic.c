@@ -112,14 +112,9 @@ void	draw_ppm(fz_pixmap *ppm)
 	// Free surface
 	SDL_FreeSurface(image);
 
-	// clear window
-	SDL_RenderClear(graphic->renderer);
-
 	SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(trans->dstrect), 0, NULL, SDL_FLIP_NONE);
 	// Free texture
 	SDL_DestroyTexture(texture);
-	// Render
-	SDL_RenderPresent(graphic->renderer);
 
 	log_info("draw_ppm() [Success]");
 }
@@ -160,10 +155,43 @@ static void	draw_text(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font
 	log_info("draw_text() [Success]");
 }
 
+static void	draw_cover(char *book)
+{
+	char	path[PATH_MAX] = {0};
+
+	sprintf(path, "/switch/ebookReaderNX/%s", book);
+
+	init_mupdf();
+
+	if (open_ebook(path) == false) {
+		return ;
+	}
+
+	trans->zoom = 100;
+
+	// set zoom and rotation
+	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
+	trans->ctm = fz_pre_rotate(trans->ctm, 0);
+
+	trans->dstrect.w = 350;
+	trans->dstrect.h = 500;
+	trans->dstrect.x = (WIN_WIDTH / 2) - (350 /2);
+	trans->dstrect.y = (WIN_HEIGHT / 2) - (500 / 2);
+
+	if (convert_page_to_ppm(0) == false) {
+		return ;
+	}
+
+	draw_ppm(ebook->ppm);
+
+	fz_drop_pixmap(ebook->ctx, ebook->ppm);
+
+	log_info("draw_cover() [Success]");
+}
+
 void	draw_ui(char *book)
 {
 	SDL_Surface	*image = NULL;
-	SDL_Rect	cover = {(WIN_WIDTH / 2) - (350 /2) , (WIN_HEIGHT / 2) - (500 / 2), 350, 500};
 	SDL_Color	color = {255, 255, 255, 255};
 	int			title_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(book)) / 2));
 	char		page_number[10] = {0};
@@ -171,17 +199,21 @@ void	draw_ui(char *book)
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
 	SDL_RenderClear(graphic->renderer);
 
-	SDL_SetRenderDrawColor(graphic->renderer, 0xff, 0xff, 0xff, 0xff);
-	SDL_RenderDrawRect(graphic->renderer, &cover);
+	// Draw Cover
+	draw_cover(book);
 
 	// Title
 	draw_text(graphic->renderer, title_x, 30, book, graphic->ttf->font_large, color);
+
 	// Page number
 	draw_text(graphic->renderer, 850, 130, "Pages number :", graphic->ttf->font_medium, color);
-	sprintf(page_number, "%d", ebook->total_page);
+	if (count_page_number() == false) {
+		sprintf(page_number, "???");
+	} else {
+		sprintf(page_number, "%d", ebook->total_page);
+	}
 	draw_text(graphic->renderer, 1100, 130, page_number, graphic->ttf->font_medium, color);
 
-	SDL_RenderPresent(graphic->renderer);
-
+	deinit_mupdf();
 	log_info("draw_ui() [Success]");
 }

@@ -1,5 +1,7 @@
 #include "common.h"
 
+extern t_graphic	*graphic;
+
 static int	count_files_number(void)
 {
 	int				nb = 0;
@@ -61,7 +63,7 @@ static char	**get_ebook_list(void)
 	return (file_list);
 }
 
-char	*home_page(void)
+void	home_page(void)
 {
 	char	**books = NULL;
 	int		index = 0;
@@ -70,7 +72,8 @@ char	*home_page(void)
 	// get all books
 	books = get_ebook_list();
 	if (books == NULL) {
-		return (NULL);
+		log_fatal("Get ebook list failure");
+		return ;
 	}
 
 	nb_books = count_2d_array(books);
@@ -92,7 +95,6 @@ char	*home_page(void)
 		if (kDown & KEY_DLEFT) {
 			index--;
 		}
-
 		// loop in array
 		if (index == nb_books) {
 			index = 0;
@@ -100,11 +102,18 @@ char	*home_page(void)
 			index = nb_books -1;
 		}
 
-		if (kDown)
-			draw_ui(books[index]);
+		if (kDown & KEY_A) {
+			ebook_reader(books[index], 0);
+		}
 
+		if (kDown) {
+			draw_ui(books[index]);
+		}
+
+		SDL_RenderPresent(graphic->renderer);
 	}
 
+	/*free_2d_array(&books);*/
+
 	log_info("home_page() [Success]");
-	return (books[0]);
 }

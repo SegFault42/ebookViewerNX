@@ -3,6 +3,6 @@
 
 #include <dirent.h>
 
-char	*home_page(void);
+void	home_page(void);
 
 #endif

@@ -38,15 +38,15 @@ static void	init_all(void)
 		deinit_graphic();
 		exit(-1);
 	}
-	if (init_mupdf() == false) {
-		deinit_graphic();
-		deinit_ttf();
-		exit(-1);
-	}
+	/*if (init_mupdf() == false) {*/
+		/*deinit_graphic();*/
+		/*deinit_ttf();*/
+		/*exit(-1);*/
+	/*}*/
 	if (init_layout() == false) {
 		deinit_graphic();
 		deinit_ttf();
-		deinit_mupdf();
+		/*deinit_mupdf();*/
 		exit (-1);
 	}
 
@@ -77,10 +77,7 @@ int main(void)
 {
 	init_all();
 
-	char *book = home_page();
-	/*if (book != NULL) {*/
-		/*ebook_reader("/book.pdf", 0);*/
-	/*}*/
+	home_page();
 
 	deinit_all();
 
