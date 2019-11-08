@@ -77,9 +77,9 @@ int main(void)
 {
 	init_all();
 
-	/*char *book = home_page();*/
+	char *book = home_page();
 	/*if (book != NULL) {*/
-		/*[>ebook_reader("/book.pdf", 0);<]*/
+		/*ebook_reader("/book.pdf", 0);*/
 	/*}*/
 
 	deinit_all();

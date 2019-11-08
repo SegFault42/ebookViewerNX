@@ -64,6 +64,8 @@ static char	**get_ebook_list(void)
 char	*home_page(void)
 {
 	char	**books = NULL;
+	int		index = 0;
+	int		nb_books = 0;
 
 	// get all books
 	books = get_ebook_list();
@@ -71,16 +73,31 @@ char	*home_page(void)
 		return (NULL);
 	}
 
+	nb_books = count_2d_array(books);
+
 	while (appletMainLoop()) {
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-		/*u64 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);*/
 
-		draw_ui(books[0]);
+		// Draw the cover and book informations
+		draw_ui(books[index]);
 
 		if (kDown & KEY_PLUS) {
 			break ;
+		}
+		if (kDown & KEY_DRIGHT) {
+			index++;
+		}
+		if (kDown & KEY_DLEFT) {
+			index--;
+		}
+
+		// loop in array
+		if (index == nb_books) {
+			index = 0;
+		} else if (index == -1) {
+			index = nb_books -1;
 		}
 	}
 

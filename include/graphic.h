@@ -3,6 +3,7 @@
 
 #define WIN_WIDTH	1280
 #define WIN_HEIGHT	720
+#define CHAR_WIDTH	22.5 // size of one character in px in X
 
 typedef struct		s_ttf
 {

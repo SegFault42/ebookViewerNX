@@ -24,5 +24,6 @@
 #include "graphic.h"
 #include "layout.h"
 #include "home.h"
+#include "array.h"
 
 #endif
