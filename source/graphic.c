@@ -3,6 +3,50 @@
 extern t_graphic	*graphic;
 extern t_transform	*trans;
 
+bool	init_ttf(void)
+{
+	graphic->ttf = (t_ttf *)calloc(sizeof(t_ttf), 1);
+	if (graphic->ttf == NULL) {
+		log_fatal("init_ttf() : calloc [failure]");
+		return (false);
+	}
+
+	if (TTF_Init() == -1) {
+		log_fatal("TTF_Init(): %s\n", TTF_GetError());
+		free(graphic->ttf);
+		graphic->ttf = NULL;
+		return (false);
+	}
+
+	graphic->ttf->font_small = TTF_OpenFont("romfs:/fonts/NintendoStandard.ttf", 24);
+	graphic->ttf->font_medium = TTF_OpenFont("romfs:/fonts/NintendoStandard.ttf", 31);
+	graphic->ttf->font_large = TTF_OpenFont("romfs:/fonts/NintendoStandard.ttf", 42);
+	if (graphic->ttf->font_small == NULL || graphic->ttf->font_medium == NULL || graphic->ttf->font_large == NULL) {
+		log_fatal("TTF_OpenFont(): %s\n", TTF_GetError());
+		free(graphic->ttf);
+		graphic->ttf = NULL;
+		TTF_Quit();
+		return (false);
+	}
+
+	log_info("init_ttf() [Success]");
+	return (true);
+}
+
+void	deinit_ttf(void)
+{
+	TTF_CloseFont(graphic->ttf->font_small);
+	TTF_CloseFont(graphic->ttf->font_medium);
+	TTF_CloseFont(graphic->ttf->font_large);
+
+	TTF_Quit();
+
+	free(graphic->ttf);
+	graphic->ttf = NULL;
+
+	log_info("init_ttf() [Failure]");
+}
+
 bool	init_graphic(void)
 {
 	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
@@ -34,20 +78,6 @@ bool	init_graphic(void)
 		return (false);
 	}
 
-	if (TTF_Init() == -1) {
-		log_fatal("TTF_Init(): %s\n", SDL_GetError());
-		SDL_DestroyWindow(graphic->win);
-		SDL_DestroyRenderer(graphic->renderer);
-		SDL_Quit();
-		free(graphic);
-		return (false);
-	}
-
-	// TODO: error handling
-	graphic->font_small = TTF_OpenFont("romfs:/fonts/NintendoStandard.ttf", 24);
-	graphic->font_medium = TTF_OpenFont("romfs:/fonts/NintendoStandard.ttf", 31);
-	graphic->font_large = TTF_OpenFont("romfs:/fonts/NintendoStandard.ttf", 42);
-
 	log_info("init_graphic() [Success]");
 	return (true);
 }
@@ -61,11 +91,6 @@ void	deinit_graphic(void)
 	graphic = NULL;
 
 	SDL_Quit();
-	TTF_Quit();
-
-	TTF_CloseFont(graphic->font_small);
-	TTF_CloseFont(graphic->font_medium);
-	TTF_CloseFont(graphic->font_large);
 
 	log_info("deinit_graphic() [Success]");
 }
@@ -137,16 +162,16 @@ static void	draw_text(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font
 void	draw_ui(char *book)
 {
 	SDL_Surface	*image = NULL;
-	SDL_Rect	rect = {(WIN_WIDTH / 2) - (350 /2) , (WIN_HEIGHT / 2) - (500 / 2), 350, 500};
+	SDL_Rect	cover = {(WIN_WIDTH / 2) - (350 /2) , (WIN_HEIGHT / 2) - (500 / 2), 350, 500};
 	SDL_Color	color = {0, 0, 0, 255};
 
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
 	SDL_RenderClear(graphic->renderer);
 
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 0, 0, 255);
-	SDL_RenderDrawRect(graphic->renderer, &rect);
+	SDL_RenderDrawRect(graphic->renderer, &cover);
 
-	draw_text(graphic->renderer, 50, 500, book, graphic->font_large, color);
+	draw_text(graphic->renderer, 50, 500, book, graphic->ttf->font_large, color);
 
 	SDL_RenderPresent(graphic->renderer);
 

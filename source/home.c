@@ -67,12 +67,15 @@ char	*home_page(void)
 
 	// get all books
 	books = get_ebook_list();
+	if (books == NULL) {
+		return (NULL);
+	}
 
 	while (appletMainLoop()) {
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-		u64 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
+		/*u64 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);*/
 
 		draw_ui(books[0]);
 

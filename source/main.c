@@ -15,6 +15,8 @@ void	create_requiered_folder(void)
 
 static void	init_all(void)
 {
+	Result	ret = 0;
+
 	#ifdef __NXLINK__
 		socketInitializeDefault();
 		nxlinkStdio();
@@ -24,15 +26,26 @@ static void	init_all(void)
 		twiliInitialize();
 	#endif
 
+	if (R_FAILED(ret = romfsInit())) {
+		log_fatal("romfsInit() [Failure]");
+		exit(-1);
+	}
+
 	if (init_graphic() == false) {
+		exit(-1);
+	}
+	if (init_ttf() == false) {
+		deinit_graphic();
 		exit(-1);
 	}
 	if (init_mupdf() == false) {
 		deinit_graphic();
+		deinit_ttf();
 		exit(-1);
 	}
 	if (init_layout() == false) {
 		deinit_graphic();
+		deinit_ttf();
 		deinit_mupdf();
 		exit (-1);
 	}
@@ -42,6 +55,8 @@ static void	init_all(void)
 
 static void	deinit_all(void)
 {
+	romfsExit();
+	deinit_ttf();
 	deinit_graphic();
 	if (ebook != NULL) {
 		deinit_mupdf();
@@ -62,9 +77,10 @@ int main(void)
 {
 	init_all();
 
-	char *book = home_page();
-
-	/*ebook_reader("/book.pdf", 0);*/
+	/*char *book = home_page();*/
+	/*if (book != NULL) {*/
+		/*[>ebook_reader("/book.pdf", 0);<]*/
+	/*}*/
 
 	deinit_all();
 

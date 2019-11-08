@@ -42,7 +42,7 @@ BUILD		:=	build
 SOURCES		:=	source ./libs/log.c/src
 DATA		:=	data
 INCLUDES	:=	include ./libs/log.c/src ./libs/mupdf/include ./libs/mupdf/source/fitz
-ROMFS	:=	romfs
+ROMFS		:=	romfs
 
 MAJOR		:= 0
 MINOR		:= 0
