@@ -36,7 +36,7 @@ void	deinit_ttf(void)
 
 	TTF_Quit();
 
-	log_info("init_ttf() [Failure]");
+	log_info("deinit_ttf() [Success]");
 }
 
 bool	init_graphic(void)
@@ -195,6 +195,8 @@ void	draw_ui(char *book)
 		sprintf(page_number, "%d", ebook->total_page);
 	}
 	draw_text(graphic->renderer, 1100, 130, page_number, graphic->ttf->font_medium, color);
+
+	// Progression
 
 	deinit_mupdf();
 	log_info("draw_ui() [Success]");

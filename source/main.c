@@ -11,6 +11,12 @@ void	create_requiered_folder(void)
 	if (mkdir("/switch/ebookReaderNX", 0777) != -1) {
 		log_info("/switch/ebookReaderNX created !");
 	}
+
+	int fd = open("/switch/ebookReaderNX/config", O_CREAT, S_IRUSR | S_IWUSR);
+	if (fd == -1) {
+		log_warn("create config failed : %s", strerror(errno));
+	}
+	close(fd);
 }
 
 static void	init_all(void)

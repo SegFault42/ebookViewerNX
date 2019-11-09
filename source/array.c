@@ -11,17 +11,14 @@ size_t	count_2d_array(char **array)
 	return (idx);
 }
 
-void	free_2d_array(char ***array)
+void	free_2d_array(char **array)
 {
-	if (array) {
-		for (size_t idx = 0; array[idx]; idx++) {
-			free(*array[idx]);
-			*array[idx] = NULL;
-		}
-
-		free(*array);
-		*array = NULL;
+	for (int i = 0; array[i]; i++) {
+		free(array[i]);
+		array[i] = NULL;
 	}
+	free(array);
+	array = NULL;
 }
 
 void	print_2d_array(char **array)

@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <errno.h>
+#include <fcntl.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -25,5 +26,6 @@
 #include "layout.h"
 #include "home.h"
 #include "array.h"
+#include "get_next_line.h"
 
 #endif

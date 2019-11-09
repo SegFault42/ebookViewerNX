@@ -89,7 +89,7 @@ void	get_page_info(int current_page)
 	log_info("get_page_info() [Success]");
 }
 
-static void	load_page(char *book, int current_page)
+static void	render_page(char *book, int current_page)
 {
 	char	*path = NULL;
 
@@ -145,13 +145,105 @@ static void	load_page(char *book, int current_page)
 	printf("%d/%d\n", current_page+1, ebook->total_page);
 	deinit_mupdf();
 
-	log_info("load_page() [Success]");
+	log_info("render_page() [Success]");
 }
 
-void	ebook_reader(char *path, int current_page)
+void	save_last_page(char *book, int current_page)
+{
+	int		fd = 0;
+	int		fd_tmp = 0;
+	char	*line = NULL;
+	bool	new_book = true;
+	char	*token = NULL;
+	char	*tmp = NULL;
+
+	ebook->last_page = current_page;
+
+	fd = open(CONFIG_PATH, O_RDONLY);
+	if (fd == -1) {
+		log_warn("open : %s", strerror(errno));
+		return ;
+	}
+
+	fd_tmp = open("/tmp", O_CREAT | O_RDWR | O_TRUNC, 0777);
+	if (fd_tmp == -1) {
+		log_warn("open : %s", strerror(errno));
+		return ;
+	}
+
+	while (get_next_line(fd, &line) > 0) {
+		tmp = strdup(line);
+		token = strtok(tmp, "=");
+		if (!strcmp(token, book)) {
+			dprintf(fd_tmp, "%s=%d\n", token, ebook->last_page);
+			new_book = false;
+		} else {
+			dprintf(fd_tmp, "%s\n", line);
+		}
+
+		free(tmp);
+		tmp = NULL;
+		free(line);
+		line = NULL;
+	}
+	if (new_book == true) {
+		dprintf(fd_tmp, "%s=%d\n", book, ebook->last_page);
+	}
+	free(line);
+	line = NULL;
+
+	close(fd);
+	close(fd_tmp);
+
+	if (remove(CONFIG_PATH) == -1) {
+		log_warn("%s", strerror(errno));
+	}
+	if (rename("/tmp", CONFIG_PATH) == -1) {
+		log_warn("%s", strerror(errno));
+	}
+
+	log_info("save_last_page() [Success]");
+}
+
+void	load_last_page(char *book)
+{
+	int		fd = 0;
+	char	*line = NULL;
+	char	*token = NULL;
+	char	*tmp = NULL;
+
+	fd = open(CONFIG_PATH, O_RDONLY);
+	if (fd == -1) {
+		log_warn("open : %s", strerror(errno));
+		return ;
+	}
+
+	while (get_next_line(fd, &line) > 0) {
+		tmp = strdup(line);
+		token = strtok(tmp, "=");
+		if (!strcmp(token, book)) {
+			token = strtok(NULL, "=");
+			ebook->last_page = atoi(token);
+			break ;
+		}
+
+		free(tmp);
+		tmp = NULL;
+		free(line);
+		line = NULL;
+	}
+	free(line);
+	line = NULL;
+
+	close(fd);
+	log_info("load_last_page() [Success]");
+}
+
+void	ebook_reader(char *book)
 {
 	bool	refresh = true;
 
+	load_last_page(book);
 	while (appletMainLoop()) {
 		hidScanInput();
 
@@ -159,42 +251,43 @@ void	ebook_reader(char *path, int current_page)
 
 		// input
 		if (kDown & KEY_DRIGHT) {
-			current_page++;
+			ebook->last_page++;
 			refresh = true;
 		}
 		if (kDown & KEY_DLEFT) {
-			current_page--;
+			ebook->last_page--;
 			refresh = true;
 		}
 		if (kDown & KEY_R) {
-			current_page += 10;
+			ebook->last_page += 10;
 			refresh = true;
 		}
 		if (kDown & KEY_L) {
-			current_page -= 10;
+			ebook->last_page -= 10;
 			refresh = true;
 		}
 		if (kDown & KEY_ZR) {
 			ebook->layout_orientation = !ebook->layout_orientation;
 			refresh = true;
 		}
-		if (kDown & KEY_PLUS) {
-			break;
-		}
-
 		// Overflow
-		if (current_page >= ebook->total_page) {
-			current_page = 0;
+		if (ebook->last_page >= ebook->total_page) {
+			ebook->last_page = 0;
 		}
-		if (current_page < 0) {
-			current_page = ebook->total_page -1;
+		if (ebook->last_page < 0) {
+			ebook->last_page = ebook->total_page -1;
 		}
 
 		// printing
 		if (refresh == true) {
-			load_page(path, current_page);
+			render_page(book, ebook->last_page);
 			SDL_RenderPresent(graphic->renderer);
 			refresh = false;
+		}
+
+		if (kDown & KEY_PLUS) {
+			save_last_page(book, ebook->last_page);
+			break;
 		}
 	}
 
