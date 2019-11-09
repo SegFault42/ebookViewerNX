@@ -60,7 +60,7 @@ ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 CFLAGS	:=	-g -Wall -Wextra -O2 -ffunction-sections\
 			$(ARCH) $(DEFINES)
 
-CFLAGS	+=	-D__NXLINK__ $(INCLUDE)# -D__TWILI__
+CFLAGS	+=	-D__NXLINK__ $(INCLUDE) -DLOG_USE_COLOR # -D__TWILI__
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 

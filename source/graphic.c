@@ -6,12 +6,6 @@ extern t_ebook		*ebook;
 
 bool	init_ttf(void)
 {
-	graphic->ttf = (t_ttf *)calloc(sizeof(t_ttf), 1);
-	if (graphic->ttf == NULL) {
-		log_fatal("init_ttf() : calloc [failure]");
-		return (false);
-	}
-
 	if (TTF_Init() == -1) {
 		log_fatal("TTF_Init(): %s\n", TTF_GetError());
 		free(graphic->ttf);
@@ -42,20 +36,11 @@ void	deinit_ttf(void)
 
 	TTF_Quit();
 
-	free(graphic->ttf);
-	graphic->ttf = NULL;
-
-	log_info("init_ttf() [Failure]");
+	log_info("deinit_ttf() [Success]");
 }
 
 bool	init_graphic(void)
 {
-	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
-	if (graphic == NULL) {
-		log_fatal("init_graphic() : calloc [Failure]");
-		return (false);
-	}
-
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		log_fatal("SDL_Init(): %s\n", SDL_GetError());
 		free(graphic);
@@ -87,9 +72,6 @@ void	deinit_graphic(void)
 {
 	SDL_DestroyWindow(graphic->win);
 	SDL_DestroyRenderer(graphic->renderer);
-
-	free(graphic);
-	graphic = NULL;
 
 	SDL_Quit();
 
@@ -213,6 +195,8 @@ void	draw_ui(char *book)
 		sprintf(page_number, "%d", ebook->total_page);
 	}
 	draw_text(graphic->renderer, 1100, 130, page_number, graphic->ttf->font_medium, color);
+
+	// Progression
 
 	deinit_mupdf();
 	log_info("draw_ui() [Success]");

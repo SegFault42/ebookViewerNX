@@ -11,6 +11,12 @@ void	create_requiered_folder(void)
 	if (mkdir("/switch/ebookReaderNX", 0777) != -1) {
 		log_info("/switch/ebookReaderNX created !");
 	}
+
+	int fd = open("/switch/ebookReaderNX/config", O_CREAT, S_IRUSR | S_IWUSR);
+	if (fd == -1) {
+		log_warn("create config failed : %s", strerror(errno));
+	}
+	close(fd);
 }
 
 static void	init_all(void)
@@ -29,6 +35,17 @@ static void	init_all(void)
 	if (R_FAILED(ret = romfsInit())) {
 		log_fatal("romfsInit() [Failure]");
 		exit(-1);
+	}
+
+	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
+	graphic->ttf = (t_ttf *)calloc(sizeof(t_ttf), 1);
+	ebook = (t_ebook *)calloc(sizeof(t_ebook), 1);
+	if (graphic == NULL || graphic->ttf == NULL || ebook == NULL) {
+		free(graphic);
+		free(graphic->ttf);
+		free(ebook);
+		log_fatal("init_all() : calloc [Failure]");
+		return ;
 	}
 
 	if (init_graphic() == false) {
@@ -58,10 +75,11 @@ static void	deinit_all(void)
 	romfsExit();
 	deinit_ttf();
 	deinit_graphic();
-	if (ebook != NULL) {
-		deinit_mupdf();
-	}
 	deinit_layout();
+
+	free(graphic->ttf);
+	free(graphic);
+	free(ebook);
 
 	log_info("Quitting ...");
 	#ifdef __NXLINK__
