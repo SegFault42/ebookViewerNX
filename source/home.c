@@ -8,6 +8,7 @@ static int	count_files_number(void)
 	int				nb = 0;
 	struct dirent	*entry = NULL;
 	DIR				*dir = NULL;
+	char			*ext = NULL;
 
 	dir = opendir("/switch/ebookReaderNX/");
 	if (dir == NULL) {
@@ -17,7 +18,10 @@ static int	count_files_number(void)
 
 	while ((entry = readdir(dir)) != NULL) {
 		if (entry->d_type == DT_REG) {
-			nb++;
+			ext = strrchr(entry->d_name, '.');
+			if (ext != NULL && !strcmp(ext, ".pdf")) {
+				nb++;
+			}
 		}
 	}
 
@@ -32,6 +36,7 @@ static char	**get_ebook_list(void)
 	struct dirent	*entry = NULL;
 	int				file_number = 0;
 	char			**file_list = NULL;
+	char			*ext = NULL;
 
 	file_number = count_files_number();
 	if (file_number == 0) {
@@ -53,12 +58,22 @@ static char	**get_ebook_list(void)
 
 	for (int i = 0; (entry = readdir(dir)) != NULL;) {
 		if (entry->d_type == DT_REG) {
-			file_list[i] = strdup(entry->d_name);
-			i++;
+			ext = strrchr(entry->d_name, '.');
+			if (ext != NULL && !strcmp(ext, ".pdf")) {
+				printf("%s\n", entry->d_name);
+				file_list[i] = strdup(entry->d_name);
+				i++;
+			}
 		}
 	}
 
 	closedir(dir);
+
+	if (count_2d_array(file_list) == 0) {
+		free(file_list);
+		file_list = NULL;
+		return (NULL);
+	}
 
 	log_info("get_ebook_list() [Success]");
 	return (file_list);
@@ -123,19 +138,17 @@ void	home_page(void)
 		// Draw the cover and book informations
 		if (kDown & KEY_DRIGHT) {
 			index++;
-			load_last_page(books[index]);
 			refresh = true;
 		}
 		if (kDown & KEY_DLEFT) {
 			index--;
-			load_last_page(books[index]);
 			refresh = true;
 		}
 		// loop in array
 		if (index == nb_books) {
 			index = 0;
 			refresh = true;
-		} else if (index == -1) {
+		} else if (index < 0) {
 			index = nb_books -1;
 			refresh = true;
 		}
@@ -146,6 +159,7 @@ void	home_page(void)
 		}
 
 		if (refresh == true) {
+			load_last_page(books[index]);
 			draw_ui(books[index]);
 			refresh = false;
 		}
