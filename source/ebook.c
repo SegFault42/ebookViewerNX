@@ -126,7 +126,12 @@ static void	load_page(char *book, int current_page)
 
 	get_page_info(current_page);
 
-	portrait_default();
+	if (ebook->layout_orientation == PORTRAIT) {
+		portrait_default();
+	}
+	else if (ebook->layout_orientation == LANDSCAPE) {
+		landscape_default();
+	}
 
 	if (convert_page_to_ppm(current_page) == false) {
 		deinit_mupdf();
@@ -145,31 +150,52 @@ static void	load_page(char *book, int current_page)
 
 void	ebook_reader(char *path, int current_page)
 {
-	load_page(path, current_page);
+	bool	refresh = true;
+
 	while (appletMainLoop()) {
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
+		// input
 		if (kDown & KEY_DRIGHT) {
 			current_page++;
-			if (current_page == ebook->total_page) {
-				current_page = 0;
-			}
-			load_page(path, current_page);
+			refresh = true;
 		}
 		if (kDown & KEY_DLEFT) {
 			current_page--;
-			if (current_page == -1) {
-				current_page = ebook->total_page -1;
-			}
-			load_page(path, current_page);
+			refresh = true;
 		}
-
+		if (kDown & KEY_R) {
+			current_page += 10;
+			refresh = true;
+		}
+		if (kDown & KEY_L) {
+			current_page -= 10;
+			refresh = true;
+		}
+		if (kDown & KEY_ZR) {
+			ebook->layout_orientation = !ebook->layout_orientation;
+			refresh = true;
+		}
 		if (kDown & KEY_PLUS) {
 			break;
 		}
-		SDL_RenderPresent(graphic->renderer);
+
+		// Overflow
+		if (current_page >= ebook->total_page) {
+			current_page = 0;
+		}
+		if (current_page < 0) {
+			current_page = ebook->total_page -1;
+		}
+
+		// printing
+		if (refresh == true) {
+			load_page(path, current_page);
+			SDL_RenderPresent(graphic->renderer);
+			refresh = false;
+		}
 	}
 
 	log_info("ebook_reader() [Success]");

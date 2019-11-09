@@ -3,6 +3,9 @@
 
 #include <mupdf/fitz.h>
 
+#define PORTRAIT	false
+#define LANDSCAPE	true
+
 typedef struct	s_ebook
 {
 	fz_context	*ctx;
@@ -10,6 +13,7 @@ typedef struct	s_ebook
 	fz_pixmap	*ppm;
 	int			total_page;
 	int			current_page; // Current page in book
+	bool		layout_orientation;
 }				t_ebook;
 
 void	ebook_reader(char *path, int page_index);
