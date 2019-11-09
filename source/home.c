@@ -64,6 +64,41 @@ static char	**get_ebook_list(void)
 	return (file_list);
 }
 
+void	load_last_page(char *book)
+{
+	int		fd = 0;
+	char	*line = NULL;
+	char	*token = NULL;
+	char	*tmp = NULL;
+
+	fd = open(CONFIG_PATH, O_RDONLY);
+	if (fd == -1) {
+		log_warn("open : %s", strerror(errno));
+		return ;
+	}
+
+	ebook->last_page = 0;
+	while (get_next_line(fd, &line) > 0) {
+		tmp = strdup(line);
+		token = strtok(tmp, "=");
+		if (!strcmp(token, book)) {
+			token = strtok(NULL, "=");
+			ebook->last_page = atoi(token);
+			break ;
+		}
+
+		free(tmp);
+		tmp = NULL;
+		free(line);
+		line = NULL;
+	}
+	free(line);
+	line = NULL;
+
+	close(fd);
+	log_info("load_last_page() [Success]");
+}
+
 void	home_page(void)
 {
 	char	**books = NULL;
@@ -80,7 +115,6 @@ void	home_page(void)
 
 	nb_books = count_2d_array(books);
 
-
 	while (appletMainLoop()) {
 		hidScanInput();
 
@@ -89,10 +123,12 @@ void	home_page(void)
 		// Draw the cover and book informations
 		if (kDown & KEY_DRIGHT) {
 			index++;
+			load_last_page(books[index]);
 			refresh = true;
 		}
 		if (kDown & KEY_DLEFT) {
 			index--;
+			load_last_page(books[index]);
 			refresh = true;
 		}
 		// loop in array
@@ -120,7 +156,7 @@ void	home_page(void)
 		SDL_RenderPresent(graphic->renderer);
 	}
 
-	// free list 
+	// free list
 	free_2d_array(books);
 
 	log_info("home_page() [Success]");

@@ -89,14 +89,14 @@ void	get_page_info(int current_page)
 	log_info("get_page_info() [Success]");
 }
 
-static void	render_page(char *book, int current_page)
+static bool	render_page(char *book, int current_page)
 {
 	char	*path = NULL;
 
 	path = (char *)calloc(sizeof(char) , strlen("/switch/ebookReaderNX/") + strlen(book) + 1);
 	if (path == NULL) {
 		log_fatal("calloc [Failure]");
-		return ;
+		return (false);
 	}
 
 	strcat(path, "/switch/ebookReaderNX/");
@@ -107,7 +107,7 @@ static void	render_page(char *book, int current_page)
 		deinit_mupdf();
 		free(path);
 		path = NULL;
-		return ;
+		return (false);
 	}
 
 	free(path);
@@ -115,13 +115,13 @@ static void	render_page(char *book, int current_page)
 
 	if (count_page_number() == false) {
 		deinit_mupdf();
-		return ;
+		return (false);
 	}
 	// check out of range index
 	if (ebook->total_page < 0 || current_page >= ebook->total_page) {
 		log_fatal("page number out of range: %d (page count %d)\n", ebook->total_page + 1, current_page);
 		deinit_mupdf();
-		return ;
+		return (false);
 	}
 
 	get_page_info(current_page);
@@ -135,7 +135,7 @@ static void	render_page(char *book, int current_page)
 
 	if (convert_page_to_ppm(current_page) == false) {
 		deinit_mupdf();
-		return ;
+		return (false);
 	}
 
 	SDL_RenderClear(graphic->renderer);
@@ -146,6 +146,7 @@ static void	render_page(char *book, int current_page)
 	deinit_mupdf();
 
 	log_info("render_page() [Success]");
+	return (true);
 }
 
 void	save_last_page(char *book, int current_page)
@@ -205,45 +206,10 @@ void	save_last_page(char *book, int current_page)
 	log_info("save_last_page() [Success]");
 }
 
-void	load_last_page(char *book)
-{
-	int		fd = 0;
-	char	*line = NULL;
-	char	*token = NULL;
-	char	*tmp = NULL;
-
-	fd = open(CONFIG_PATH, O_RDONLY);
-	if (fd == -1) {
-		log_warn("open : %s", strerror(errno));
-		return ;
-	}
-
-	while (get_next_line(fd, &line) > 0) {
-		tmp = strdup(line);
-		token = strtok(tmp, "=");
-		if (!strcmp(token, book)) {
-			token = strtok(NULL, "=");
-			ebook->last_page = atoi(token);
-			break ;
-		}
-
-		free(tmp);
-		tmp = NULL;
-		free(line);
-		line = NULL;
-	}
-	free(line);
-	line = NULL;
-
-	close(fd);
-	log_info("load_last_page() [Success]");
-}
-
 void	ebook_reader(char *book)
 {
 	bool	refresh = true;
 
-	load_last_page(book);
 	while (appletMainLoop()) {
 		hidScanInput();
 
@@ -270,6 +236,7 @@ void	ebook_reader(char *book)
 			ebook->layout_orientation = !ebook->layout_orientation;
 			refresh = true;
 		}
+
 		// Overflow
 		if (ebook->last_page >= ebook->total_page) {
 			ebook->last_page = 0;
@@ -280,7 +247,9 @@ void	ebook_reader(char *book)
 
 		// printing
 		if (refresh == true) {
-			render_page(book, ebook->last_page);
+			if (render_page(book, ebook->last_page) == false) {
+				break ;
+			}
 			SDL_RenderPresent(graphic->renderer);
 			refresh = false;
 		}
