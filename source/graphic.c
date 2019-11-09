@@ -137,7 +137,7 @@ static void	draw_text(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font
 	log_info("draw_text() [Success]");
 }
 
-static void	draw_cover(char *book)
+static bool	draw_cover(char *book)
 {
 	char	path[PATH_MAX] = {0};
 
@@ -146,7 +146,7 @@ static void	draw_cover(char *book)
 	init_mupdf();
 
 	if (open_ebook(path) == false) {
-		return ;
+		return (false);
 	}
 
 	trans->zoom = 100;
@@ -161,7 +161,7 @@ static void	draw_cover(char *book)
 	trans->dstrect.y = (WIN_HEIGHT / 2) - (500 / 2);
 
 	if (convert_page_to_ppm(0) == false) {
-		return ;
+		return (false);
 	}
 
 	draw_ppm(ebook->ppm);
@@ -169,34 +169,34 @@ static void	draw_cover(char *book)
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
 
 	log_info("draw_cover() [Success]");
+	return (true);
 }
 
 void	draw_ui(char *book)
 {
-	SDL_Surface	*image = NULL;
 	SDL_Color	color = {255, 255, 255, 255};
 	int			title_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(book)) / 2));
-	char		page_number[10] = {0};
+	int			progression_x = 0;// ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(page_number)) / 2));
+	char		page_number[20] = {0};
 
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
 	SDL_RenderClear(graphic->renderer);
 
 	// Draw Cover
-	draw_cover(book);
+	if (draw_cover(book) == false) {
+		deinit_mupdf();
+		return ;
+	}
 
 	// Title
 	draw_text(graphic->renderer, title_x, 30, book, graphic->ttf->font_large, color);
 
 	// Page number
-	draw_text(graphic->renderer, 850, 130, "Pages number :", graphic->ttf->font_medium, color);
-	if (count_page_number() == false) {
-		sprintf(page_number, "???");
-	} else {
-		sprintf(page_number, "%d", ebook->total_page);
-	}
-	draw_text(graphic->renderer, 1100, 130, page_number, graphic->ttf->font_medium, color);
+	count_page_number();
 
-	// Progression
+	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
+	progression_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(page_number)) / 2));
+	draw_text(graphic->renderer, progression_x, 650, page_number, graphic->ttf->font_large, color);
 
 	deinit_mupdf();
 	log_info("draw_ui() [Success]");

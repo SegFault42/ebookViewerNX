@@ -8,6 +8,7 @@ static int	count_files_number(void)
 	int				nb = 0;
 	struct dirent	*entry = NULL;
 	DIR				*dir = NULL;
+	char			*ext = NULL;
 
 	dir = opendir("/switch/ebookReaderNX/");
 	if (dir == NULL) {
@@ -17,7 +18,10 @@ static int	count_files_number(void)
 
 	while ((entry = readdir(dir)) != NULL) {
 		if (entry->d_type == DT_REG) {
-			nb++;
+			ext = strrchr(entry->d_name, '.');
+			if (ext != NULL && !strcmp(ext, ".pdf")) {
+				nb++;
+			}
 		}
 	}
 
@@ -32,6 +36,7 @@ static char	**get_ebook_list(void)
 	struct dirent	*entry = NULL;
 	int				file_number = 0;
 	char			**file_list = NULL;
+	char			*ext = NULL;
 
 	file_number = count_files_number();
 	if (file_number == 0) {
@@ -53,15 +58,60 @@ static char	**get_ebook_list(void)
 
 	for (int i = 0; (entry = readdir(dir)) != NULL;) {
 		if (entry->d_type == DT_REG) {
-			file_list[i] = strdup(entry->d_name);
-			i++;
+			ext = strrchr(entry->d_name, '.');
+			if (ext != NULL && !strcmp(ext, ".pdf")) {
+				printf("%s\n", entry->d_name);
+				file_list[i] = strdup(entry->d_name);
+				i++;
+			}
 		}
 	}
 
 	closedir(dir);
 
+	if (count_2d_array(file_list) == 0) {
+		free(file_list);
+		file_list = NULL;
+		return (NULL);
+	}
+
 	log_info("get_ebook_list() [Success]");
 	return (file_list);
+}
+
+void	load_last_page(char *book)
+{
+	int		fd = 0;
+	char	*line = NULL;
+	char	*token = NULL;
+	char	*tmp = NULL;
+
+	fd = open(CONFIG_PATH, O_RDONLY);
+	if (fd == -1) {
+		log_warn("open : %s", strerror(errno));
+		return ;
+	}
+
+	ebook->last_page = 0;
+	while (get_next_line(fd, &line) > 0) {
+		tmp = strdup(line);
+		token = strtok(tmp, "=");
+		if (!strcmp(token, book)) {
+			token = strtok(NULL, "=");
+			ebook->last_page = atoi(token);
+			break ;
+		}
+
+		free(tmp);
+		tmp = NULL;
+		free(line);
+		line = NULL;
+	}
+	free(line);
+	line = NULL;
+
+	close(fd);
+	log_info("load_last_page() [Success]");
 }
 
 void	home_page(void)
@@ -79,7 +129,6 @@ void	home_page(void)
 	}
 
 	nb_books = count_2d_array(books);
-
 
 	while (appletMainLoop()) {
 		hidScanInput();
@@ -99,7 +148,7 @@ void	home_page(void)
 		if (index == nb_books) {
 			index = 0;
 			refresh = true;
-		} else if (index == -1) {
+		} else if (index < 0) {
 			index = nb_books -1;
 			refresh = true;
 		}
@@ -110,6 +159,7 @@ void	home_page(void)
 		}
 
 		if (refresh == true) {
+			load_last_page(books[index]);
 			draw_ui(books[index]);
 			refresh = false;
 		}
@@ -120,7 +170,7 @@ void	home_page(void)
 		SDL_RenderPresent(graphic->renderer);
 	}
 
-	// free list 
+	// free list
 	free_2d_array(books);
 
 	log_info("home_page() [Success]");
