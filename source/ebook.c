@@ -129,8 +129,7 @@ static bool	render_page(char *book, int current_page)
 
 	if (ebook->layout_orientation == PORTRAIT) {
 		portrait_default();
-	}
-	else if (ebook->layout_orientation == LANDSCAPE) {
+	} else if (ebook->layout_orientation == LANDSCAPE) {
 		landscape_default();
 	}
 

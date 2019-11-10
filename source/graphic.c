@@ -149,7 +149,10 @@ static bool	draw_cover(char *book)
 		return (false);
 	}
 
-	trans->zoom = 100;
+	get_page_info(0);
+
+	//scale to fit 100%
+	trans->zoom = 100 / (trans->bounds.y1 / 500);
 
 	// set zoom and rotation
 	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
@@ -159,6 +162,7 @@ static bool	draw_cover(char *book)
 	trans->dstrect.h = 500;
 	trans->dstrect.x = (WIN_WIDTH / 2) - (350 /2);
 	trans->dstrect.y = (WIN_HEIGHT / 2) - (500 / 2);
+
 
 	if (convert_page_to_ppm(0) == false) {
 		return (false);
