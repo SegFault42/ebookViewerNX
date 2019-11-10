@@ -44,23 +44,22 @@ static char	**get_ebook_list(void)
 		return (NULL);
 	}
 
-	file_list = (char **)calloc(sizeof(char *), file_number + 1);
-	if (file_list == NULL) {
-		log_fatal("calloc failure");
-		return (NULL);
-	}
-
 	dir = opendir("/switch/ebookReaderNX/");
 	if (dir == NULL) {
 		perror("opendir");
 		return (NULL);
 	}
 
+	file_list = (char **)calloc(sizeof(char *), file_number + 1);
+	if (file_list == NULL) {
+		log_fatal("calloc failure");
+		return (NULL);
+	}
+
 	for (int i = 0; (entry = readdir(dir)) != NULL;) {
 		if (entry->d_type == DT_REG) {
 			ext = strrchr(entry->d_name, '.');
-			if (ext != NULL && !strcmp(ext, ".pdf")) {
-				printf("%s\n", entry->d_name);
+			if (ext != NULL && !strcmp(ext, ".pd")) {
 				file_list[i] = strdup(entry->d_name);
 				i++;
 			}
