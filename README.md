@@ -11,7 +11,6 @@
 - Read book
 - switch page by 10
 - landscape/portrait
-- Bookmark
 
 ## To do :
 - Sort by last read
@@ -21,7 +20,7 @@
 - touchscreen support
 - info screen
 - cache to load faster pages
-- Customisable control
+- Customisable control in config file
 
 ## improvement :
 

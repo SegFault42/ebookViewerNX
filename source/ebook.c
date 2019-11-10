@@ -249,12 +249,12 @@ void	ebook_reader(char *book)
 			if (render_page(book, ebook->last_page) == false) {
 				break ;
 			}
+			save_last_page(book, ebook->last_page);
 			SDL_RenderPresent(graphic->renderer);
 			refresh = false;
 		}
 
 		if (kDown & controller->quit) {
-			save_last_page(book, ebook->last_page);
 			break;
 		}
 	}

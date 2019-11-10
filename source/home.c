@@ -60,7 +60,7 @@ static char	**get_ebook_list(void)
 	for (int i = 0; (entry = readdir(dir)) != NULL;) {
 		if (entry->d_type == DT_REG) {
 			ext = strrchr(entry->d_name, '.');
-			if (ext != NULL && (!strcmp(ext, ".pdf"))) {
+			if (ext != NULL && ( !strcmp(ext, ".pdf") || !strcmp(ext, ".epub"))) {
 				file_list[i] = strdup(entry->d_name);
 				i++;
 			}
