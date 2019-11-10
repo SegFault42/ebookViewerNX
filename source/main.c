@@ -2,9 +2,10 @@
 
 #include <common.h>
 
-t_graphic	*graphic = NULL;
-t_transform	*trans = NULL;
-t_ebook		*ebook = NULL;
+t_graphic		*graphic = NULL;
+t_transform		*trans = NULL;
+t_ebook			*ebook = NULL;
+t_controller	*controller = NULL;
 
 void	create_requiered_folder(void)
 {
@@ -40,14 +41,17 @@ static void	init_all(void)
 	graphic = (t_graphic *)calloc(sizeof(t_graphic), 1);
 	graphic->ttf = (t_ttf *)calloc(sizeof(t_ttf), 1);
 	ebook = (t_ebook *)calloc(sizeof(t_ebook), 1);
-	if (graphic == NULL || graphic->ttf == NULL || ebook == NULL) {
+	controller = (t_controller *)calloc(sizeof(t_controller), 1);
+	if (graphic == NULL || graphic->ttf == NULL || ebook == NULL || controller == NULL) {
 		free(graphic);
 		free(graphic->ttf);
 		free(ebook);
+		free(controller);
 		log_fatal("init_all() : calloc [Failure]");
 		return ;
 	}
 
+	default_controller_layout();
 	if (init_graphic() == false) {
 		exit(-1);
 	}
@@ -55,15 +59,9 @@ static void	init_all(void)
 		deinit_graphic();
 		exit(-1);
 	}
-	/*if (init_mupdf() == false) {*/
-		/*deinit_graphic();*/
-		/*deinit_ttf();*/
-		/*exit(-1);*/
-	/*}*/
 	if (init_layout() == false) {
 		deinit_graphic();
 		deinit_ttf();
-		/*deinit_mupdf();*/
 		exit (-1);
 	}
 
@@ -80,6 +78,7 @@ static void	deinit_all(void)
 	free(graphic->ttf);
 	free(graphic);
 	free(ebook);
+	free(controller);
 
 	log_info("Quitting ...");
 	#ifdef __NXLINK__

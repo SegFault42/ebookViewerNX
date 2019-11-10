@@ -3,6 +3,7 @@
 extern t_graphic	*graphic;
 extern t_ebook		*ebook;
 extern t_transform	*trans;
+extern t_controller	*controller;
 
 bool	init_mupdf(void)
 {
@@ -142,7 +143,6 @@ static bool	render_page(char *book, int current_page)
 	draw_ppm(ebook->ppm);
 
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
-	printf("%d/%d\n", current_page+1, ebook->total_page);
 	deinit_mupdf();
 
 	log_info("render_page() [Success]");
@@ -216,23 +216,23 @@ void	ebook_reader(char *book)
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
 		// input
-		if (kDown & KEY_DRIGHT) {
+		if (kDown & controller->next_page) {
 			ebook->last_page++;
 			refresh = true;
 		}
-		if (kDown & KEY_DLEFT) {
+		if (kDown & controller->prev_page) {
 			ebook->last_page--;
 			refresh = true;
 		}
-		if (kDown & KEY_R) {
+		if (kDown & controller->next_multiple_page) {
 			ebook->last_page += 10;
 			refresh = true;
 		}
-		if (kDown & KEY_L) {
+		if (kDown & controller->prev_multiple_page) {
 			ebook->last_page -= 10;
 			refresh = true;
 		}
-		if (kDown & KEY_ZR) {
+		if (kDown & controller->layout) {
 			ebook->layout_orientation = !ebook->layout_orientation;
 			refresh = true;
 		}
@@ -254,7 +254,7 @@ void	ebook_reader(char *book)
 			refresh = false;
 		}
 
-		if (kDown & KEY_PLUS) {
+		if (kDown & controller->quit) {
 			save_last_page(book, ebook->last_page);
 			break;
 		}

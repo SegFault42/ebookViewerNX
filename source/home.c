@@ -2,6 +2,7 @@
 
 extern t_graphic	*graphic;
 extern t_ebook		*ebook;
+extern t_controller	*controller;
 
 static int	count_files_number(void)
 {
@@ -46,7 +47,7 @@ static char	**get_ebook_list(void)
 
 	dir = opendir("/switch/ebookReaderNX/");
 	if (dir == NULL) {
-		perror("opendir");
+		log_fatal("%s", strerror(errno));
 		return (NULL);
 	}
 
@@ -59,7 +60,7 @@ static char	**get_ebook_list(void)
 	for (int i = 0; (entry = readdir(dir)) != NULL;) {
 		if (entry->d_type == DT_REG) {
 			ext = strrchr(entry->d_name, '.');
-			if (ext != NULL && !strcmp(ext, ".pd")) {
+			if (ext != NULL && !strcmp(ext, ".pdf")) {
 				file_list[i] = strdup(entry->d_name);
 				i++;
 			}
@@ -68,17 +69,12 @@ static char	**get_ebook_list(void)
 
 	closedir(dir);
 
-	if (count_2d_array(file_list) == 0) {
-		free(file_list);
-		file_list = NULL;
-		return (NULL);
-	}
-
 	log_info("get_ebook_list() [Success]");
 	return (file_list);
 }
 
-void	load_last_page(char *book)
+// get last page stored in config
+static void	load_last_page(char *book)
 {
 	int		fd = 0;
 	char	*line = NULL;
@@ -128,6 +124,12 @@ void	home_page(void)
 	}
 
 	nb_books = count_2d_array(books);
+	if (nb_books == 0) {
+		free(books);
+		books = NULL;
+		log_fatal("Please put ebook in /switch/ebookReaderNX");
+		return ;
+	}
 
 	while (appletMainLoop()) {
 		hidScanInput();
@@ -135,11 +137,11 @@ void	home_page(void)
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
 		// Draw the cover and book informations
-		if (kDown & KEY_DRIGHT) {
+		if (kDown & controller->next_page) {
 			index++;
 			refresh = true;
 		}
-		if (kDown & KEY_DLEFT) {
+		if (kDown & controller->prev_page) {
 			index--;
 			refresh = true;
 		}
@@ -152,21 +154,22 @@ void	home_page(void)
 			refresh = true;
 		}
 
-		if (kDown & KEY_A) {
+		if (kDown & controller->launch_book) {
 			ebook_reader(books[index]);
 			refresh = true;
 		}
 
+		// draw only if needed
 		if (refresh == true) {
 			load_last_page(books[index]);
 			draw_ui(books[index]);
+			SDL_RenderPresent(graphic->renderer);
 			refresh = false;
 		}
-		if (kDown & KEY_PLUS) {
+
+		if (kDown & controller->quit) {
 			break ;
 		}
-
-		SDL_RenderPresent(graphic->renderer);
 	}
 
 	// free list

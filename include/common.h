@@ -27,5 +27,6 @@
 #include "home.h"
 #include "array.h"
 #include "get_next_line.h"
+#include "controller.h"
 
 #endif
