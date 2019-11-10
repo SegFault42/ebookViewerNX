@@ -135,13 +135,16 @@ void	home_page(void)
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+		touchPosition touch;
+
+		hidTouchRead(&touch, 0);
 
 		// Draw the cover and book informations
-		if (kDown & controller->next_page) {
+		if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
 			index++;
 			refresh = true;
 		}
-		if (kDown & controller->prev_page) {
+		if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
 			index--;
 			refresh = true;
 		}
@@ -154,7 +157,7 @@ void	home_page(void)
 			refresh = true;
 		}
 
-		if (kDown & controller->launch_book) {
+		if (kDown & controller->launch_book || touch_launch_book(touch) == true) {
 			ebook_reader(books[index]);
 			refresh = true;
 		}

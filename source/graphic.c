@@ -158,10 +158,10 @@ static bool	draw_cover(char *book)
 	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
 	trans->ctm = fz_pre_rotate(trans->ctm, 0);
 
-	trans->dstrect.w = 350;
-	trans->dstrect.h = 500;
-	trans->dstrect.x = (WIN_WIDTH / 2) - (350 /2);
-	trans->dstrect.y = (WIN_HEIGHT / 2) - (500 / 2);
+	trans->dstrect.w = COVER_WIDTH;
+	trans->dstrect.h = COVER_HEIGHT;
+	trans->dstrect.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);
+	trans->dstrect.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2);
 
 
 	if (convert_page_to_ppm(0) == false) {

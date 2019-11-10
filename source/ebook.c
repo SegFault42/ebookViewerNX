@@ -213,13 +213,16 @@ void	ebook_reader(char *book)
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+		touchPosition touch;
+
+		hidTouchRead(&touch, 0);
 
 		// input
-		if (kDown & controller->next_page) {
+		if (kDown & controller->next_page || touch_next_page_read(touch)) {
 			ebook->last_page++;
 			refresh = true;
 		}
-		if (kDown & controller->prev_page) {
+		if (kDown & controller->prev_page || touch_prev_page_read(touch)) {
 			ebook->last_page--;
 			refresh = true;
 		}
