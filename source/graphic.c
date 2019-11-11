@@ -206,6 +206,7 @@ void	draw_line(void)
 
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderDrawLines(graphic->renderer, points, POINTS_COUNT);
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
 }
 
 void	draw_app_name(void)
