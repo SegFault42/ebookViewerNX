@@ -21,6 +21,7 @@
 - info screen
 - cache to load faster pages
 - Customisable control in config file
+- vibrate when button pressed
 
 ## improvement :
 
