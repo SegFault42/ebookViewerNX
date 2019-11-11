@@ -2,6 +2,7 @@
 
 extern t_transform	*trans;
 extern t_ebook		*ebook;
+extern t_layout		*layout;;
 
 bool	init_layout(void)
 {
@@ -10,6 +11,11 @@ bool	init_layout(void)
 		log_info("init_layout() [Failure]");
 		return (false);
 	}
+
+	layout->cover_pos.w = COVER_WIDTH;
+	layout->cover_pos.h = COVER_HEIGHT;
+	layout->cover_pos.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);
+	layout->cover_pos.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;
 
 	log_info("init_layout() [Success]");
 	return (true);

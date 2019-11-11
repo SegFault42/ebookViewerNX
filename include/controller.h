@@ -20,9 +20,11 @@ typedef struct	s_controller
 
 
 void			default_controller_layout(void);
+
 bool			touch_next_page_home(touchPosition touch);
 bool			touch_prev_page_home(touchPosition touch);
-bool			touch_launch_book(touchPosition touch);
+bool			touch_launch_book_home(touchPosition touch);
+
 bool			touch_next_page_read(touchPosition touch);
 bool			touch_prev_page_read(touchPosition touch);
 

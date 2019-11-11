@@ -139,10 +139,12 @@ static bool	render_page(char *book, int current_page)
 	}
 
 	SDL_RenderClear(graphic->renderer);
-	draw_ppm(ebook->ppm);
+	draw_ppm(ebook->ppm, READ);
 
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
 	deinit_mupdf();
+
+	//TODO: page number
 
 	log_info("render_page() [Success]");
 	return (true);
@@ -203,7 +205,6 @@ void	save_last_page(char *book, int current_page)
 		}
 	}
 
-
 	log_info("save_last_page() [Success]");
 }
 
@@ -261,7 +262,6 @@ void	ebook_reader(char *book)
 			save_last_page(book, ebook->last_page);
 			refresh = false;
 		}
-
 	}
 
 	log_info("ebook_reader() [Success]");

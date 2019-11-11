@@ -3,6 +3,7 @@
 extern t_graphic	*graphic;
 extern t_ebook		*ebook;
 extern t_controller	*controller;
+extern t_layout		*layout;
 
 static int	count_files_number(void)
 {
@@ -159,7 +160,7 @@ void	home_page(void)
 			refresh = true;
 		}
 
-		if (kDown & controller->launch_book || touch_launch_book(touch) == true) {
+		if (kDown & controller->launch_book || touch_launch_book_home(touch) == true) {
 			ebook_reader(books[index]);
 			refresh = true;
 		}
