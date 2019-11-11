@@ -168,39 +168,41 @@ void	save_last_page(char *book, int current_page)
 	fd_tmp = open("/tmp", O_CREAT | O_RDWR | O_TRUNC, 0777);
 	if (fd_tmp == -1) {
 		log_warn("open : %s", strerror(errno));
+		close(fd);
 		return ;
 	}
 
 	while (get_next_line(fd, &line) > 0) {
 		tmp = strdup(line);
 		token = strtok(tmp, "=");
+
 		if (!strcmp(token, book)) {
-			dprintf(fd_tmp, "%s=%d\n", token, ebook->last_page);
+			dprintf(fd_tmp, "%s=%d\n", book, ebook->last_page);
 			new_book = false;
 		} else {
 			dprintf(fd_tmp, "%s\n", line);
 		}
 
 		free(tmp);
-		tmp = NULL;
 		free(line);
+		tmp = NULL;
 		line = NULL;
 	}
 	if (new_book == true) {
 		dprintf(fd_tmp, "%s=%d\n", book, ebook->last_page);
 	}
-	free(line);
-	line = NULL;
 
 	close(fd);
 	close(fd_tmp);
 
 	if (remove(CONFIG_PATH) == -1) {
 		log_warn("%s", strerror(errno));
+	} else {
+		if (rename("/tmp", CONFIG_PATH) == -1) {
+			log_warn("%s", strerror(errno));
+		}
 	}
-	if (rename("/tmp", CONFIG_PATH) == -1) {
-		log_warn("%s", strerror(errno));
-	}
+
 
 	log_info("save_last_page() [Success]");
 }
@@ -246,20 +248,20 @@ void	ebook_reader(char *book)
 		if (ebook->last_page < 0) {
 			ebook->last_page = ebook->total_page -1;
 		}
+		if (kDown & controller->quit) {
+			break;
+		}
 
 		// printing
 		if (refresh == true) {
 			if (render_page(book, ebook->last_page) == false) {
 				break ;
 			}
-			save_last_page(book, ebook->last_page);
 			SDL_RenderPresent(graphic->renderer);
+			save_last_page(book, ebook->last_page);
 			refresh = false;
 		}
 
-		if (kDown & controller->quit) {
-			break;
-		}
 	}
 
 	log_info("ebook_reader() [Success]");

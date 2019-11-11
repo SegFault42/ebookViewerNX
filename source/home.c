@@ -102,6 +102,8 @@ static void	load_last_page(char *book)
 		free(line);
 		line = NULL;
 	}
+	free(tmp);
+	tmp = NULL;
 	free(line);
 	line = NULL;
 

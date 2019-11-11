@@ -13,7 +13,7 @@ void	create_requiered_folder(void)
 		log_info("/switch/ebookReaderNX created !");
 	}
 
-	int fd = open("/switch/ebookReaderNX/config", O_CREAT, S_IRUSR | S_IWUSR);
+	int fd = open("/switch/ebookReaderNX/config", O_CREAT, 0777);
 	if (fd == -1) {
 		log_warn("create config failed : %s", strerror(errno));
 	}
