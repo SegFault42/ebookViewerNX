@@ -2,6 +2,7 @@
 
 extern t_graphic	*graphic;
 extern t_ebook		*ebook;
+extern t_controller	*controller;
 
 static int	count_files_number(void)
 {
@@ -44,23 +45,22 @@ static char	**get_ebook_list(void)
 		return (NULL);
 	}
 
+	dir = opendir("/switch/ebookReaderNX/");
+	if (dir == NULL) {
+		log_fatal("%s", strerror(errno));
+		return (NULL);
+	}
+
 	file_list = (char **)calloc(sizeof(char *), file_number + 1);
 	if (file_list == NULL) {
 		log_fatal("calloc failure");
 		return (NULL);
 	}
 
-	dir = opendir("/switch/ebookReaderNX/");
-	if (dir == NULL) {
-		perror("opendir");
-		return (NULL);
-	}
-
 	for (int i = 0; (entry = readdir(dir)) != NULL;) {
 		if (entry->d_type == DT_REG) {
 			ext = strrchr(entry->d_name, '.');
-			if (ext != NULL && !strcmp(ext, ".pdf")) {
-				printf("%s\n", entry->d_name);
+			if (ext != NULL && ( !strcmp(ext, ".pdf") || !strcmp(ext, ".epub"))) {
 				file_list[i] = strdup(entry->d_name);
 				i++;
 			}
@@ -69,17 +69,12 @@ static char	**get_ebook_list(void)
 
 	closedir(dir);
 
-	if (count_2d_array(file_list) == 0) {
-		free(file_list);
-		file_list = NULL;
-		return (NULL);
-	}
-
 	log_info("get_ebook_list() [Success]");
 	return (file_list);
 }
 
-void	load_last_page(char *book)
+// get last page stored in config
+static void	load_last_page(char *book)
 {
 	int		fd = 0;
 	char	*line = NULL;
@@ -107,6 +102,8 @@ void	load_last_page(char *book)
 		free(line);
 		line = NULL;
 	}
+	free(tmp);
+	tmp = NULL;
 	free(line);
 	line = NULL;
 
@@ -129,18 +126,27 @@ void	home_page(void)
 	}
 
 	nb_books = count_2d_array(books);
+	if (nb_books == 0) {
+		free(books);
+		books = NULL;
+		log_fatal("Please put ebook in /switch/ebookReaderNX");
+		return ;
+	}
 
 	while (appletMainLoop()) {
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+		touchPosition touch;
+
+		hidTouchRead(&touch, 0);
 
 		// Draw the cover and book informations
-		if (kDown & KEY_DRIGHT) {
+		if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
 			index++;
 			refresh = true;
 		}
-		if (kDown & KEY_DLEFT) {
+		if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
 			index--;
 			refresh = true;
 		}
@@ -153,21 +159,22 @@ void	home_page(void)
 			refresh = true;
 		}
 
-		if (kDown & KEY_A) {
+		if (kDown & controller->launch_book || touch_launch_book(touch) == true) {
 			ebook_reader(books[index]);
 			refresh = true;
 		}
 
+		// draw only if needed
 		if (refresh == true) {
 			load_last_page(books[index]);
 			draw_ui(books[index]);
+			SDL_RenderPresent(graphic->renderer);
 			refresh = false;
 		}
-		if (kDown & KEY_PLUS) {
+
+		if (kDown & controller->quit) {
 			break ;
 		}
-
-		SDL_RenderPresent(graphic->renderer);
 	}
 
 	// free list

@@ -25,5 +25,6 @@ void	deinit_mupdf(void);
 bool	open_ebook(char *path);
 bool	convert_page_to_ppm(int current_page);
 bool	count_page_number(void);
+void	get_page_info(int current_page);
 
 #endif

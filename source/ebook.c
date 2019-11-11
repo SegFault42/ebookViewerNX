@@ -3,6 +3,7 @@
 extern t_graphic	*graphic;
 extern t_ebook		*ebook;
 extern t_transform	*trans;
+extern t_controller	*controller;
 
 bool	init_mupdf(void)
 {
@@ -128,8 +129,7 @@ static bool	render_page(char *book, int current_page)
 
 	if (ebook->layout_orientation == PORTRAIT) {
 		portrait_default();
-	}
-	else if (ebook->layout_orientation == LANDSCAPE) {
+	} else if (ebook->layout_orientation == LANDSCAPE) {
 		landscape_default();
 	}
 
@@ -142,7 +142,6 @@ static bool	render_page(char *book, int current_page)
 	draw_ppm(ebook->ppm);
 
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
-	printf("%d/%d\n", current_page+1, ebook->total_page);
 	deinit_mupdf();
 
 	log_info("render_page() [Success]");
@@ -169,39 +168,41 @@ void	save_last_page(char *book, int current_page)
 	fd_tmp = open("/tmp", O_CREAT | O_RDWR | O_TRUNC, 0777);
 	if (fd_tmp == -1) {
 		log_warn("open : %s", strerror(errno));
+		close(fd);
 		return ;
 	}
 
 	while (get_next_line(fd, &line) > 0) {
 		tmp = strdup(line);
 		token = strtok(tmp, "=");
+
 		if (!strcmp(token, book)) {
-			dprintf(fd_tmp, "%s=%d\n", token, ebook->last_page);
+			dprintf(fd_tmp, "%s=%d\n", book, ebook->last_page);
 			new_book = false;
 		} else {
 			dprintf(fd_tmp, "%s\n", line);
 		}
 
 		free(tmp);
-		tmp = NULL;
 		free(line);
+		tmp = NULL;
 		line = NULL;
 	}
 	if (new_book == true) {
 		dprintf(fd_tmp, "%s=%d\n", book, ebook->last_page);
 	}
-	free(line);
-	line = NULL;
 
 	close(fd);
 	close(fd_tmp);
 
 	if (remove(CONFIG_PATH) == -1) {
 		log_warn("%s", strerror(errno));
+	} else {
+		if (rename("/tmp", CONFIG_PATH) == -1) {
+			log_warn("%s", strerror(errno));
+		}
 	}
-	if (rename("/tmp", CONFIG_PATH) == -1) {
-		log_warn("%s", strerror(errno));
-	}
+
 
 	log_info("save_last_page() [Success]");
 }
@@ -214,25 +215,28 @@ void	ebook_reader(char *book)
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+		touchPosition touch;
+
+		hidTouchRead(&touch, 0);
 
 		// input
-		if (kDown & KEY_DRIGHT) {
+		if (kDown & controller->next_page || touch_next_page_read(touch)) {
 			ebook->last_page++;
 			refresh = true;
 		}
-		if (kDown & KEY_DLEFT) {
+		if (kDown & controller->prev_page || touch_prev_page_read(touch)) {
 			ebook->last_page--;
 			refresh = true;
 		}
-		if (kDown & KEY_R) {
+		if (kDown & controller->next_multiple_page) {
 			ebook->last_page += 10;
 			refresh = true;
 		}
-		if (kDown & KEY_L) {
+		if (kDown & controller->prev_multiple_page) {
 			ebook->last_page -= 10;
 			refresh = true;
 		}
-		if (kDown & KEY_ZR) {
+		if (kDown & controller->layout) {
 			ebook->layout_orientation = !ebook->layout_orientation;
 			refresh = true;
 		}
@@ -244,6 +248,9 @@ void	ebook_reader(char *book)
 		if (ebook->last_page < 0) {
 			ebook->last_page = ebook->total_page -1;
 		}
+		if (kDown & controller->quit) {
+			break;
+		}
 
 		// printing
 		if (refresh == true) {
@@ -251,13 +258,10 @@ void	ebook_reader(char *book)
 				break ;
 			}
 			SDL_RenderPresent(graphic->renderer);
+			save_last_page(book, ebook->last_page);
 			refresh = false;
 		}
 
-		if (kDown & KEY_PLUS) {
-			save_last_page(book, ebook->last_page);
-			break;
-		}
 	}
 
 	log_info("ebook_reader() [Success]");
