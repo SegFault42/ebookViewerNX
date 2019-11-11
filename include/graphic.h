@@ -10,6 +10,9 @@
 
 #define APP_NAME	"EbookReaderNX v0.1"
 
+#define COVER		0
+#define READ		1
+
 typedef struct		s_ttf
 {
 	TTF_Font		*font_small;
@@ -25,10 +28,9 @@ typedef struct		s_graphic
 	t_ttf			*ttf;
 }					t_graphic;
 
-
 bool	init_graphic(void);
 void	deinit_graphic(void);
-void	draw_ppm(fz_pixmap *ppm);
+void	draw_ppm(fz_pixmap *ppm, bool cover);
 void	draw_ui(char *books);
 bool	init_ttf(void);
 void	deinit_ttf(void);

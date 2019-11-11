@@ -2,10 +2,11 @@
 
 #include <common.h>
 
-t_graphic		*graphic = NULL;
-t_transform		*trans = NULL;
-t_ebook			*ebook = NULL;
-t_controller	*controller = NULL;
+t_graphic			*graphic = NULL;
+t_transform			*trans = NULL;
+t_ebook				*ebook = NULL;
+t_controller		*controller = NULL;
+t_layout			*layout = NULL;
 
 void	create_requiered_folder(void)
 {
@@ -42,11 +43,13 @@ static void	init_all(void)
 	graphic->ttf = (t_ttf *)calloc(sizeof(t_ttf), 1);
 	ebook = (t_ebook *)calloc(sizeof(t_ebook), 1);
 	controller = (t_controller *)calloc(sizeof(t_controller), 1);
-	if (graphic == NULL || graphic->ttf == NULL || ebook == NULL || controller == NULL) {
+	layout = (t_layout *)calloc(sizeof(t_layout), 1);
+	if (graphic == NULL || graphic->ttf == NULL || ebook == NULL || controller == NULL || layout == NULL) {
 		free(graphic);
 		free(graphic->ttf);
 		free(ebook);
 		free(controller);
+		free(layout);
 		log_fatal("init_all() : calloc [Failure]");
 		return ;
 	}
@@ -79,6 +82,7 @@ static void	deinit_all(void)
 	free(graphic);
 	free(ebook);
 	free(controller);
+	free(layout);
 
 	log_info("Quitting ...");
 	#ifdef __NXLINK__

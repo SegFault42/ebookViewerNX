@@ -3,6 +3,7 @@
 extern t_graphic	*graphic;
 extern t_ebook		*ebook;
 extern t_controller	*controller;
+extern t_layout		*layout;
 
 static int	count_files_number(void)
 {

@@ -11,6 +11,11 @@ typedef struct	s_transform
 	SDL_Rect	dstrect;
 }				t_transform;
 
+typedef struct		s_layout
+{
+	SDL_Rect		cover_pos;
+}					t_layout;
+
 bool	init_layout(void);
 void	deinit_layout(void);
 void	landscape_default(void);

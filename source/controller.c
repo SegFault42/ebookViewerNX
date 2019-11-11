@@ -2,6 +2,8 @@
 
 extern t_controller	*controller;
 extern t_ebook		*ebook;
+extern t_graphic	*graphic;
+extern t_layout		*layout;
 
 void	default_controller_layout(void)
 {
@@ -19,7 +21,7 @@ void	default_controller_layout(void)
 
 bool	touch_next_page_home(touchPosition touch)
 {
-	if (touch.px >= (WIN_WIDTH / 2) - (COVER_WIDTH / 2) + COVER_WIDTH) {
+	if (touch.px >= (u32)(layout->cover_pos.x + layout->cover_pos.w)) {
 		return (true);
 	}
 
@@ -28,7 +30,7 @@ bool	touch_next_page_home(touchPosition touch)
 
 bool	touch_prev_page_home(touchPosition touch)
 {
-	if (touch.px > 0 && touch.px <= (WIN_WIDTH / 2) - (COVER_WIDTH / 2)) {
+	if (touch.px > 0 && touch.px <= (u32)(layout->cover_pos.x)) {
 		return (true);
 	}
 
@@ -37,10 +39,10 @@ bool	touch_prev_page_home(touchPosition touch)
 
 bool	touch_launch_book_home(touchPosition touch)
 {
-	if (touch.px >= (WIN_WIDTH / 2) - (COVER_WIDTH / 2) &&
-			touch.px <= (WIN_WIDTH / 2) - (COVER_WIDTH / 2) + COVER_WIDTH &&
-			touch.py >= (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) &&
-			touch.py <= (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + COVER_HEIGHT) {
+	if (touch.px >= (u32)(layout->cover_pos.x) &&
+			touch.px <= (u32)(layout->cover_pos.x + layout->cover_pos.w) &&
+			touch.py >= (u32)(layout->cover_pos.y) &&
+			touch.py <= (u32)(layout->cover_pos.y + layout->cover_pos.h)) {
 		return (true);
 	}
 

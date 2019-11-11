@@ -3,6 +3,7 @@
 extern t_graphic	*graphic;
 extern t_transform	*trans;
 extern t_ebook		*ebook;
+extern t_layout		*layout;
 
 bool	init_ttf(void)
 {
@@ -78,7 +79,7 @@ void	deinit_graphic(void)
 	log_info("deinit_graphic() [Success]");
 }
 
-void	draw_ppm(fz_pixmap *ppm)
+void	draw_ppm(fz_pixmap *ppm, bool cover)
 {
 	SDL_Surface	*image = NULL;
 	SDL_Texture	*texture = NULL;
@@ -94,7 +95,11 @@ void	draw_ppm(fz_pixmap *ppm)
 	// Free surface
 	SDL_FreeSurface(image);
 
-	SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(trans->dstrect), 0, NULL, SDL_FLIP_NONE);
+	if (cover == 0) {
+		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->cover_pos), 0, NULL, SDL_FLIP_NONE);
+	} else {
+		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(trans->dstrect), 0, NULL, SDL_FLIP_NONE);
+	}
 	// Free texture
 	SDL_DestroyTexture(texture);
 
@@ -139,7 +144,13 @@ static void	draw_text(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font
 
 static bool	draw_cover(char *book)
 {
-	char	path[PATH_MAX] = {0};
+	char		path[PATH_MAX] = {0};
+	SDL_Rect	rect = {
+		layout->cover_pos.x,
+		layout->cover_pos.y,
+		layout->cover_pos.w,
+		layout->cover_pos.h
+	};
 
 	sprintf(path, "/switch/ebookReaderNX/%s", book);
 
@@ -158,19 +169,18 @@ static bool	draw_cover(char *book)
 	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
 	trans->ctm = fz_pre_rotate(trans->ctm, 0);
 
-	trans->dstrect.w = COVER_WIDTH;
-	trans->dstrect.h = COVER_HEIGHT;
-	trans->dstrect.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);
-	trans->dstrect.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;
-
-
 	if (convert_page_to_ppm(0) == false) {
 		return (false);
 	}
 
-	draw_ppm(ebook->ppm);
+	draw_ppm(ebook->ppm, COVER);
 
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
+
+	// Draw rect around cover
+	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawRect(graphic->renderer, &rect);
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
 
 	log_info("draw_cover() [Success]");
 	return (true);
