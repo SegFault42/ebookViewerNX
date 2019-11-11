@@ -35,7 +35,7 @@ bool	touch_prev_page_home(touchPosition touch)
 	return (false);
 }
 
-bool	touch_launch_book(touchPosition touch)
+bool	touch_launch_book_home(touchPosition touch)
 {
 	if (touch.px >= (WIN_WIDTH / 2) - (COVER_WIDTH / 2) &&
 			touch.px <= (WIN_WIDTH / 2) - (COVER_WIDTH / 2) + COVER_WIDTH &&

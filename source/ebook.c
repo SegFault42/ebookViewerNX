@@ -261,7 +261,6 @@ void	ebook_reader(char *book)
 			save_last_page(book, ebook->last_page);
 			refresh = false;
 		}
-
 	}
 
 	log_info("ebook_reader() [Success]");
