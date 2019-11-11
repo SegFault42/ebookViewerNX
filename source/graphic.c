@@ -179,7 +179,7 @@ static bool	draw_cover(char *book)
 void	draw_ui(char *book)
 {
 	SDL_Color	color = {255, 255, 255, 255};
-	int			title_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(book)) / 2));
+	int			title_x = 0;
 	int			progression_x = 0;// ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(page_number)) / 2));
 	char		page_number[20] = {0};
 
@@ -193,7 +193,14 @@ void	draw_ui(char *book)
 	}
 
 	// Title
+	// remove file extension
+	char *title = strrchr(book, '.');
+	if (title != NULL) {
+		title[0] = '\0';
+		title_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(book)) / 2));
+	}
 	draw_text(graphic->renderer, title_x, 30, book, graphic->ttf->font_large, color);
+	title[strlen(title)] = '.';
 
 	// Page number
 	count_page_number();
