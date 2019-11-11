@@ -202,6 +202,7 @@ void	draw_title(char *book)
 	draw_text(graphic->renderer, title_x, 80, book, graphic->ttf->font_medium, color);
 
 	title[strlen(title)] = '.';
+	log_info("draw_title() [Success]");
 }
 
 void	draw_line(void)
@@ -217,6 +218,7 @@ void	draw_line(void)
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderDrawLines(graphic->renderer, points, POINTS_COUNT);
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+	log_info("draw_line() [Success]");
 }
 
 void	draw_app_name(void)
@@ -224,6 +226,7 @@ void	draw_app_name(void)
 	SDL_Color	color = {255, 255, 255, 255};
 
 	draw_text(graphic->renderer, (WIN_WIDTH / 2) - ((CHAR_WIDTH_LARGE * sizeof(APP_NAME)) / 2), 5, APP_NAME, graphic->ttf->font_large, color);
+	log_info("draw_app_name() [Success]");
 }
 
 void	draw_page_number(void)
@@ -237,6 +240,7 @@ void	draw_page_number(void)
 	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
 	progression_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH_MEDIUM * strlen(page_number)) / 2));
 	draw_text(graphic->renderer, progression_x, 660, page_number, graphic->ttf->font_medium, color);
+	log_info("draw_page_number() [Success]");
 }
 
 void	draw_ui(char *book)
