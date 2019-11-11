@@ -3,9 +3,12 @@
 
 #define WIN_WIDTH	1280
 #define WIN_HEIGHT	720
-#define CHAR_WIDTH	22.5 // size of one character in px in X
+#define CHAR_WIDTH_LARGE	22.5 // size of one character in px in X
+#define CHAR_WIDTH_MEDIUM	17 // size of one character in px in X
 #define COVER_WIDTH		350
 #define COVER_HEIGHT	500
+
+#define APP_NAME	"EbookReaderNX v0.1"
 
 typedef struct		s_ttf
 {

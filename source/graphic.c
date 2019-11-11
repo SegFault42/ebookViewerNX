@@ -161,7 +161,7 @@ static bool	draw_cover(char *book)
 	trans->dstrect.w = COVER_WIDTH;
 	trans->dstrect.h = COVER_HEIGHT;
 	trans->dstrect.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);
-	trans->dstrect.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2);
+	trans->dstrect.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;
 
 
 	if (convert_page_to_ppm(0) == false) {
@@ -176,15 +176,71 @@ static bool	draw_cover(char *book)
 	return (true);
 }
 
-void	draw_ui(char *book)
+void	draw_title(char *book)
+{
+	char		*title = NULL;
+	int			title_x = 0;
+	SDL_Color	color = {255, 255, 255, 255};
+
+	// remove file extension
+	title = strrchr(book, '.');
+	if (title != NULL) {
+		title[0] = '\0';
+		title_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH_MEDIUM * strlen(book)) / 2));
+	}
+
+	draw_text(graphic->renderer, title_x, 80, book, graphic->ttf->font_medium, color);
+
+	title[strlen(title)] = '.';
+}
+
+void	draw_line(void)
+{
+	#define		POINTS_COUNT	4
+	const		SDL_Point points[POINTS_COUNT] = {
+		{40, 55},
+		{1240, 55},
+		{1240, 56},
+		{40, 56}
+	};
+
+	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawLines(graphic->renderer, points, POINTS_COUNT);
+}
+
+void	draw_app_name(void)
 {
 	SDL_Color	color = {255, 255, 255, 255};
-	int			title_x = 0;
-	int			progression_x = 0;// ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(page_number)) / 2));
-	char		page_number[20] = {0};
 
+	draw_text(graphic->renderer, (WIN_WIDTH / 2) - ((CHAR_WIDTH_LARGE * sizeof(APP_NAME)) / 2), 5, APP_NAME, graphic->ttf->font_large, color);
+}
+
+void	draw_page_number(void)
+{
+	int			progression_x = 0;
+	char		page_number[20] = {0};
+	SDL_Color	color = {255, 255, 255, 255};
+
+	count_page_number();
+
+	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
+	progression_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH_MEDIUM * strlen(page_number)) / 2));
+	draw_text(graphic->renderer, progression_x, 660, page_number, graphic->ttf->font_medium, color);
+}
+
+void	draw_ui(char *book)
+{
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
 	SDL_RenderClear(graphic->renderer);
+
+	// Draw app name
+	draw_app_name();
+
+	// Draw line
+	draw_line();
+
+	// Draw title
+	draw_title(book);
 
 	// Draw Cover
 	if (draw_cover(book) == false) {
@@ -192,22 +248,8 @@ void	draw_ui(char *book)
 		return ;
 	}
 
-	// Title
-	// remove file extension
-	char *title = strrchr(book, '.');
-	if (title != NULL) {
-		title[0] = '\0';
-		title_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(book)) / 2));
-	}
-	draw_text(graphic->renderer, title_x, 30, book, graphic->ttf->font_large, color);
-	title[strlen(title)] = '.';
-
-	// Page number
-	count_page_number();
-
-	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
-	progression_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH * strlen(page_number)) / 2));
-	draw_text(graphic->renderer, progression_x, 650, page_number, graphic->ttf->font_large, color);
+	// Draw Page number
+	draw_page_number();
 
 	deinit_mupdf();
 	log_info("draw_ui() [Success]");
