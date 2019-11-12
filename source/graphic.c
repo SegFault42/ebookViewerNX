@@ -207,16 +207,8 @@ void	draw_title(char *book)
 
 void	draw_line(void)
 {
-	#define		POINTS_COUNT	4
-	const		SDL_Point points[POINTS_COUNT] = {
-		{40, 55},
-		{1240, 55},
-		{1240, 56},
-		{40, 56}
-	};
-
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawLines(graphic->renderer, points, POINTS_COUNT);
+	SDL_RenderDrawLines(graphic->renderer, layout->line, sizeof(layout->line) / sizeof(layout->line[0]));
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
 	log_info("draw_line() [Success]");
 }
@@ -243,6 +235,16 @@ void	draw_page_number(void)
 	log_info("draw_page_number() [Success]");
 }
 
+static void	draw_exit_button(void)
+{
+	SDL_Color	color = {255, 255, 255, 255};
+
+	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawLines(graphic->renderer, layout->exit_home, sizeof(layout->exit_home) / sizeof(layout->exit_home[0]));
+	draw_text(graphic->renderer, 1175, 15, "Exit", graphic->ttf->font_small, color);
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+}
+
 void	draw_ui(char *book)
 {
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
@@ -265,6 +267,8 @@ void	draw_ui(char *book)
 
 	// Draw Page number
 	draw_page_number();
+
+	draw_exit_button();
 
 	deinit_mupdf();
 	log_info("draw_ui() [Success]");

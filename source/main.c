@@ -102,6 +102,5 @@ int main(void)
 
 	deinit_all();
 
-
 	return (0);
 }

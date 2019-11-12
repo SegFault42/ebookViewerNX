@@ -20,9 +20,10 @@
 - touchscreen support
 - info screen
 - cache to load faster pages
-- Customisable control in config file
 - vibrate when button pressed
-- hide extension name in title
+- Customisable control in config file
+- controle, different type in config mode
+- Add progress bar for progression
 
 ## improvement :
 
