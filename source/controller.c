@@ -21,7 +21,8 @@ void	default_controller_layout(void)
 
 bool	touch_next_page_home(touchPosition touch)
 {
-	if (touch.px >= (u32)(layout->cover_pos.x + layout->cover_pos.w)) {
+	if (touch.px >= (u32)(layout->cover_pos.x + layout->cover_pos.w) &&
+			touch.py > (u32)(layout->line[0].y)) {
 		return (true);
 	}
 
@@ -30,7 +31,8 @@ bool	touch_next_page_home(touchPosition touch)
 
 bool	touch_prev_page_home(touchPosition touch)
 {
-	if (touch.px > 0 && touch.px <= (u32)(layout->cover_pos.x)) {
+	if (touch.px > 0 && touch.px <= (u32)(layout->cover_pos.x) &&
+			touch.py > (u32)(layout->line[0].y)) {
 		return (true);
 	}
 

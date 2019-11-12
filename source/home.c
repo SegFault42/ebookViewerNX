@@ -170,7 +170,7 @@ void	home_page(void)
 			refresh = false;
 		}
 
-		if (kDown & controller->quit) {
+		if (kDown & controller->quit || touch_exit_home(touch)) {
 			break ;
 		}
 	}
