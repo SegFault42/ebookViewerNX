@@ -202,21 +202,15 @@ void	draw_title(char *book)
 	draw_text(graphic->renderer, title_x, 80, book, graphic->ttf->font_medium, color);
 
 	title[strlen(title)] = '.';
+	log_info("draw_title() [Success]");
 }
 
 void	draw_line(void)
 {
-	#define		POINTS_COUNT	4
-	const		SDL_Point points[POINTS_COUNT] = {
-		{40, 55},
-		{1240, 55},
-		{1240, 56},
-		{40, 56}
-	};
-
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawLines(graphic->renderer, points, POINTS_COUNT);
+	SDL_RenderDrawLines(graphic->renderer, layout->line, sizeof(layout->line) / sizeof(layout->line[0]));
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+	log_info("draw_line() [Success]");
 }
 
 void	draw_app_name(void)
@@ -224,6 +218,7 @@ void	draw_app_name(void)
 	SDL_Color	color = {255, 255, 255, 255};
 
 	draw_text(graphic->renderer, (WIN_WIDTH / 2) - ((CHAR_WIDTH_LARGE * sizeof(APP_NAME)) / 2), 5, APP_NAME, graphic->ttf->font_large, color);
+	log_info("draw_app_name() [Success]");
 }
 
 void	draw_page_number(void)
@@ -237,6 +232,17 @@ void	draw_page_number(void)
 	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
 	progression_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH_MEDIUM * strlen(page_number)) / 2));
 	draw_text(graphic->renderer, progression_x, 660, page_number, graphic->ttf->font_medium, color);
+	log_info("draw_page_number() [Success]");
+}
+
+static void	draw_exit_button(void)
+{
+	SDL_Color	color = {255, 255, 255, 255};
+
+	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawLines(graphic->renderer, layout->exit_home, sizeof(layout->exit_home) / sizeof(layout->exit_home[0]));
+	draw_text(graphic->renderer, 1175, 15, "Exit", graphic->ttf->font_small, color);
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
 }
 
 void	draw_ui(char *book)
@@ -261,6 +267,8 @@ void	draw_ui(char *book)
 
 	// Draw Page number
 	draw_page_number();
+
+	draw_exit_button();
 
 	deinit_mupdf();
 	log_info("draw_ui() [Success]");

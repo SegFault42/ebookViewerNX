@@ -12,10 +12,33 @@ bool	init_layout(void)
 		return (false);
 	}
 
+	// Cover position in home menu
 	layout->cover_pos.w = COVER_WIDTH;
 	layout->cover_pos.h = COVER_HEIGHT;
 	layout->cover_pos.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);
 	layout->cover_pos.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;
+
+	// Exit button position in home menu
+	layout->exit_home[0].x = 1150;
+	layout->exit_home[0].y = 10;
+	layout->exit_home[1].x = 1240;
+	layout->exit_home[1].y = 10;
+	layout->exit_home[2].x = 1240;
+	layout->exit_home[2].y = 45;
+	layout->exit_home[3].x = 1150;
+	layout->exit_home[3].y = 45;
+	layout->exit_home[4].x = 1150;
+	layout->exit_home[4].y = 10;
+
+	// Line in top
+	layout->line[0].x = 40;
+	layout->line[0].y = 55;
+	layout->line[1].x = 1240;
+	layout->line[1].y = 55;
+	layout->line[2].x = 1240;
+	layout->line[2].y = 56;
+	layout->line[3].x = 40;
+	layout->line[3].y = 56;
 
 	log_info("init_layout() [Success]");
 	return (true);

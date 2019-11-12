@@ -21,7 +21,7 @@ static int	count_files_number(void)
 	while ((entry = readdir(dir)) != NULL) {
 		if (entry->d_type == DT_REG) {
 			ext = strrchr(entry->d_name, '.');
-			if (ext != NULL && !strcmp(ext, ".pdf")) {
+			if (ext != NULL && (!strcmp(ext, ".pdf") || !strcmp(ext, ".epub"))) {
 				nb++;
 			}
 		}
@@ -58,6 +58,7 @@ static char	**get_ebook_list(void)
 		return (NULL);
 	}
 
+	// store files in list
 	for (int i = 0; (entry = readdir(dir)) != NULL;) {
 		if (entry->d_type == DT_REG) {
 			ext = strrchr(entry->d_name, '.');
@@ -103,10 +104,6 @@ static void	load_last_page(char *book)
 		free(line);
 		line = NULL;
 	}
-	free(tmp);
-	tmp = NULL;
-	free(line);
-	line = NULL;
 
 	close(fd);
 	log_info("load_last_page() [Success]");
@@ -173,7 +170,7 @@ void	home_page(void)
 			refresh = false;
 		}
 
-		if (kDown & controller->quit) {
+		if (kDown & controller->quit || touch_exit_home(touch)) {
 			break ;
 		}
 	}
