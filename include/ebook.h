@@ -17,6 +17,7 @@ typedef struct	s_ebook
 	int			last_page;
 
 	bool		layout_orientation;
+	bool		read_mode;
 }				t_ebook;
 
 void	ebook_reader(char *path);

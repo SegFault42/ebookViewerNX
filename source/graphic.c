@@ -204,10 +204,13 @@ void	draw_title(char *book)
 	log_info("draw_title() [Success]");
 }
 
-void	draw_line(void)
+void	draw_line()
 {
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(graphic->renderer, &layout->line);
+	// if reading and landscape 
+	if (/*ebook->layout_orientation == LANDSCAPE &&*/ ebook->read_mode == false) {
+		SDL_RenderFillRect(graphic->renderer, &layout->line);
+	}
 
 	log_info("draw_line() [Success]");
 }
@@ -216,7 +219,11 @@ void	draw_app_name(void)
 {
 	SDL_Color	color = {255, 255, 255, 255};
 
-	draw_text(graphic->renderer, (WIN_WIDTH / 2) - ((CHAR_WIDTH_LARGE * sizeof(APP_NAME)) / 2), 5, APP_NAME, graphic->ttf->font_large, color);
+	// if reading and landscape 
+	if (/*ebook->layout_orientation == LANDSCAPE &&*/ ebook->read_mode == false) {
+		draw_text(graphic->renderer, (WIN_WIDTH / 2) - ((CHAR_WIDTH_LARGE * sizeof(APP_NAME)) / 2), 5, APP_NAME, graphic->ttf->font_large, color);
+	}
+
 	log_info("draw_app_name() [Success]");
 }
 
@@ -253,16 +260,22 @@ static void	draw_help_button(void)
 	/*draw_text(graphic->renderer, 1175, 15, "Help", graphic->ttf->font_small, color);*/
 }
 
-void	draw_home_menu(char *book)
+void	draw_bar(void)
 {
-	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
-	SDL_RenderClear(graphic->renderer);
-
 	// Draw app name
 	draw_app_name();
 
 	// Draw line
 	draw_line();
+}
+void	draw_home_menu(char *book)
+{
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
+	SDL_RenderClear(graphic->renderer);
+
+	// Draw bar
+	// TODO: draw element dynamic !!!
+	draw_bar();
 
 	// Draw title
 	draw_title(book);

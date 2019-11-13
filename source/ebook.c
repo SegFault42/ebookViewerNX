@@ -212,6 +212,7 @@ void	ebook_reader(char *book)
 {
 	bool	refresh = true;
 
+	ebook->read_mode = true;
 	while (appletMainLoop()) {
 		hidScanInput();
 
@@ -250,6 +251,7 @@ void	ebook_reader(char *book)
 			ebook->last_page = ebook->total_page -1;
 		}
 		if (kDown & controller->quit) {
+			ebook->read_mode = false;
 			break;
 		}
 
