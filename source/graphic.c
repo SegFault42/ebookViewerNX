@@ -253,7 +253,7 @@ static void	draw_help_button(void)
 	/*draw_text(graphic->renderer, 1175, 15, "Help", graphic->ttf->font_small, color);*/
 }
 
-void	draw_ui(char *book)
+void	draw_home_menu(char *book)
 {
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
 	SDL_RenderClear(graphic->renderer);
@@ -279,5 +279,5 @@ void	draw_ui(char *book)
 	draw_exit_button();
 
 	deinit_mupdf();
-	log_info("draw_ui() [Success]");
+	log_info("draw_home_menu() [Success]");
 }
