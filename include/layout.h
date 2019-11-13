@@ -14,8 +14,8 @@ typedef struct	s_transform
 typedef struct		s_layout
 {
 	SDL_Rect		cover_pos;
-	SDL_Point		exit_home[5];
-	SDL_Point		line[4];
+	SDL_Rect		exit_home;
+	SDL_Rect		line;
 
 }					t_layout;
 

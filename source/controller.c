@@ -22,7 +22,7 @@ void	default_controller_layout(void)
 bool	touch_next_page_home(touchPosition touch)
 {
 	if (touch.px >= (u32)(layout->cover_pos.x + layout->cover_pos.w) &&
-			touch.py > (u32)(layout->line[0].y)) {
+			touch.py > (u32)(layout->line.y)) {
 		return (true);
 	}
 
@@ -32,7 +32,7 @@ bool	touch_next_page_home(touchPosition touch)
 bool	touch_prev_page_home(touchPosition touch)
 {
 	if (touch.px > 0 && touch.px <= (u32)(layout->cover_pos.x) &&
-			touch.py > (u32)(layout->line[0].y)) {
+			touch.py > (u32)(layout->line.y)) {
 		return (true);
 	}
 
@@ -53,10 +53,10 @@ bool	touch_launch_book_home(touchPosition touch)
 
 bool	touch_exit_home(touchPosition touch)
 {
-	if (touch.px >= (u32)layout->exit_home[0].x &&
-			touch.px <= (u32)layout->exit_home[1].x &&
-			touch.py >= (u32)layout->exit_home[0].y &&
-			touch.py <= (u32)layout->exit_home[2].y) {
+	if (touch.px >= (u32)layout->exit_home.x &&
+			touch.px <= (u32)(layout->exit_home.x + layout->exit_home.w) &&
+			touch.py >= (u32)layout->exit_home.y &&
+			touch.py <= (u32)(layout->exit_home.y + layout->exit_home.h)) {
 		return (true);
 	}
 	return (false);

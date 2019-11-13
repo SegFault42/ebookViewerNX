@@ -208,8 +208,9 @@ void	draw_title(char *book)
 void	draw_line(void)
 {
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawLines(graphic->renderer, layout->line, sizeof(layout->line) / sizeof(layout->line[0]));
+	SDL_RenderFillRect(graphic->renderer, &layout->line);
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+
 	log_info("draw_line() [Success]");
 }
 
@@ -240,9 +241,20 @@ static void	draw_exit_button(void)
 	SDL_Color	color = {255, 255, 255, 255};
 
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawLines(graphic->renderer, layout->exit_home, sizeof(layout->exit_home) / sizeof(layout->exit_home[0]));
-	draw_text(graphic->renderer, 1175, 15, "Exit", graphic->ttf->font_small, color);
+	SDL_RenderDrawRect(graphic->renderer, &layout->exit_home);
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+
+	draw_text(graphic->renderer, 1175, 15, "Exit", graphic->ttf->font_small, color);
+}
+
+static void	draw_help_button(void)
+{
+	/*SDL_Color	color = {255, 255, 255, 255};*/
+
+	/*SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);*/
+	/*SDL_RenderDrawLines(graphic->renderer, layout->help_home, sizeof(layout->help_home) / sizeof(layout->help_home[0]));*/
+	/*draw_text(graphic->renderer, 1175, 15, "Help", graphic->ttf->font_small, color);*/
+	/*SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);*/
 }
 
 void	draw_ui(char *book)
