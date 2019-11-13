@@ -207,7 +207,7 @@ void	draw_title(char *book)
 void	draw_line()
 {
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	// if reading and landscape 
+	// if reading and landscape
 	if (/*ebook->layout_orientation == LANDSCAPE &&*/ ebook->read_mode == false) {
 		SDL_RenderFillRect(graphic->renderer, &layout->line);
 	}
@@ -221,7 +221,7 @@ void	draw_app_name(void)
 
 	// if reading and landscape 
 	if (/*ebook->layout_orientation == LANDSCAPE &&*/ ebook->read_mode == false) {
-		draw_text(graphic->renderer, (WIN_WIDTH / 2) - ((CHAR_WIDTH_LARGE * sizeof(APP_NAME)) / 2), 5, APP_NAME, graphic->ttf->font_large, color);
+		draw_text(graphic->renderer, layout->app_title.x, layout->app_title.y, APP_NAME, graphic->ttf->font_large, color);
 	}
 
 	log_info("draw_app_name() [Success]");

@@ -2,15 +2,30 @@
 
 extern t_transform	*trans;
 extern t_ebook		*ebook;
-extern t_layout		*layout;;
+extern t_layout		*layout;
+extern t_graphic	*graphic;
 
 bool	init_layout(void)
 {
+	int w = 0;
+	int h = 0;
+
 	trans = (t_transform *)calloc(sizeof(t_transform), 1);
 	if (trans == NULL) {
 		log_info("init_layout() [Failure]");
 		return (false);
 	}
+
+	// title app coord
+	TTF_SizeText(graphic->ttf->font_large, APP_NAME, &w, &h);
+	layout->app_title.x = (WIN_WIDTH / 2) - (w / 2);
+	layout->app_title.y = WIN_HEIGHT / 144;
+
+	// Line in top
+	layout->line.x = WIN_WIDTH / 32;
+	layout->line.y = WIN_HEIGHT / 12;
+	layout->line.w = WIN_WIDTH - (layout->line.x * 2);
+	layout->line.h = 2;
 
 	// Cover position in home menu
 	layout->cover.w = COVER_WIDTH;
@@ -29,12 +44,6 @@ bool	init_layout(void)
 	/*layout->help_home.y = 10;*/
 	/*layout->help_home.w = 90;*/
 	/*layout->help_home.h = 35;*/
-
-	// Line in top
-	layout->line.x = 40;
-	layout->line.y = 55;
-	layout->line.w = 1200;
-	layout->line.h = 2;
 
 	log_info("init_layout() [Success]");
 	return (true);
