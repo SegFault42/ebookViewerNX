@@ -96,7 +96,7 @@ void	draw_ppm(fz_pixmap *ppm, bool cover)
 	SDL_FreeSurface(image);
 
 	if (cover == 0) {
-		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->cover_pos), 0, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->cover), 0, NULL, SDL_FLIP_NONE);
 	} else {
 		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(trans->dstrect), 0, NULL, SDL_FLIP_NONE);
 	}
@@ -146,10 +146,10 @@ static bool	draw_cover(char *book)
 {
 	char		path[PATH_MAX] = {0};
 	SDL_Rect	rect = {
-		layout->cover_pos.x,
-		layout->cover_pos.y,
-		layout->cover_pos.w,
-		layout->cover_pos.h
+		layout->cover.x,
+		layout->cover.y,
+		layout->cover.w,
+		layout->cover.h
 	};
 
 	sprintf(path, "/switch/ebookReaderNX/%s", book);
