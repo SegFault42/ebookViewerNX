@@ -19,7 +19,7 @@ bool	init_layout(void)
 	// title app coord
 	TTF_SizeText(graphic->ttf->font_large, APP_NAME, &w, &h);
 	layout->app_title.x = (WIN_WIDTH / 2) - (w / 2);
-	layout->app_title.y = WIN_HEIGHT / 144;
+	layout->app_title.y = WIN_HEIGHT / 90;
 
 	// Line in top
 	layout->line.x = WIN_WIDTH / 32;
@@ -27,17 +27,17 @@ bool	init_layout(void)
 	layout->line.w = WIN_WIDTH - (layout->line.x * 2);
 	layout->line.h = 2;
 
+	// Exit button position in home menu
+	layout->exit_home.w = WIN_WIDTH / 14;
+	layout->exit_home.h = layout->line.y / 1.30;
+	layout->exit_home.x = 0.8984375 * WIN_WIDTH;
+	layout->exit_home.y = (layout->line.y - layout->exit_home.h) / 2;
+
 	// Cover position in home menu
 	layout->cover.w = COVER_WIDTH;
 	layout->cover.h = COVER_HEIGHT;
 	layout->cover.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);
 	layout->cover.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;
-
-	// Exit button position in home menu
-	layout->exit_home.x = 1150;
-	layout->exit_home.y = 10;
-	layout->exit_home.w = 90;
-	layout->exit_home.h = 35;
 
 	// Help home
 	/*layout->help_home.x = 1150;*/
