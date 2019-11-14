@@ -27,12 +27,6 @@ bool	init_layout(void)
 	layout->line.w = WIN_WIDTH - (layout->line.x * 2);
 	layout->line.h = 2;
 
-	// Exit button position in home menu
-	layout->exit_home.w = WIN_WIDTH / 14;
-	layout->exit_home.h = layout->line.y / 1.30;
-	layout->exit_home.x = 0.8984375 * WIN_WIDTH;
-	layout->exit_home.y = (layout->line.y - layout->exit_home.h) / 2;
-
 	// Cover position in home menu
 	layout->cover.w = COVER_WIDTH;
 	layout->cover.h = COVER_HEIGHT;
