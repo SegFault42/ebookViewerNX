@@ -15,6 +15,7 @@ typedef struct		s_layout
 {
 	SDL_Rect		cover;
 	SDL_Rect		exit_home;
+	SDL_Rect		help_home;
 	SDL_Rect		line;
 	SDL_Point		app_title;
 }					t_layout;
