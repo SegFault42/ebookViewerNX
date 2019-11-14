@@ -96,7 +96,7 @@ void	draw_ppm(fz_pixmap *ppm, bool cover)
 	SDL_FreeSurface(image);
 
 	if (cover == 0) {
-		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->cover_pos), 0, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->cover), 0, NULL, SDL_FLIP_NONE);
 	} else {
 		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(trans->dstrect), 0, NULL, SDL_FLIP_NONE);
 	}
@@ -146,10 +146,10 @@ static bool	draw_cover(char *book)
 {
 	char		path[PATH_MAX] = {0};
 	SDL_Rect	rect = {
-		layout->cover_pos.x,
-		layout->cover_pos.y,
-		layout->cover_pos.w,
-		layout->cover_pos.h
+		layout->cover.x,
+		layout->cover.y,
+		layout->cover.w,
+		layout->cover.h
 	};
 
 	sprintf(path, "/switch/ebookReaderNX/%s", book);
@@ -180,7 +180,6 @@ static bool	draw_cover(char *book)
 	// Draw rect around cover
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderDrawRect(graphic->renderer, &rect);
-	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
 
 	log_info("draw_cover() [Success]");
 	return (true);
@@ -205,11 +204,14 @@ void	draw_title(char *book)
 	log_info("draw_title() [Success]");
 }
 
-void	draw_line(void)
+void	draw_line()
 {
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawLines(graphic->renderer, layout->line, sizeof(layout->line) / sizeof(layout->line[0]));
-	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+	// if reading and landscape
+	if (/*ebook->layout_orientation == LANDSCAPE &&*/ ebook->read_mode == false) {
+		SDL_RenderFillRect(graphic->renderer, &layout->line);
+	}
+
 	log_info("draw_line() [Success]");
 }
 
@@ -217,7 +219,11 @@ void	draw_app_name(void)
 {
 	SDL_Color	color = {255, 255, 255, 255};
 
-	draw_text(graphic->renderer, (WIN_WIDTH / 2) - ((CHAR_WIDTH_LARGE * sizeof(APP_NAME)) / 2), 5, APP_NAME, graphic->ttf->font_large, color);
+	// if reading and landscape 
+	if (/*ebook->layout_orientation == LANDSCAPE &&*/ ebook->read_mode == false) {
+		draw_text(graphic->renderer, layout->app_title.x, layout->app_title.y, APP_NAME, graphic->ttf->font_large, color);
+	}
+
 	log_info("draw_app_name() [Success]");
 }
 
@@ -235,26 +241,63 @@ void	draw_page_number(void)
 	log_info("draw_page_number() [Success]");
 }
 
-static void	draw_exit_button(void)
+void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color, SDL_Color text_color)
 {
-	SDL_Color	color = {255, 255, 255, 255};
+	int	rect_text_w = 0;
+	int	rect_text_y = 0;
+	int	text_x = 0;
+	int	text_y = 0;
 
-	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawLines(graphic->renderer, layout->exit_home, sizeof(layout->exit_home) / sizeof(layout->exit_home[0]));
-	draw_text(graphic->renderer, 1175, 15, "Exit", graphic->ttf->font_small, color);
-	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+	SDL_SetRenderDrawColor(graphic->renderer, button_color.r, button_color.g, button_color.b, button_color.a);
+	SDL_RenderDrawRect(graphic->renderer, &rect);
+
+	TTF_SizeText(graphic->ttf->font_small, text, &rect_text_w, &rect_text_y);
+
+	text_x = ((rect.w / 2) - (rect_text_w / 2)) + rect.x;
+	text_y = ((rect.h / 2) - (rect_text_y / 2)) + rect.y;
+
+	draw_text(graphic->renderer, text_x, text_y, text, graphic->ttf->font_small, text_color);
 }
 
-void	draw_ui(char *book)
+static void	draw_exit_button(void)
 {
-	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
-	SDL_RenderClear(graphic->renderer);
+	layout->exit_home.w = WIN_WIDTH / 14;
+	layout->exit_home.h = layout->line.y / 1.30;
+	layout->exit_home.x = 0.8984375 * WIN_WIDTH;
+	layout->exit_home.y = (layout->line.y - layout->exit_home.h) / 2;
 
+	SDL_Color background_color = {0, 255, 0, 255};
+	SDL_Color text_color = {255, 255, 255, 255};
+
+	draw_button(layout->exit_home, "Exit", 0, background_color, text_color);
+}
+
+
+static void	draw_help_button(void)
+{
+	/*SDL_Color	color = {255, 255, 255, 255};*/
+
+	/*SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);*/
+	/*SDL_RenderDrawLines(graphic->renderer, layout->help_home, sizeof(layout->help_home) / sizeof(layout->help_home[0]));*/
+	/*draw_text(graphic->renderer, 1175, 15, "Help", graphic->ttf->font_small, color);*/
+}
+
+void	draw_bar(void)
+{
 	// Draw app name
 	draw_app_name();
 
 	// Draw line
 	draw_line();
+}
+void	draw_home_menu(char *book)
+{
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
+	SDL_RenderClear(graphic->renderer);
+
+	// Draw bar
+	// TODO: draw element dynamic !!!
+	draw_bar();
 
 	// Draw title
 	draw_title(book);
@@ -268,8 +311,9 @@ void	draw_ui(char *book)
 	// Draw Page number
 	draw_page_number();
 
+	// Draw exit button
 	draw_exit_button();
 
 	deinit_mupdf();
-	log_info("draw_ui() [Success]");
+	log_info("draw_home_menu() [Success]");
 }

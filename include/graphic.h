@@ -31,7 +31,7 @@ typedef struct		s_graphic
 bool	init_graphic(void);
 void	deinit_graphic(void);
 void	draw_ppm(fz_pixmap *ppm, bool cover);
-void	draw_ui(char *books);
+void	draw_home_menu(char *books);
 bool	init_ttf(void);
 void	deinit_ttf(void);
 

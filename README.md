@@ -24,6 +24,7 @@
 - Customisable control in config file
 - controle, different type in config mode
 - Add progress bar for progression
+- Print unknow book for unknow format
 
 ## improvement :
 

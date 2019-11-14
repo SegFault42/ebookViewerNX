@@ -5,6 +5,18 @@ extern t_ebook		*ebook;
 extern t_graphic	*graphic;
 extern t_layout		*layout;
 
+static bool	button_touch(touchPosition touch, SDL_Rect rect)
+{
+	if (touch.px >= (u32)(rect.x) &&
+			touch.px <= (u32)(rect.x + rect.w) &&
+			touch.py >= (u32)(rect.y) &&
+			touch.py <= (u32)(rect.y + rect.h)) {
+		return (true);
+	}
+
+	return (false);
+}
+
 void	default_controller_layout(void)
 {
 	controller->next_page = KEY_RSTICK_RIGHT;
@@ -21,8 +33,8 @@ void	default_controller_layout(void)
 
 bool	touch_next_page_home(touchPosition touch)
 {
-	if (touch.px >= (u32)(layout->cover_pos.x + layout->cover_pos.w) &&
-			touch.py > (u32)(layout->line[0].y)) {
+	if (touch.px >= (u32)(layout->cover.x + layout->cover.w) &&
+			touch.py > (u32)(layout->line.y)) {
 		return (true);
 	}
 
@@ -31,8 +43,8 @@ bool	touch_next_page_home(touchPosition touch)
 
 bool	touch_prev_page_home(touchPosition touch)
 {
-	if (touch.px > 0 && touch.px <= (u32)(layout->cover_pos.x) &&
-			touch.py > (u32)(layout->line[0].y)) {
+	if (touch.px > 0 && touch.px <= (u32)(layout->cover.x) &&
+			touch.py > (u32)(layout->line.y)) {
 		return (true);
 	}
 
@@ -41,10 +53,7 @@ bool	touch_prev_page_home(touchPosition touch)
 
 bool	touch_launch_book_home(touchPosition touch)
 {
-	if (touch.px >= (u32)(layout->cover_pos.x) &&
-			touch.px <= (u32)(layout->cover_pos.x + layout->cover_pos.w) &&
-			touch.py >= (u32)(layout->cover_pos.y) &&
-			touch.py <= (u32)(layout->cover_pos.y + layout->cover_pos.h)) {
+	if (button_touch(touch, layout->cover) == true) {
 		return (true);
 	}
 
@@ -53,10 +62,7 @@ bool	touch_launch_book_home(touchPosition touch)
 
 bool	touch_exit_home(touchPosition touch)
 {
-	if (touch.px >= (u32)layout->exit_home[0].x &&
-			touch.px <= (u32)layout->exit_home[1].x &&
-			touch.py >= (u32)layout->exit_home[0].y &&
-			touch.py <= (u32)layout->exit_home[2].y) {
+	if (button_touch(touch, layout->exit_home) == true) {
 		return (true);
 	}
 	return (false);

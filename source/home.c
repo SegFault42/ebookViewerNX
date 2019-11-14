@@ -165,7 +165,7 @@ void	home_page(void)
 		// draw only if needed
 		if (refresh == true) {
 			load_last_page(books[index]);
-			draw_ui(books[index]);
+			draw_home_menu(books[index]);
 			SDL_RenderPresent(graphic->renderer);
 			refresh = false;
 		}
