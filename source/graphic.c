@@ -257,6 +257,8 @@ void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color
 	text_y = ((rect.h / 2) - (rect_text_y / 2)) + rect.y;
 
 	draw_text(graphic->renderer, text_x, text_y, text, graphic->ttf->font_small, text_color);
+
+	log_info("draw_button() [Success]");
 }
 
 static void	draw_exit_button(void)
@@ -270,6 +272,8 @@ static void	draw_exit_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	draw_button(layout->exit_home, "Exit", 0, background_color, text_color);
+
+	log_info("draw_exit_button() [Success]");
 }
 
 static void	draw_help_button(void)
@@ -283,6 +287,8 @@ static void	draw_help_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	draw_button(layout->help_home, "Help", 0, background_color, text_color);
+
+	log_info("draw_help_button() [Success]");
 }
 
 void	draw_bar(void)
@@ -292,7 +298,21 @@ void	draw_bar(void)
 
 	// Draw line
 	draw_line();
+
+	log_info("draw_bar() [Success]");
 }
+
+void	print_help(void)
+{
+	SDL_Rect	rect = {0, 0, WIN_WIDTH, WIN_HEIGHT};
+
+	SDL_SetRenderDrawColor(graphic->renderer, 255, 10, 10, 255);
+	SDL_SetRenderDrawBlendMode(graphic->renderer, SDL_BLENDMODE_BLEND);
+	SDL_RenderFillRect(graphic->renderer, &rect);
+
+	log_info("print_help() [Success]");
+}
+
 void	draw_home_menu(char *book)
 {
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);

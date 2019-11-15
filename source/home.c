@@ -157,9 +157,17 @@ void	home_page(void)
 			refresh = true;
 		}
 
-		if (kDown & controller->launch_book || touch_launch_book_home(touch) == true) {
+		if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
 			ebook_reader(books[index]);
 			refresh = true;
+		}
+		printf("%d, %d\n", touch.px, touch.py);
+		if (kDown & controller->help || touch_button(touch, e_help) == true) {
+			print_help();
+
+			SDL_RenderPresent(graphic->renderer);
+			refresh = true;
+			sleep(3);
 		}
 
 		// draw only if needed
@@ -170,7 +178,7 @@ void	home_page(void)
 			refresh = false;
 		}
 
-		if (kDown & controller->quit || touch_exit_home(touch)) {
+		if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
 			break ;
 		}
 	}
