@@ -306,7 +306,7 @@ void	print_help(void)
 {
 	SDL_Rect	rect = {0, 0, WIN_WIDTH, WIN_HEIGHT};
 
-	SDL_SetRenderDrawColor(graphic->renderer, 255, 10, 10, 255);
+	SDL_SetRenderDrawColor(graphic->renderer, 255, 255, 255, 100);
 	SDL_SetRenderDrawBlendMode(graphic->renderer, SDL_BLENDMODE_BLEND);
 	SDL_RenderFillRect(graphic->renderer, &rect);
 

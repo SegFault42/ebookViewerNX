@@ -115,6 +115,7 @@ void	home_page(void)
 	int		index = 0;
 	int		nb_books = 0;
 	bool	refresh = true;
+	bool	help = false;
 
 	// get all books
 	books = get_ebook_list();
@@ -157,25 +158,28 @@ void	home_page(void)
 			refresh = true;
 		}
 
-		if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
-			ebook_reader(books[index]);
-			refresh = true;
-		}
-		printf("%d, %d\n", touch.px, touch.py);
-		if (kDown & controller->help || touch_button(touch, e_help) == true) {
-			print_help();
-
-			SDL_RenderPresent(graphic->renderer);
-			refresh = true;
-			sleep(3);
-		}
-
 		// draw only if needed
 		if (refresh == true) {
 			load_last_page(books[index]);
 			draw_home_menu(books[index]);
-			SDL_RenderPresent(graphic->renderer);
+			if (help == true) {
+				print_help();
+				SDL_RenderPresent(graphic->renderer);
+			} else {
+				SDL_RenderPresent(graphic->renderer);
+			}
+			touch.px = 0;
+			touch.py = 0;
 			refresh = false;
+		}
+
+		if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
+			ebook_reader(books[index]);
+			refresh = true;
+		}
+		if (kDown & controller->help || touch_button(touch, e_help) == true) {
+			help = !help;
+			refresh = true;
 		}
 
 		if (kDown & controller->quit || touch_button(touch, e_exit) == true) {

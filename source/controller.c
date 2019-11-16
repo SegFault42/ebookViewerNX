@@ -60,6 +60,7 @@ bool	touch_button(touchPosition touch, int button_id)
 	} else if (button_id == e_help && button_touch(touch, layout->help_home) == true) {
 		return (true);
 	}
+
 	return (false);
 }
 
