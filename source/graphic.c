@@ -306,7 +306,7 @@ void	print_help(void)
 {
 	SDL_Rect	rect = {0, 0, WIN_WIDTH, WIN_HEIGHT};
 	SDL_Color	color = {255, 255, 255, 255};
-	int	w, h;
+	int			w, h;
 
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 200);
 	SDL_SetRenderDrawBlendMode(graphic->renderer, SDL_BLENDMODE_BLEND);
@@ -335,7 +335,6 @@ void	print_help(void)
 	// draw launch book
 	TTF_SizeText(graphic->ttf->font_medium, "Launch book", &w, &h);
 	draw_text(graphic->renderer, (layout->cover.x + (layout->cover.w / 2)) - (w / 2), (WIN_HEIGHT / 2) - (h / 2), "Open book", graphic->ttf->font_medium, color);
-	
 
 	log_info("print_help() [Success]");
 }

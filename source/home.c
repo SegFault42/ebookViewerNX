@@ -143,10 +143,12 @@ void	home_page(void)
 		// Draw the cover and book informations
 		if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
 			index++;
+			help = false;
 			refresh = true;
 		}
 		if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
 			index--;
+			help = false;
 			refresh = true;
 		}
 		// loop in array
@@ -176,15 +178,21 @@ void	home_page(void)
 		if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
 			ebook_reader(books[index]);
 			refresh = true;
+			help = false;
 		}
 		if (kDown & controller->help || touch_button(touch, e_help) == true) {
-			help = !help;
+			if (help == true) {
+				help = false;
+			} else {
+				help = true;
+			}
 			refresh = true;
 		}
 
 		if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
 			break ;
 		}
+		if (help == true) printf("true\n");
 	}
 
 	// free list
