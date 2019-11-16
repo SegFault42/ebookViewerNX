@@ -306,9 +306,25 @@ void	print_help(void)
 {
 	SDL_Rect	rect = {0, 0, WIN_WIDTH, WIN_HEIGHT};
 
-	SDL_SetRenderDrawColor(graphic->renderer, 255, 255, 255, 100);
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 200);
 	SDL_SetRenderDrawBlendMode(graphic->renderer, SDL_BLENDMODE_BLEND);
+
+	// draw background
 	SDL_RenderFillRect(graphic->renderer, &rect);
+
+	SDL_SetRenderDrawColor(graphic->renderer, 255, 255, 255, 255);
+	// draw left lines
+	SDL_RenderDrawLine(graphic->renderer, layout->cover.x -1, layout->line.y, layout->cover.x -1, WIN_HEIGHT);
+	SDL_RenderDrawLine(graphic->renderer, layout->cover.x, layout->line.y, layout->cover.x, WIN_HEIGHT);
+	// draw left lines
+	SDL_RenderDrawLine(graphic->renderer, layout->cover.x + layout->cover.w + 1, layout->line.y, layout->cover.x + layout->cover.w + 1, WIN_HEIGHT);
+	SDL_RenderDrawLine(graphic->renderer, layout->cover.x + layout->cover.w, layout->line.y, layout->cover.x + layout->cover.w, WIN_HEIGHT);
+	// Draw Horizontal line
+	SDL_RenderDrawLine(graphic->renderer, 0, layout->line.y, WIN_WIDTH, layout->line.y);
+	SDL_RenderDrawLine(graphic->renderer, 0, layout->line.y + 1, WIN_WIDTH, layout->line.y + 1);
+
+	// draw prev book
+	/*draw_text(graphic->renderer, (layout->cover.x / 2) - (), 660, page_number, graphic->ttf->font_medium, color);*/
 
 	log_info("print_help() [Success]");
 }
