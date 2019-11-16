@@ -34,5 +34,6 @@ void	draw_ppm(fz_pixmap *ppm, bool cover);
 void	draw_home_menu(char *books);
 bool	init_ttf(void);
 void	deinit_ttf(void);
+void	print_help(void);
 
 #endif

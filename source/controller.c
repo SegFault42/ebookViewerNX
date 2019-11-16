@@ -5,7 +5,7 @@ extern t_ebook		*ebook;
 extern t_graphic	*graphic;
 extern t_layout		*layout;
 
-static bool	button_touch(touchPosition touch, SDL_Rect rect)
+bool	button_touch(touchPosition touch, SDL_Rect rect)
 {
 	if (touch.px >= (u32)(rect.x) &&
 			touch.px <= (u32)(rect.x + rect.w) &&
@@ -27,7 +27,7 @@ void	default_controller_layout(void)
 
 	controller->quit = KEY_PLUS;
 	controller->launch_book = KEY_A;
-	controller->info = KEY_X;
+	controller->help = KEY_X;
 	controller->layout = KEY_ZR;
 }
 
@@ -51,20 +51,16 @@ bool	touch_prev_page_home(touchPosition touch)
 	return (false);
 }
 
-bool	touch_launch_book_home(touchPosition touch)
+bool	touch_button(touchPosition touch, int button_id)
 {
-	if (button_touch(touch, layout->cover) == true) {
+	if (button_id == e_exit && button_touch(touch, layout->exit_home) == true) {
+		return (true);
+	} else if (button_id == e_cover && button_touch(touch, layout->cover) == true) {
+		return (true);
+	} else if (button_id == e_help && button_touch(touch, layout->help_home) == true) {
 		return (true);
 	}
 
-	return (false);
-}
-
-bool	touch_exit_home(touchPosition touch)
-{
-	if (button_touch(touch, layout->exit_home) == true) {
-		return (true);
-	}
 	return (false);
 }
 

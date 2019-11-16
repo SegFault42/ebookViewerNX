@@ -138,6 +138,7 @@ static bool	render_page(char *book, int current_page)
 		return (false);
 	}
 
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(graphic->renderer);
 	draw_ppm(ebook->ppm, READ);
 

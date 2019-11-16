@@ -115,6 +115,7 @@ void	home_page(void)
 	int		index = 0;
 	int		nb_books = 0;
 	bool	refresh = true;
+	bool	help = false;
 
 	// get all books
 	books = get_ebook_list();
@@ -142,10 +143,12 @@ void	home_page(void)
 		// Draw the cover and book informations
 		if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
 			index++;
+			help = false;
 			refresh = true;
 		}
 		if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
 			index--;
+			help = false;
 			refresh = true;
 		}
 		// loop in array
@@ -157,22 +160,39 @@ void	home_page(void)
 			refresh = true;
 		}
 
-		if (kDown & controller->launch_book || touch_launch_book_home(touch) == true) {
-			ebook_reader(books[index]);
-			refresh = true;
-		}
-
 		// draw only if needed
 		if (refresh == true) {
 			load_last_page(books[index]);
 			draw_home_menu(books[index]);
-			SDL_RenderPresent(graphic->renderer);
+			if (help == true) {
+				print_help();
+				SDL_RenderPresent(graphic->renderer);
+			} else {
+				SDL_RenderPresent(graphic->renderer);
+			}
+			touch.px = 0;
+			touch.py = 0;
 			refresh = false;
 		}
 
-		if (kDown & controller->quit || touch_exit_home(touch)) {
+		if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
+			ebook_reader(books[index]);
+			refresh = true;
+			help = false;
+		}
+		if (kDown & controller->help || touch_button(touch, e_help) == true) {
+			if (help == true) {
+				help = false;
+			} else {
+				help = true;
+			}
+			refresh = true;
+		}
+
+		if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
 			break ;
 		}
+		if (help == true) printf("true\n");
 	}
 
 	// free list

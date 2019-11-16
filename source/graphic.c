@@ -248,15 +248,17 @@ void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color
 	int	text_x = 0;
 	int	text_y = 0;
 
+	TTF_SizeText(graphic->ttf->font_small, text, &rect_text_w, &rect_text_y);
+
 	SDL_SetRenderDrawColor(graphic->renderer, button_color.r, button_color.g, button_color.b, button_color.a);
 	SDL_RenderDrawRect(graphic->renderer, &rect);
-
-	TTF_SizeText(graphic->ttf->font_small, text, &rect_text_w, &rect_text_y);
 
 	text_x = ((rect.w / 2) - (rect_text_w / 2)) + rect.x;
 	text_y = ((rect.h / 2) - (rect_text_y / 2)) + rect.y;
 
 	draw_text(graphic->renderer, text_x, text_y, text, graphic->ttf->font_small, text_color);
+
+	log_info("draw_button() [Success]");
 }
 
 static void	draw_exit_button(void)
@@ -270,16 +272,23 @@ static void	draw_exit_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	draw_button(layout->exit_home, "Exit", 0, background_color, text_color);
-}
 
+	log_info("draw_exit_button() [Success]");
+}
 
 static void	draw_help_button(void)
 {
-	/*SDL_Color	color = {255, 255, 255, 255};*/
+	layout->help_home.w = WIN_WIDTH / 14;
+	layout->help_home.h = layout->line.y / 1.30;
+	layout->help_home.x = 0.8203125 * WIN_WIDTH;
+	layout->help_home.y = (layout->line.y - layout->help_home.h) / 2;
 
-	/*SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);*/
-	/*SDL_RenderDrawLines(graphic->renderer, layout->help_home, sizeof(layout->help_home) / sizeof(layout->help_home[0]));*/
-	/*draw_text(graphic->renderer, 1175, 15, "Help", graphic->ttf->font_small, color);*/
+	SDL_Color background_color = {0, 255, 0, 255};
+	SDL_Color text_color = {255, 255, 255, 255};
+
+	draw_button(layout->help_home, "Help", 0, background_color, text_color);
+
+	log_info("draw_help_button() [Success]");
 }
 
 void	draw_bar(void)
@@ -289,14 +298,53 @@ void	draw_bar(void)
 
 	// Draw line
 	draw_line();
+
+	log_info("draw_bar() [Success]");
 }
+
+void	print_help(void)
+{
+	SDL_Rect	rect = {0, 0, WIN_WIDTH, WIN_HEIGHT};
+	SDL_Color	color = {255, 255, 255, 255};
+	int			w, h;
+
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 200);
+	SDL_SetRenderDrawBlendMode(graphic->renderer, SDL_BLENDMODE_BLEND);
+
+	// draw background
+	SDL_RenderFillRect(graphic->renderer, &rect);
+
+	SDL_SetRenderDrawColor(graphic->renderer, 255, 255, 255, 255);
+	// draw left lines
+	SDL_RenderDrawLine(graphic->renderer, layout->cover.x -1, layout->line.y, layout->cover.x -1, WIN_HEIGHT);
+	SDL_RenderDrawLine(graphic->renderer, layout->cover.x, layout->line.y, layout->cover.x, WIN_HEIGHT);
+	// draw right lines
+	SDL_RenderDrawLine(graphic->renderer, layout->cover.x + layout->cover.w + 1, layout->line.y, layout->cover.x + layout->cover.w + 1, WIN_HEIGHT);
+	SDL_RenderDrawLine(graphic->renderer, layout->cover.x + layout->cover.w, layout->line.y, layout->cover.x + layout->cover.w, WIN_HEIGHT);
+	// Draw Horizontal line
+	SDL_RenderDrawLine(graphic->renderer, 0, layout->line.y, WIN_WIDTH, layout->line.y);
+	SDL_RenderDrawLine(graphic->renderer, 0, layout->line.y + 1, WIN_WIDTH, layout->line.y + 1);
+
+	// draw prev book
+	TTF_SizeText(graphic->ttf->font_medium, "Previous book", &w, &h);
+	draw_text(graphic->renderer, (layout->cover.x / 2) - (w / 2), (WIN_HEIGHT / 2) - (h / 2), "Previous book", graphic->ttf->font_medium, color);
+
+	// draw next book
+	TTF_SizeText(graphic->ttf->font_medium, "Next book", &w, &h);
+	draw_text(graphic->renderer, layout->cover.x + layout->cover.w + ((layout->cover.x / 2) - (w / 2)), (WIN_HEIGHT / 2) - (h / 2), "Next book", graphic->ttf->font_medium, color);
+	// draw launch book
+	TTF_SizeText(graphic->ttf->font_medium, "Launch book", &w, &h);
+	draw_text(graphic->renderer, (layout->cover.x + (layout->cover.w / 2)) - (w / 2), (WIN_HEIGHT / 2) - (h / 2), "Open book", graphic->ttf->font_medium, color);
+
+	log_info("print_help() [Success]");
+}
+
 void	draw_home_menu(char *book)
 {
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
 	SDL_RenderClear(graphic->renderer);
 
 	// Draw bar
-	// TODO: draw element dynamic !!!
 	draw_bar();
 
 	// Draw title
@@ -313,6 +361,8 @@ void	draw_home_menu(char *book)
 
 	// Draw exit button
 	draw_exit_button();
+
+	draw_help_button();
 
 	deinit_mupdf();
 	log_info("draw_home_menu() [Success]");
