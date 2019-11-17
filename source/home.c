@@ -181,18 +181,13 @@ void	home_page(void)
 			help = false;
 		}
 		if (kDown & controller->help || touch_button(touch, e_help) == true) {
-			if (help == true) {
-				help = false;
-			} else {
-				help = true;
-			}
+			help = help == true ? false : true;
 			refresh = true;
 		}
 
 		if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
 			break ;
 		}
-		if (help == true) printf("true\n");
 	}
 
 	// free list

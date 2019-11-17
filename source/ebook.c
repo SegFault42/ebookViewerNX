@@ -251,10 +251,14 @@ void	ebook_reader(char *book)
 		if (ebook->last_page < 0) {
 			ebook->last_page = ebook->total_page -1;
 		}
-		if (kDown & controller->quit) {
+		if (kDown & controller->quit || (ebook->layout_orientation == LANDSCAPE && touch_button(touch, e_exit) == true)) {
 			ebook->read_mode = false;
 			break;
 		}
+		/*if (kDown & controller->help || touch_button(touch, e_help) == true) {*/
+			/*help = help == true ? false : true;*/
+			/*refresh = true;*/
+		/*}*/
 
 		// printing
 		if (refresh == true) {

@@ -204,13 +204,22 @@ void	draw_title(char *book)
 	log_info("draw_title() [Success]");
 }
 
-void	draw_line()
+void	draw_line(void)
 {
-	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	// if reading and landscape
-	if (/*ebook->layout_orientation == LANDSCAPE &&*/ ebook->read_mode == false) {
-		SDL_RenderFillRect(graphic->renderer, &layout->line);
+	if (ebook->read_mode == false || (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true)) {
+		layout->line.x = WIN_WIDTH / 32;
+		layout->line.y = WIN_HEIGHT / 12;
+		layout->line.w = WIN_WIDTH - (layout->line.x * 2);
+		layout->line.h = 2;
+	} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		layout->line.x = WIN_WIDTH - (WIN_WIDTH / 28);
+		layout->line.y = WIN_HEIGHT / 20;
+		layout->line.w = 2;
+		layout->line.h = WIN_HEIGHT - (layout->line.y * 2);
 	}
+
+	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderFillRect(graphic->renderer, &layout->line);
 
 	log_info("draw_line() [Success]");
 }
@@ -221,10 +230,8 @@ void	draw_app_name(void)
 	int			w = 0;
 	int			h = 0;
 
-
 	// in home menu
-	if (ebook->read_mode == false) {
-		// title app coord
+	if (ebook->read_mode == false || (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true)) {
 		TTF_SizeText(graphic->ttf->font_large, APP_NAME, &w, &h);
 		layout->app_title.x = (WIN_WIDTH / 2) - (w / 2);
 		layout->app_title.y = WIN_HEIGHT / 90;
@@ -239,20 +246,6 @@ void	draw_app_name(void)
 	}
 
 	log_info("draw_app_name() [Success]");
-}
-
-void	draw_page_number(void)
-{
-	int			progression_x = 0;
-	char		page_number[20] = {0};
-	SDL_Color	color = {255, 255, 255, 255};
-
-	count_page_number();
-
-	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
-	progression_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH_MEDIUM * strlen(page_number)) / 2));
-	draw_text(graphic->renderer, progression_x, 660, page_number, graphic->ttf->font_medium, color, 0);
-	log_info("draw_page_number() [Success]");
 }
 
 void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color, SDL_Color text_color)
@@ -277,6 +270,7 @@ void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color
 
 static void	draw_exit_button(void)
 {
+	// TODO: draw exit and help for portrait mode
 	layout->exit_home.w = WIN_WIDTH / 14;
 	layout->exit_home.h = layout->line.y / 1.30;
 	layout->exit_home.x = 0.8984375 * WIN_WIDTH;
@@ -305,20 +299,29 @@ static void	draw_help_button(void)
 	log_info("draw_help_button() [Success]");
 }
 
+
 void	draw_bar(void)
 {
-	// Line in top
-	layout->line.x = WIN_WIDTH / 32;
-	layout->line.y = WIN_HEIGHT / 12;
-	layout->line.w = WIN_WIDTH - (layout->line.x * 2);
-	layout->line.h = 2;
-	// Draw app name
 	draw_app_name();
-
-	// Draw line
 	draw_line();
+	draw_exit_button();
+	draw_help_button();
 
 	log_info("draw_bar() [Success]");
+}
+
+void	draw_page_number(void)
+{
+	int			progression_x = 0;
+	char		page_number[20] = {0};
+	SDL_Color	color = {255, 255, 255, 255};
+
+	count_page_number();
+
+	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
+	progression_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH_MEDIUM * strlen(page_number)) / 2));
+	draw_text(graphic->renderer, progression_x, 660, page_number, graphic->ttf->font_medium, color, 0);
+	log_info("draw_page_number() [Success]");
 }
 
 void	print_help(void)
@@ -377,11 +380,6 @@ void	draw_home_menu(char *book)
 
 	// Draw Page number
 	draw_page_number();
-
-	// Draw exit button
-	draw_exit_button();
-
-	draw_help_button();
 
 	deinit_mupdf();
 	log_info("draw_home_menu() [Success]");
