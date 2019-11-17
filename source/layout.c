@@ -16,16 +16,16 @@ bool	init_layout(void)
 		return (false);
 	}
 
-	// title app coord
-	TTF_SizeText(graphic->ttf->font_large, APP_NAME, &w, &h);
-	layout->app_title.x = (WIN_WIDTH / 2) - (w / 2);
-	layout->app_title.y = WIN_HEIGHT / 90;
+   /* // title app coord*/
+	/*TTF_SizeText(graphic->ttf->font_large, APP_NAME, &w, &h);*/
+	/*layout->app_title.x = (WIN_WIDTH / 2) - (w / 2);*/
+	/*layout->app_title.y = WIN_HEIGHT / 90;*/
 
-	// Line in top
-	layout->line.x = WIN_WIDTH / 32;
-	layout->line.y = WIN_HEIGHT / 12;
-	layout->line.w = WIN_WIDTH - (layout->line.x * 2);
-	layout->line.h = 2;
+	/*[>// Line in top<]*/
+	/*[>layout->line.x = WIN_WIDTH / 32;<]*/
+	/*[>layout->line.y = WIN_HEIGHT / 12;<]*/
+	/*[>layout->line.w = WIN_WIDTH - (layout->line.x * 2);<]*/
+	/*[>layout->line.h = 2;<]*/
 
 	// Cover position in home menu
 	layout->cover.w = COVER_WIDTH;

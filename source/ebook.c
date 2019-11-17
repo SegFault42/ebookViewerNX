@@ -261,6 +261,7 @@ void	ebook_reader(char *book)
 			if (render_page(book, ebook->last_page) == false) {
 				break ;
 			}
+			draw_bar();
 			SDL_RenderPresent(graphic->renderer);
 			save_last_page(book, ebook->last_page);
 			refresh = false;

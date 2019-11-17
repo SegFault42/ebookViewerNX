@@ -35,5 +35,6 @@ void	draw_home_menu(char *books);
 bool	init_ttf(void);
 void	deinit_ttf(void);
 void	print_help(void);
+void	draw_bar(void);
 
 #endif
