@@ -206,17 +206,32 @@ void	draw_title(char *book)
 
 void	draw_line(void)
 {
+	SDL_Rect	rect;
+	
 	if (ebook->read_mode == false || (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true)) {
 		layout->line.x = WIN_WIDTH / 32;
 		layout->line.y = WIN_HEIGHT / 12;
 		layout->line.w = WIN_WIDTH - (layout->line.x * 2);
 		layout->line.h = 2;
+
+		rect.x = 0;
+		rect.h = layout->line.y;
 	} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
 		layout->line.x = WIN_WIDTH - (WIN_WIDTH / 28);
 		layout->line.y = WIN_HEIGHT / 20;
 		layout->line.w = 2;
 		layout->line.h = WIN_HEIGHT - (layout->line.y * 2);
+
+		rect.x = layout->line.x;
+		rect.h = WIN_HEIGHT;
 	}
+
+	rect.y = 0;
+	rect.w = WIN_WIDTH;
+
+	// draw background bar
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
+	SDL_RenderFillRect(graphic->renderer, &rect);
 
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(graphic->renderer, &layout->line);
@@ -302,8 +317,8 @@ static void	draw_help_button(void)
 
 void	draw_bar(void)
 {
-	draw_app_name();
 	draw_line();
+	draw_app_name();
 	draw_exit_button();
 	draw_help_button();
 

@@ -4,6 +4,7 @@ extern t_graphic	*graphic;
 extern t_ebook		*ebook;
 extern t_transform	*trans;
 extern t_controller	*controller;
+extern t_layout		*layout;
 
 bool	init_mupdf(void)
 {
@@ -260,12 +261,18 @@ void	ebook_reader(char *book)
 			/*refresh = true;*/
 		/*}*/
 
+		if (kDown & KEY_A) {
+			layout->show_bar = !layout->show_bar;
+			refresh = true;
+		}
 		// printing
 		if (refresh == true) {
 			if (render_page(book, ebook->last_page) == false) {
 				break ;
 			}
-			draw_bar();
+			if (layout->show_bar == true) {
+				draw_bar();
+			}
 			SDL_RenderPresent(graphic->renderer);
 			save_last_page(book, ebook->last_page);
 			refresh = false;

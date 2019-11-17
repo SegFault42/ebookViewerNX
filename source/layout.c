@@ -16,28 +16,14 @@ bool	init_layout(void)
 		return (false);
 	}
 
-   /* // title app coord*/
-	/*TTF_SizeText(graphic->ttf->font_large, APP_NAME, &w, &h);*/
-	/*layout->app_title.x = (WIN_WIDTH / 2) - (w / 2);*/
-	/*layout->app_title.y = WIN_HEIGHT / 90;*/
-
-	/*[>// Line in top<]*/
-	/*[>layout->line.x = WIN_WIDTH / 32;<]*/
-	/*[>layout->line.y = WIN_HEIGHT / 12;<]*/
-	/*[>layout->line.w = WIN_WIDTH - (layout->line.x * 2);<]*/
-	/*[>layout->line.h = 2;<]*/
-
 	// Cover position in home menu
 	layout->cover.w = COVER_WIDTH;
 	layout->cover.h = COVER_HEIGHT;
 	layout->cover.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);
 	layout->cover.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;
 
-	// Help home
-	/*layout->help_home.x = 1150;*/
-	/*layout->help_home.y = 10;*/
-	/*layout->help_home.w = 90;*/
-	/*layout->help_home.h = 35;*/
+	// show bar default
+	layout->show_bar = true;
 
 	log_info("init_layout() [Success]");
 	return (true);

@@ -18,6 +18,7 @@ typedef struct		s_layout
 	SDL_Rect		help_home;
 	SDL_Rect		line;
 	SDL_Point		app_title;
+	bool			show_bar;
 }					t_layout;
 
 bool	init_layout(void);
