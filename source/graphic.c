@@ -263,7 +263,7 @@ void	draw_app_name(void)
 	log_info("draw_app_name() [Success]");
 }
 
-void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color, SDL_Color text_color)
+void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color, SDL_Color text_color, int angle)
 {
 	int	rect_text_w = 0;
 	int	rect_text_y = 0;
@@ -278,7 +278,7 @@ void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color
 	text_x = ((rect.w / 2) - (rect_text_w / 2)) + rect.x;
 	text_y = ((rect.h / 2) - (rect_text_y / 2)) + rect.y;
 
-	draw_text(graphic->renderer, text_x, text_y, text, graphic->ttf->font_small, text_color, 0);
+	draw_text(graphic->renderer, text_x, text_y, text, graphic->ttf->font_small, text_color, angle);
 
 	log_info("draw_button() [Success]");
 }
@@ -294,26 +294,35 @@ static void	draw_exit_button(void)
 	SDL_Color background_color = {0, 255, 0, 255};
 	SDL_Color text_color = {255, 255, 255, 255};
 
-	draw_button(layout->exit_home, "Exit", 0, background_color, text_color);
+	draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 0);
 
 	log_info("draw_exit_button() [Success]");
 }
 
 static void	draw_help_button(void)
 {
-	layout->help_home.w = WIN_WIDTH / 14;
-	layout->help_home.h = layout->line.y / 1.30;
-	layout->help_home.x = 0.8203125 * WIN_WIDTH;
-	layout->help_home.y = (layout->line.y - layout->help_home.h) / 2;
-
 	SDL_Color background_color = {0, 255, 0, 255};
 	SDL_Color text_color = {255, 255, 255, 255};
 
-	draw_button(layout->help_home, "Help", 0, background_color, text_color);
+	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		layout->help_home.w = 34;
+		layout->help_home.h = 58;
+
+		layout->help_home.x = 1240;
+		layout->help_home.y = 550;
+
+		draw_button(layout->help_home, "Help", 0, background_color, text_color, 90);
+	} else {
+		layout->help_home.w = WIN_WIDTH / 14;
+		layout->help_home.h = layout->line.y / 1.30;
+		layout->help_home.x = 0.8203125 * WIN_WIDTH;
+		layout->help_home.y = (layout->line.y - layout->help_home.h) / 2;
+
+		draw_button(layout->help_home, "Help", 0, background_color, text_color, 0);
+	}
 
 	log_info("draw_help_button() [Success]");
 }
-
 
 void	draw_bar(void)
 {
