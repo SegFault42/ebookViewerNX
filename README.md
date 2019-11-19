@@ -25,6 +25,7 @@
 - Add progress bar for progression
 - Print unknow book for unknow format
 - multiple view in home
+- add switch button (to switch layout)
 
 ## improvement :
 
