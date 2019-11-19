@@ -219,28 +219,29 @@ void	ebook_reader(char *book)
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-		touchPosition touch;
+		touchPosition touch = {0};
 
 		hidTouchRead(&touch, 0);
 
-		// input
-		if (kDown & controller->next_page || touch_next_page_read(touch)) {
+		if (kDown & controller->quit || (ebook->layout_orientation == LANDSCAPE && touch_button(touch, e_exit) == true)) {
+			ebook->read_mode = false;
+			break;
+		} else if (kDown & KEY_A || (touch_button(touch, e_bar) == true)) {
+			layout->show_bar = !layout->show_bar;
+			refresh = true;
+		} else if (kDown & controller->next_page || touch_next_page_read(touch)) {
 			ebook->last_page++;
 			refresh = true;
-		}
-		if (kDown & controller->prev_page || touch_prev_page_read(touch)) {
+		} else if (kDown & controller->prev_page || touch_prev_page_read(touch)) {
 			ebook->last_page--;
 			refresh = true;
-		}
-		if (kDown & controller->next_multiple_page) {
+		} else if (kDown & controller->next_multiple_page) {
 			ebook->last_page += 10;
 			refresh = true;
-		}
-		if (kDown & controller->prev_multiple_page) {
+		} else if (kDown & controller->prev_multiple_page) {
 			ebook->last_page -= 10;
 			refresh = true;
-		}
-		if (kDown & controller->layout) {
+		} else if (kDown & controller->layout) {
 			ebook->layout_orientation = !ebook->layout_orientation;
 			refresh = true;
 		}
@@ -252,19 +253,11 @@ void	ebook_reader(char *book)
 		if (ebook->last_page < 0) {
 			ebook->last_page = ebook->total_page -1;
 		}
-		if (kDown & controller->quit || (ebook->layout_orientation == LANDSCAPE && touch_button(touch, e_exit) == true)) {
-			ebook->read_mode = false;
-			break;
-		}
 		/*if (kDown & controller->help || touch_button(touch, e_help) == true) {*/
 			/*help = help == true ? false : true;*/
 			/*refresh = true;*/
 		/*}*/
 
-		if (kDown & KEY_A) {
-			layout->show_bar = !layout->show_bar;
-			refresh = true;
-		}
 		// printing
 		if (refresh == true) {
 			if (render_page(book, ebook->last_page) == false) {

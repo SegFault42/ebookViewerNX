@@ -206,7 +206,7 @@ void	draw_title(char *book)
 
 void	draw_line(void)
 {
-	SDL_Rect	rect;
+	SDL_Rect	rect = {0};
 	
 	if (ebook->read_mode == false || (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true)) {
 		layout->line.x = WIN_WIDTH / 32;
@@ -216,6 +216,12 @@ void	draw_line(void)
 
 		rect.x = 0;
 		rect.h = layout->line.y;
+
+		// coord to touch bar
+		layout->bar.x = 0;
+		layout->bar.y = 0;
+		layout->bar.w = WIN_WIDTH;
+		layout->bar.h = layout->line.y;
 	} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
 		layout->line.x = WIN_WIDTH - (WIN_WIDTH / 28);
 		layout->line.y = WIN_HEIGHT / 20;
@@ -224,6 +230,12 @@ void	draw_line(void)
 
 		rect.x = layout->line.x;
 		rect.h = WIN_HEIGHT;
+
+		// coord to touch bar
+		layout->bar.x = layout->line.x;
+		layout->bar.y = 0;
+		layout->bar.w = WIN_WIDTH - layout->line.x;
+		layout->bar.h = WIN_HEIGHT;
 	}
 
 	rect.y = 0;

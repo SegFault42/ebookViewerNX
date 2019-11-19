@@ -24,6 +24,7 @@ typedef struct		s_layout
 
 	// refacto
 	SDL_Rect		help_button;
+	SDL_Rect		bar;
 }					t_layout;
 
 bool	init_layout(void);
