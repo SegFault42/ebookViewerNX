@@ -136,27 +136,34 @@ void	home_page(void)
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-		touchPosition touch;
+		touchPosition touch = {0};
+		ebook->layout_orientation = LANDSCAPE;
 
 		hidTouchRead(&touch, 0);
 
 		// Draw the cover and book informations
-		if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
+		if (kDown & controller->help || touch_button(touch, e_help) == true) {
+			help = help == true ? false : true;
+			refresh = true;
+		} else if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
+			break ;
+		} else if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
+			ebook_reader(books[index]);
+			refresh = true;
+			help = false;
+		} else if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
 			index++;
+			if (index == nb_books) {
+				index = 0;
+			}
 			help = false;
 			refresh = true;
-		}
-		if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
+		} else if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
 			index--;
+			if (index < 0) {
+				index = nb_books -1;
+			}
 			help = false;
-			refresh = true;
-		}
-		// loop in array
-		if (index == nb_books) {
-			index = 0;
-			refresh = true;
-		} else if (index < 0) {
-			index = nb_books -1;
 			refresh = true;
 		}
 
@@ -175,24 +182,6 @@ void	home_page(void)
 			refresh = false;
 		}
 
-		if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
-			ebook_reader(books[index]);
-			refresh = true;
-			help = false;
-		}
-		if (kDown & controller->help || touch_button(touch, e_help) == true) {
-			if (help == true) {
-				help = false;
-			} else {
-				help = true;
-			}
-			refresh = true;
-		}
-
-		if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
-			break ;
-		}
-		if (help == true) printf("true\n");
 	}
 
 	// free list

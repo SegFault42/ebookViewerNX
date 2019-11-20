@@ -3,8 +3,10 @@
 
 #define WIN_WIDTH	1280
 #define WIN_HEIGHT	720
+// TODO: remove ---v
 #define CHAR_WIDTH_LARGE	22.5 // size of one character in px in X
 #define CHAR_WIDTH_MEDIUM	17.25 // size of one character in px in X
+
 #define COVER_WIDTH		350
 #define COVER_HEIGHT	500
 
@@ -35,5 +37,6 @@ void	draw_home_menu(char *books);
 bool	init_ttf(void);
 void	deinit_ttf(void);
 void	print_help(void);
+void	draw_bar(void);
 
 #endif

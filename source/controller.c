@@ -7,6 +7,10 @@ extern t_layout		*layout;
 
 bool	button_touch(touchPosition touch, SDL_Rect rect)
 {
+	if (touch.px == 0 || touch.py == 0) {
+		return (false);
+	}
+
 	if (touch.px >= (u32)(rect.x) &&
 			touch.px <= (u32)(rect.x + rect.w) &&
 			touch.py >= (u32)(rect.y) &&
@@ -53,11 +57,13 @@ bool	touch_prev_page_home(touchPosition touch)
 
 bool	touch_button(touchPosition touch, int button_id)
 {
-	if (button_id == e_exit && button_touch(touch, layout->exit_home) == true) {
+	if (button_id == e_exit && (ebook->layout_orientation == LANDSCAPE && button_touch(touch, layout->exit_home)) == true) {
 		return (true);
 	} else if (button_id == e_cover && button_touch(touch, layout->cover) == true) {
 		return (true);
 	} else if (button_id == e_help && button_touch(touch, layout->help_home) == true) {
+		return (true);
+	} else if (button_id == e_bar && button_touch(touch, layout->bar) == true) {
 		return (true);
 	}
 

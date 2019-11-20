@@ -22,7 +22,8 @@ enum button_id
 {
 	e_exit = 0,
 	e_help = 1,
-	e_cover = 2
+	e_cover = 2,
+	e_bar = 3
 };
 
 void			default_controller_layout(void);

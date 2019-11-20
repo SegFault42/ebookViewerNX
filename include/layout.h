@@ -13,11 +13,18 @@ typedef struct	s_transform
 
 typedef struct		s_layout
 {
+	// home
 	SDL_Rect		cover;
 	SDL_Rect		exit_home;
 	SDL_Rect		help_home;
+
 	SDL_Rect		line;
 	SDL_Point		app_title;
+	bool			show_bar;
+
+	// refacto
+	SDL_Rect		help_button;
+	SDL_Rect		bar;
 }					t_layout;
 
 bool	init_layout(void);
