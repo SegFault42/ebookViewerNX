@@ -112,7 +112,7 @@ static void	draw_text(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font
 	SDL_Texture	*message = NULL;
 	SDL_Rect	rect;
 
-	surface_message = TTF_RenderText_Blended(font, text, color);
+	surface_message = TTF_RenderUTF8_Blended(font, text, color);
 	if (surface_message == NULL) {
 		log_fatal("%s", TTF_GetError());
 		return ;
@@ -283,6 +283,15 @@ void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color
 
 	TTF_SizeText(graphic->ttf->font_small, text, &rect_text_w, &rect_text_y);
 
+	if (angle == 90 && rect.w < rect_text_w) {
+		if (rect.w < rect_text_w) {
+			rect.h = rect_text_w + 8;
+		}
+		if (rect.h < rect_text_y) {
+			rect.w = rect_text_y + 4;
+		}
+	}
+
 	SDL_SetRenderDrawColor(graphic->renderer, button_color.r, button_color.g, button_color.b, button_color.a);
 	SDL_RenderDrawRect(graphic->renderer, &rect);
 
@@ -342,12 +351,37 @@ static void	draw_help_button(void)
 	log_info("draw_help_button() [Success]");
 }
 
+static void	draw_rotate_button(void)
+{
+	SDL_Color background_color = {0, 255, 0, 255};
+	SDL_Color text_color = {255, 255, 255, 255};
+
+	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		layout->rotate_button.x = 1240;
+		layout->rotate_button.y = 120;
+		layout->rotate_button.w = 34;
+		layout->rotate_button.h = 58;
+
+		draw_button(layout->rotate_button, "Rotate", 0, background_color, text_color, 90);
+	} else {
+		layout->rotate_button.w = WIN_WIDTH / 14;
+		layout->rotate_button.h = layout->line.y / 1.30;
+		layout->rotate_button.x = 0.739125 * WIN_WIDTH;
+		layout->rotate_button.y = (layout->line.y - layout->rotate_button.h) / 2;
+
+		draw_button(layout->rotate_button, "Rotate", 0, background_color, text_color, 0);
+	}
+
+	log_info("draw_rotate_button() [Success]");
+}
+
 void	draw_bar(void)
 {
 	draw_line();
 	draw_app_name();
 	draw_exit_button();
 	draw_help_button();
+	draw_rotate_button();
 
 	log_info("draw_bar() [Success]");
 }
