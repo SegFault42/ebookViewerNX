@@ -51,7 +51,7 @@ static void	init_all(void)
 		free(controller);
 		free(layout);
 		log_fatal("init_all() : calloc [Failure]");
-		return ;
+		exit (-1);
 	}
 
 	default_controller_layout();

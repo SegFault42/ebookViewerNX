@@ -106,7 +106,6 @@ void	draw_ppm(fz_pixmap *ppm, bool cover)
 	log_info("draw_ppm() [Success]");
 }
 
-
 static void	draw_text(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font *font, SDL_Color color, int angle)
 {
 	SDL_Surface	*surface_message = NULL;
@@ -297,16 +296,24 @@ void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color
 
 static void	draw_exit_button(void)
 {
-	// TODO: draw exit and help for portrait mode
-	layout->exit_home.w = WIN_WIDTH / 14;
-	layout->exit_home.h = layout->line.y / 1.30;
-	layout->exit_home.x = 0.8984375 * WIN_WIDTH;
-	layout->exit_home.y = (layout->line.y - layout->exit_home.h) / 2;
+	SDL_Color	background_color = {0, 255, 0, 255};
+	SDL_Color	text_color = {255, 255, 255, 255};
 
-	SDL_Color background_color = {0, 255, 0, 255};
-	SDL_Color text_color = {255, 255, 255, 255};
+	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		layout->exit_home.x = 1240;
+		layout->exit_home.y = 615;
+		layout->exit_home.w = 34;
+		layout->exit_home.h = 58;
 
-	draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 0);
+		draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 90);
+	} else {
+		layout->exit_home.w = WIN_WIDTH / 14;
+		layout->exit_home.h = layout->line.y / 1.30;
+		layout->exit_home.x = 0.8984375 * WIN_WIDTH;
+		layout->exit_home.y = (layout->line.y - layout->exit_home.h) / 2;
+
+		draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 0);
+	}
 
 	log_info("draw_exit_button() [Success]");
 }
@@ -317,11 +324,10 @@ static void	draw_help_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
-		layout->help_home.w = 34;
-		layout->help_home.h = 58;
-
 		layout->help_home.x = 1240;
 		layout->help_home.y = 550;
+		layout->help_home.w = 34;
+		layout->help_home.h = 58;
 
 		draw_button(layout->help_home, "Help", 0, background_color, text_color, 90);
 	} else {

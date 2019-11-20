@@ -36,7 +36,6 @@ void	deinit_mupdf(void)
 	log_info("deinit_mupdf() [Success]");
 }
 
-
 bool	open_ebook(char *path)
 {
 	/* Open the document. */
@@ -213,6 +212,7 @@ void	save_last_page(char *book, int current_page)
 void	ebook_reader(char *book)
 {
 	bool	refresh = true;
+	bool	help = false;
 
 	ebook->read_mode = true;
 	while (appletMainLoop()) {
@@ -223,9 +223,12 @@ void	ebook_reader(char *book)
 
 		hidTouchRead(&touch, 0);
 
-		if (kDown & controller->quit || (ebook->layout_orientation == LANDSCAPE && touch_button(touch, e_exit) == true)) {
+		if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
 			ebook->read_mode = false;
 			break;
+		} else if (kDown & controller->help || touch_button(touch, e_help) == true) {
+			help = help == true ? false : true;
+			refresh = true;
 		} else if (kDown & KEY_A || (touch_button(touch, e_bar) == true)) {
 			layout->show_bar = !layout->show_bar;
 			refresh = true;
@@ -253,10 +256,6 @@ void	ebook_reader(char *book)
 		if (ebook->last_page < 0) {
 			ebook->last_page = ebook->total_page -1;
 		}
-		/*if (kDown & controller->help || touch_button(touch, e_help) == true) {*/
-			/*help = help == true ? false : true;*/
-			/*refresh = true;*/
-		/*}*/
 
 		// printing
 		if (refresh == true) {
