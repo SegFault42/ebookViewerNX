@@ -381,7 +381,9 @@ void	draw_bar(void)
 	draw_app_name();
 	draw_exit_button();
 	draw_help_button();
-	draw_rotate_button();
+	if (ebook->read_mode == true) {
+		draw_rotate_button();
+	}
 
 	log_info("draw_bar() [Success]");
 }

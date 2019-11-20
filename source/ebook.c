@@ -229,6 +229,9 @@ void	ebook_reader(char *book)
 		} else if (kDown & controller->help || touch_button(touch, e_help) == true) {
 			help = help == true ? false : true;
 			refresh = true;
+		} else if (kDown & controller->layout || touch_button(touch, e_rotate) == true) {
+			ebook->layout_orientation = !ebook->layout_orientation;
+			refresh = true;
 		} else if (kDown & KEY_A || (touch_button(touch, e_bar) == true)) {
 			layout->show_bar = !layout->show_bar;
 			refresh = true;
@@ -243,9 +246,6 @@ void	ebook_reader(char *book)
 			refresh = true;
 		} else if (kDown & controller->prev_multiple_page) {
 			ebook->last_page -= 10;
-			refresh = true;
-		} else if (kDown & controller->layout) {
-			ebook->layout_orientation = !ebook->layout_orientation;
 			refresh = true;
 		}
 

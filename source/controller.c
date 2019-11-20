@@ -63,6 +63,8 @@ bool	touch_button(touchPosition touch, int button_id)
 		return (true);
 	} else if (button_id == e_help && button_touch(touch, layout->help_home) == true) {
 		return (true);
+	} else if (button_id == e_rotate && button_touch(touch, layout->rotate_button) == true) {
+		return (true);
 	} else if (button_id == e_bar && button_touch(touch, layout->bar) == true) {
 		return (true);
 	}
