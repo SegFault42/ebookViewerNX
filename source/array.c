@@ -4,8 +4,10 @@ size_t	count_2d_array(char **array)
 {
 	size_t	idx = 0;
 
-	while (array[idx]) {
-		idx++;
+	if (array != NULL) {
+		while (array[idx]) {
+			idx++;
+		}
 	}
 
 	return (idx);

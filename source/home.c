@@ -12,7 +12,7 @@ static int	count_files_number(void)
 	DIR				*dir = NULL;
 	char			*ext = NULL;
 
-	dir = opendir("/switch/ebookReaderNX/");
+	dir = opendir("/switch/ebookViewerNX/");
 	if (dir == NULL) {
 		perror("opendir");
 		return (0);
@@ -46,7 +46,7 @@ static char	**get_ebook_list(void)
 		return (NULL);
 	}
 
-	dir = opendir("/switch/ebookReaderNX/");
+	dir = opendir("/switch/ebookViewerNX/");
 	if (dir == NULL) {
 		log_fatal("%s", strerror(errno));
 		return (NULL);
@@ -119,16 +119,12 @@ void	home_page(void)
 
 	// get all books
 	books = get_ebook_list();
-	if (books == NULL) {
-		log_fatal("Get ebook list failure");
-		return ;
-	}
-
 	nb_books = count_2d_array(books);
 	if (nb_books == 0) {
 		free(books);
 		books = NULL;
-		log_fatal("Please put ebook in /switch/ebookReaderNX");
+		draw_error("No books found. Please put ebook in /switch/ebookViewerNX");
+		log_fatal("Please put ebook in /switch/ebookViewerNX");
 		return ;
 	}
 
@@ -169,14 +165,13 @@ void	home_page(void)
 
 		// draw only if needed
 		if (refresh == true) {
+			/*draw_loading();*/
 			load_last_page(books[index]);
 			draw_home_menu(books[index]);
 			if (help == true) {
 				print_help();
-				SDL_RenderPresent(graphic->renderer);
-			} else {
-				SDL_RenderPresent(graphic->renderer);
 			}
+			SDL_RenderPresent(graphic->renderer);
 			touch.px = 0;
 			touch.py = 0;
 			refresh = false;

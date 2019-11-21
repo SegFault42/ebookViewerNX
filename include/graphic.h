@@ -10,7 +10,7 @@
 #define COVER_WIDTH		350
 #define COVER_HEIGHT	500
 
-#define APP_NAME	"EbookReaderNX v0.1"
+#define APP_NAME	"ebookViewerNX v0.1"
 
 #define COVER		0
 #define READ		1
@@ -38,5 +38,7 @@ bool	init_ttf(void);
 void	deinit_ttf(void);
 void	print_help(void);
 void	draw_bar(void);
+void	draw_loading(void);
+void	draw_error(char *msg);
 
 #endif

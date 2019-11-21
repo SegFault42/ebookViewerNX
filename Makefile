@@ -45,10 +45,10 @@ INCLUDES	:=	include ./libs/log.c/src ./libs/mupdf/include ./libs/mupdf/source/fi
 ROMFS		:=	romfs
 
 MAJOR		:= 0
-MINOR		:= 0
+MINOR		:= 1
 MICRO		:= 0
 
-APP_TITLE	:=	EbookReaderNX
+APP_TITLE	:=	EbookViewerNX
 APP_AUTHOR	:=	SegFault42
 APP_VERSION	:=	${MAJOR}.${MINOR}.${MICRO}
 
@@ -67,7 +67,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:=	-lSDL2 -lSDL2_ttf -lEGL -lglapi -ldrm_nouveau `sdl2-config --libs` -lstdc++ -lnx -lmupdf -lmupdf-third -lm -ltwili -lfreetype -ljpeg -lpng -lbz2
+LIBS	:=	-lSDL2 -lSDL2_ttf -lSDL2_image -lwebp -lEGL -lglapi -ldrm_nouveau `sdl2-config --libs` -lstdc++ -lnx -lmupdf -lmupdf-third -lm -ltwili -lfreetype -ljpeg -lpng -lbz2
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -169,7 +169,7 @@ endif
 all: $(BUILD)
 
 pc:
-	clang -g source/*.c libs/log.c/src/*.c -I include -I ./libs/log.c/src -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -DLOG_USE_COLOR -o EbookReaderNX_pc
+	clang -g source/*.c libs/log.c/src/*.c -I include -I ./libs/log.c/src -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -DLOG_USE_COLOR -o EbookViewerNX_pc
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@

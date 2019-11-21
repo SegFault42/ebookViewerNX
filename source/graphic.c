@@ -47,11 +47,18 @@ bool	init_graphic(void)
 		free(graphic);
 		return (false);
 	}
+	if (IMG_Init(IMG_INIT_PNG) < 0) {
+		log_fatal("IMG_Init(): %s\n", IMG_GetError());
+		SDL_Quit();
+		free(graphic);
+		return (false);
+	}
 
 	graphic->win = SDL_CreateWindow("", 0, 0, WIN_WIDTH, WIN_HEIGHT, 0);
 	if (graphic->win == NULL) {
 		log_fatal("SDL_CreateWindow(): %s\n", SDL_GetError());
 		SDL_Quit();
+		IMG_Quit();
 		free(graphic);
 		return (false);
 	}
@@ -61,9 +68,12 @@ bool	init_graphic(void)
 		log_fatal("SDL_CreateRenderer(): %s\n", SDL_GetError());
 		SDL_DestroyWindow(graphic->win);
 		SDL_Quit();
+		IMG_Quit();
 		free(graphic);
 		return (false);
 	}
+
+	SDL_SetRenderDrawBlendMode(graphic->renderer, SDL_BLENDMODE_BLEND);
 
 	log_info("init_graphic() [Success]");
 	return (true);
@@ -75,6 +85,7 @@ void	deinit_graphic(void)
 	SDL_DestroyRenderer(graphic->renderer);
 
 	SDL_Quit();
+	IMG_Quit();
 
 	log_info("deinit_graphic() [Success]");
 }
@@ -106,14 +117,13 @@ void	draw_ppm(fz_pixmap *ppm, bool cover)
 	log_info("draw_ppm() [Success]");
 }
 
-
 static void	draw_text(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font *font, SDL_Color color, int angle)
 {
 	SDL_Surface	*surface_message = NULL;
 	SDL_Texture	*message = NULL;
 	SDL_Rect	rect;
 
-	surface_message = TTF_RenderText_Blended(font, text, color);
+	surface_message = TTF_RenderUTF8_Blended(font, text, color);
 	if (surface_message == NULL) {
 		log_fatal("%s", TTF_GetError());
 		return ;
@@ -152,7 +162,7 @@ static bool	draw_cover(char *book)
 		layout->cover.h
 	};
 
-	sprintf(path, "/switch/ebookReaderNX/%s", book);
+	sprintf(path, "/switch/ebookViewerNX/%s", book);
 
 	init_mupdf();
 
@@ -284,6 +294,15 @@ void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color
 
 	TTF_SizeText(graphic->ttf->font_small, text, &rect_text_w, &rect_text_y);
 
+	if (angle == 90 && rect.w < rect_text_w) {
+		if (rect.w < rect_text_w) {
+			rect.h = rect_text_w + 8;
+		}
+		if (rect.h < rect_text_y) {
+			rect.w = rect_text_y + 4;
+		}
+	}
+
 	SDL_SetRenderDrawColor(graphic->renderer, button_color.r, button_color.g, button_color.b, button_color.a);
 	SDL_RenderDrawRect(graphic->renderer, &rect);
 
@@ -297,16 +316,24 @@ void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color
 
 static void	draw_exit_button(void)
 {
-	// TODO: draw exit and help for portrait mode
-	layout->exit_home.w = WIN_WIDTH / 14;
-	layout->exit_home.h = layout->line.y / 1.30;
-	layout->exit_home.x = 0.8984375 * WIN_WIDTH;
-	layout->exit_home.y = (layout->line.y - layout->exit_home.h) / 2;
+	SDL_Color	background_color = {0, 255, 0, 255};
+	SDL_Color	text_color = {255, 255, 255, 255};
 
-	SDL_Color background_color = {0, 255, 0, 255};
-	SDL_Color text_color = {255, 255, 255, 255};
+	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		layout->exit_home.x = 1240;
+		layout->exit_home.y = 615;
+		layout->exit_home.w = 34;
+		layout->exit_home.h = 58;
 
-	draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 0);
+		draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 90);
+	} else {
+		layout->exit_home.w = WIN_WIDTH / 14;
+		layout->exit_home.h = layout->line.y / 1.30;
+		layout->exit_home.x = 0.8984375 * WIN_WIDTH;
+		layout->exit_home.y = (layout->line.y - layout->exit_home.h) / 2;
+
+		draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 0);
+	}
 
 	log_info("draw_exit_button() [Success]");
 }
@@ -317,11 +344,10 @@ static void	draw_help_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
-		layout->help_home.w = 34;
-		layout->help_home.h = 58;
-
 		layout->help_home.x = 1240;
 		layout->help_home.y = 550;
+		layout->help_home.w = 34;
+		layout->help_home.h = 58;
 
 		draw_button(layout->help_home, "Help", 0, background_color, text_color, 90);
 	} else {
@@ -336,12 +362,39 @@ static void	draw_help_button(void)
 	log_info("draw_help_button() [Success]");
 }
 
+static void	draw_rotate_button(void)
+{
+	SDL_Color background_color = {0, 255, 0, 255};
+	SDL_Color text_color = {255, 255, 255, 255};
+
+	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		layout->rotate_button.x = 1240;
+		layout->rotate_button.y = 120;
+		layout->rotate_button.w = 34;
+		layout->rotate_button.h = 58;
+
+		draw_button(layout->rotate_button, "Rotate", 0, background_color, text_color, 90);
+	} else {
+		layout->rotate_button.w = WIN_WIDTH / 14;
+		layout->rotate_button.h = layout->line.y / 1.30;
+		layout->rotate_button.x = 0.739125 * WIN_WIDTH;
+		layout->rotate_button.y = (layout->line.y - layout->rotate_button.h) / 2;
+
+		draw_button(layout->rotate_button, "Rotate", 0, background_color, text_color, 0);
+	}
+
+	log_info("draw_rotate_button() [Success]");
+}
+
 void	draw_bar(void)
 {
 	draw_line();
 	draw_app_name();
 	draw_exit_button();
 	draw_help_button();
+	if (ebook->read_mode == true) {
+		draw_rotate_button();
+	}
 
 	log_info("draw_bar() [Success]");
 }
@@ -362,37 +415,25 @@ void	draw_page_number(void)
 
 void	print_help(void)
 {
-	SDL_Rect	rect = {0, 0, WIN_WIDTH, WIN_HEIGHT};
-	SDL_Color	color = {255, 255, 255, 255};
-	int			w, h;
+	SDL_Surface	*image = NULL;
 
-	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 200);
-	SDL_SetRenderDrawBlendMode(graphic->renderer, SDL_BLENDMODE_BLEND);
+	if (ebook->read_mode == false) {
+		image = IMG_Load("romfs:/help_home_landscape.png");
+	} else if (ebook->read_mode == true && ebook->layout_orientation == LANDSCAPE) {
+		image = IMG_Load("romfs:/help_read_landscape.png");
+	} else if (ebook->read_mode == true && ebook->layout_orientation == PORTRAIT) {
+		image = IMG_Load("romfs:/help_read_portrait.png");
+	}
 
-	// draw background
-	SDL_RenderFillRect(graphic->renderer, &rect);
-
-	SDL_SetRenderDrawColor(graphic->renderer, 255, 255, 255, 255);
-	// draw left lines
-	SDL_RenderDrawLine(graphic->renderer, layout->cover.x -1, layout->line.y, layout->cover.x -1, WIN_HEIGHT);
-	SDL_RenderDrawLine(graphic->renderer, layout->cover.x, layout->line.y, layout->cover.x, WIN_HEIGHT);
-	// draw right lines
-	SDL_RenderDrawLine(graphic->renderer, layout->cover.x + layout->cover.w + 1, layout->line.y, layout->cover.x + layout->cover.w + 1, WIN_HEIGHT);
-	SDL_RenderDrawLine(graphic->renderer, layout->cover.x + layout->cover.w, layout->line.y, layout->cover.x + layout->cover.w, WIN_HEIGHT);
-	// Draw Horizontal line
-	SDL_RenderDrawLine(graphic->renderer, 0, layout->line.y, WIN_WIDTH, layout->line.y);
-	SDL_RenderDrawLine(graphic->renderer, 0, layout->line.y + 1, WIN_WIDTH, layout->line.y + 1);
-
-	// draw prev book
-	TTF_SizeText(graphic->ttf->font_medium, "Previous book", &w, &h);
-	draw_text(graphic->renderer, (layout->cover.x / 2) - (w / 2), (WIN_HEIGHT / 2) - (h / 2), "Previous book", graphic->ttf->font_medium, color, 0);
-
-	// draw next book
-	TTF_SizeText(graphic->ttf->font_medium, "Next book", &w, &h);
-	draw_text(graphic->renderer, layout->cover.x + layout->cover.w + ((layout->cover.x / 2) - (w / 2)), (WIN_HEIGHT / 2) - (h / 2), "Next book", graphic->ttf->font_medium, color, 0);
-	// draw launch book
-	TTF_SizeText(graphic->ttf->font_medium, "Launch book", &w, &h);
-	draw_text(graphic->renderer, (layout->cover.x + (layout->cover.w / 2)) - (w / 2), (WIN_HEIGHT / 2) - (h / 2), "Open book", graphic->ttf->font_medium, color, 0);
+	if (image == NULL) {
+		log_warn("%s", IMG_GetError());
+	}
+	SDL_Texture	*texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+	if (texture == NULL) {
+		log_warn("%s", SDL_GetError());
+	}
+	SDL_RenderCopy(graphic->renderer, texture, NULL, NULL);
+	SDL_DestroyTexture(texture);
 
 	log_info("print_help() [Success]");
 }
@@ -419,4 +460,48 @@ void	draw_home_menu(char *book)
 
 	deinit_mupdf();
 	log_info("draw_home_menu() [Success]");
+}
+
+void	draw_loading(void)
+{
+	SDL_Color	color = {255, 255, 255, 255};
+
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(graphic->renderer);
+
+	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		draw_text(graphic->renderer, -50, 600, "Loading ...", graphic->ttf->font_medium, color, 90);
+	} else {
+		draw_text(graphic->renderer, 1100, 680, "Loading ...", graphic->ttf->font_medium, color, 0);
+	}
+
+	SDL_RenderPresent(graphic->renderer);
+
+	log_info("draw_loading() [Success]");
+}
+
+void	draw_error(char *msg)
+{
+	SDL_Color	color = {255, 255, 255, 255};
+	int			w = 0;
+	int			h = 0;
+
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(graphic->renderer);
+
+	TTF_SizeText(graphic->ttf->font_medium, msg, &w, &h);
+
+	draw_text(graphic->renderer, (WIN_WIDTH / 2) - (w / 2), (WIN_HEIGHT / 2) - (h / 2), msg, graphic->ttf->font_medium, color, 0);
+
+	while (appletMainLoop()) {
+		hidScanInput();
+
+		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+
+		if (kDown & KEY_PLUS) {
+			break ;
+		}
+
+		SDL_RenderPresent(graphic->renderer);
+	}
 }
