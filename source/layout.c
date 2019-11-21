@@ -41,9 +41,6 @@ void	set_layout(void)
 
 bool	init_layout(void)
 {
-	int w = 0;
-	int h = 0;
-
 	trans = (t_transform *)calloc(sizeof(t_transform), 1);
 	if (trans == NULL) {
 		log_info("init_layout() [Failure]");

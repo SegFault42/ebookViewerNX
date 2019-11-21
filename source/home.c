@@ -119,15 +119,11 @@ void	home_page(void)
 
 	// get all books
 	books = get_ebook_list();
-	if (books == NULL) {
-		log_fatal("Get ebook list failure");
-		return ;
-	}
-
 	nb_books = count_2d_array(books);
 	if (nb_books == 0) {
 		free(books);
 		books = NULL;
+		draw_error("No books found. Please put ebook in /switch/ebookViewerNX");
 		log_fatal("Please put ebook in /switch/ebookViewerNX");
 		return ;
 	}

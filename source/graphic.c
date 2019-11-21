@@ -481,3 +481,29 @@ void	draw_loading(void)
 
 	log_info("draw_loading() [Success]");
 }
+
+void	draw_error(char *msg)
+{
+	SDL_Color	color = {255, 255, 255, 255};
+	int			w = 0;
+	int			h = 0;
+
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(graphic->renderer);
+
+	TTF_SizeText(graphic->ttf->font_medium, msg, &w, &h);
+
+	draw_text(graphic->renderer, (WIN_WIDTH / 2) - (w / 2), (WIN_HEIGHT / 2) - (h / 2), msg, graphic->ttf->font_medium, color, 0);
+
+	while (appletMainLoop()) {
+		hidScanInput();
+
+		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+
+		if (kDown & KEY_PLUS) {
+			break ;
+		}
+
+		SDL_RenderPresent(graphic->renderer);
+	}
+}
