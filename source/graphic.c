@@ -47,11 +47,18 @@ bool	init_graphic(void)
 		free(graphic);
 		return (false);
 	}
+	if (IMG_Init(IMG_INIT_PNG) < 0) {
+		log_fatal("IMG_Init(): %s\n", IMG_GetError());
+		SDL_Quit();
+		free(graphic);
+		return (false);
+	}
 
 	graphic->win = SDL_CreateWindow("", 0, 0, WIN_WIDTH, WIN_HEIGHT, 0);
 	if (graphic->win == NULL) {
 		log_fatal("SDL_CreateWindow(): %s\n", SDL_GetError());
 		SDL_Quit();
+		IMG_Quit();
 		free(graphic);
 		return (false);
 	}
@@ -61,6 +68,7 @@ bool	init_graphic(void)
 		log_fatal("SDL_CreateRenderer(): %s\n", SDL_GetError());
 		SDL_DestroyWindow(graphic->win);
 		SDL_Quit();
+		IMG_Quit();
 		free(graphic);
 		return (false);
 	}
@@ -77,6 +85,7 @@ void	deinit_graphic(void)
 	SDL_DestroyRenderer(graphic->renderer);
 
 	SDL_Quit();
+	IMG_Quit();
 
 	log_info("deinit_graphic() [Success]");
 }
@@ -406,36 +415,25 @@ void	draw_page_number(void)
 
 void	print_help(void)
 {
-	SDL_Rect	rect = {0, 0, WIN_WIDTH, WIN_HEIGHT};
-	SDL_Color	color = {255, 255, 255, 255};
-	int			w, h;
+	SDL_Surface	*image = NULL;
 
-	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 200);
+	if (ebook->read_mode == false) {
+		image = IMG_Load("romfs:/help_home_landscape.png");
+	} else if (ebook->read_mode == true && ebook->layout_orientation == LANDSCAPE) {
+		image = IMG_Load("romfs:/help_read_landscape.png");
+	} else if (ebook->read_mode == true && ebook->layout_orientation == PORTRAIT) {
+		image = IMG_Load("romfs:/help_read_portrait.png");
+	}
 
-	// draw background
-	SDL_RenderFillRect(graphic->renderer, &rect);
-
-	SDL_SetRenderDrawColor(graphic->renderer, 255, 255, 255, 255);
-	// draw left lines
-	SDL_RenderDrawLine(graphic->renderer, layout->cover.x -1, layout->line.y, layout->cover.x -1, WIN_HEIGHT);
-	SDL_RenderDrawLine(graphic->renderer, layout->cover.x, layout->line.y, layout->cover.x, WIN_HEIGHT);
-	// draw right lines
-	SDL_RenderDrawLine(graphic->renderer, layout->cover.x + layout->cover.w + 1, layout->line.y, layout->cover.x + layout->cover.w + 1, WIN_HEIGHT);
-	SDL_RenderDrawLine(graphic->renderer, layout->cover.x + layout->cover.w, layout->line.y, layout->cover.x + layout->cover.w, WIN_HEIGHT);
-	// Draw Horizontal line
-	SDL_RenderDrawLine(graphic->renderer, 0, layout->line.y, WIN_WIDTH, layout->line.y);
-	SDL_RenderDrawLine(graphic->renderer, 0, layout->line.y + 1, WIN_WIDTH, layout->line.y + 1);
-
-	// draw prev book
-	TTF_SizeText(graphic->ttf->font_medium, "Previous book", &w, &h);
-	draw_text(graphic->renderer, (layout->cover.x / 2) - (w / 2), (WIN_HEIGHT / 2) - (h / 2), "Previous book", graphic->ttf->font_medium, color, 0);
-
-	// draw next book
-	TTF_SizeText(graphic->ttf->font_medium, "Next book", &w, &h);
-	draw_text(graphic->renderer, layout->cover.x + layout->cover.w + ((layout->cover.x / 2) - (w / 2)), (WIN_HEIGHT / 2) - (h / 2), "Next book", graphic->ttf->font_medium, color, 0);
-	// draw launch book
-	TTF_SizeText(graphic->ttf->font_medium, "Launch book", &w, &h);
-	draw_text(graphic->renderer, (layout->cover.x + (layout->cover.w / 2)) - (w / 2), (WIN_HEIGHT / 2) - (h / 2), "Open book", graphic->ttf->font_medium, color, 0);
+	if (image == NULL) {
+		log_warn("%s", IMG_GetError());
+	}
+	SDL_Texture	*texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+	if (texture == NULL) {
+		log_warn("%s", SDL_GetError());
+	}
+	SDL_RenderCopy(graphic->renderer, texture, NULL, NULL);
+	SDL_DestroyTexture(texture);
 
 	log_info("print_help() [Success]");
 }

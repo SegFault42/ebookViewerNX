@@ -170,10 +170,8 @@ void	home_page(void)
 			draw_home_menu(books[index]);
 			if (help == true) {
 				print_help();
-				SDL_RenderPresent(graphic->renderer);
-			} else {
-				SDL_RenderPresent(graphic->renderer);
 			}
+			SDL_RenderPresent(graphic->renderer);
 			touch.px = 0;
 			touch.py = 0;
 			refresh = false;

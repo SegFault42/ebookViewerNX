@@ -230,21 +230,27 @@ void	ebook_reader(char *book)
 		} else if (kDown & controller->layout || touch_button(touch, e_rotate) == true) {
 			ebook->layout_orientation = !ebook->layout_orientation;
 			refresh = true;
+			help = false;
 		} else if (kDown & KEY_A || (touch_button(touch, e_bar) == true)) {
 			layout->show_bar = !layout->show_bar;
 			refresh = true;
+			help = false;
 		} else if (kDown & controller->next_page || touch_next_page_read(touch)) {
 			ebook->last_page++;
 			refresh = true;
+			help = false;
 		} else if (kDown & controller->prev_page || touch_prev_page_read(touch)) {
 			ebook->last_page--;
 			refresh = true;
+			help = false;
 		} else if (kDown & controller->next_multiple_page) {
 			ebook->last_page += 10;
 			refresh = true;
+			help = false;
 		} else if (kDown & controller->prev_multiple_page) {
 			ebook->last_page -= 10;
 			refresh = true;
+			help = false;
 		}
 
 		// Overflow
@@ -263,6 +269,9 @@ void	ebook_reader(char *book)
 			}
 			if (layout->show_bar == true) {
 				draw_bar();
+			}
+			if (help == true) {
+				print_help();
 			}
 			SDL_RenderPresent(graphic->renderer);
 			save_last_page(book, ebook->last_page);

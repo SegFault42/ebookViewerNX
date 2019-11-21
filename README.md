@@ -40,7 +40,9 @@ Ebook reader for nintendo switch using mupdf library
 
 ```
 git clone --recursive https://github.com/SegFault42/ebookViewerNX
-cd ebookViewerNX
+cd ebookViewerNX/libs
+make -f Makefile.mupdf
+cd ../
 make
 ```
 
