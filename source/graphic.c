@@ -56,7 +56,7 @@ bool	init_graphic(void)
 		return (false);
 	}
 
-	graphic->renderer = SDL_CreateRenderer(graphic->win, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	graphic->renderer = SDL_CreateRenderer(graphic->win, 0, 0);
 	if (graphic->renderer == NULL) {
 		log_fatal("SDL_CreateRenderer(): %s\n", SDL_GetError());
 		SDL_DestroyWindow(graphic->win);
@@ -461,4 +461,20 @@ void	draw_home_menu(char *book)
 
 	deinit_mupdf();
 	log_info("draw_home_menu() [Success]");
+}
+
+void	draw_loading(int percent)
+{
+	if (percent == 1) {
+		SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+		SDL_RenderClear(graphic->renderer);
+	}
+
+	SDL_Rect	rect = {0, 0, percent, 2};
+	SDL_SetRenderDrawColor(graphic->renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderFillRect(graphic->renderer, &rect);
+
+	SDL_RenderPresent(graphic->renderer);
+
+	log_info("draw_loading() [Success]");
 }

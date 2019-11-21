@@ -94,16 +94,20 @@ static bool	render_page(char *book, int current_page)
 {
 	char	*path = NULL;
 
+	draw_loading(1);
 	path = (char *)calloc(sizeof(char) , strlen("/switch/ebookReaderNX/") + strlen(book) + 1);
 	if (path == NULL) {
 		log_fatal("calloc [Failure]");
 		return (false);
 	}
+	draw_loading(128);
 
 	strcat(path, "/switch/ebookReaderNX/");
 	strcat(path, book);
+	draw_loading(128 * 2);
 
 	init_mupdf();
+	draw_loading(128 * 3);
 	if (open_ebook(path) == false) {
 		deinit_mupdf();
 		free(path);
@@ -111,6 +115,7 @@ static bool	render_page(char *book, int current_page)
 		return (false);
 	}
 
+	draw_loading(128 * 4);
 	free(path);
 	path = NULL;
 
@@ -118,29 +123,35 @@ static bool	render_page(char *book, int current_page)
 		deinit_mupdf();
 		return (false);
 	}
+	draw_loading(128 * 5);
 	// check out of range index
 	if (ebook->total_page < 0 || current_page >= ebook->total_page) {
 		log_fatal("page number out of range: %d (page count %d)\n", ebook->total_page + 1, current_page);
 		deinit_mupdf();
 		return (false);
 	}
+	draw_loading(128 * 6);
 
 	get_page_info(current_page);
+	draw_loading(128 * 7);
 
 	if (ebook->layout_orientation == PORTRAIT) {
 		portrait_default();
 	} else if (ebook->layout_orientation == LANDSCAPE) {
 		landscape_default();
 	}
+	draw_loading(128 * 8);
 
 	if (convert_page_to_ppm(current_page) == false) {
 		deinit_mupdf();
 		return (false);
 	}
 
+	draw_loading(128 * 10);
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(graphic->renderer);
 	draw_ppm(ebook->ppm, READ);
+	/*draw_loading(128 * 9);*/
 
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
 	deinit_mupdf();
@@ -259,6 +270,7 @@ void	ebook_reader(char *book)
 
 		// printing
 		if (refresh == true) {
+			/*draw_loading();*/
 			if (render_page(book, ebook->last_page) == false) {
 				break ;
 			}
