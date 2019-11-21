@@ -153,7 +153,7 @@ static bool	draw_cover(char *book)
 		layout->cover.h
 	};
 
-	sprintf(path, "/switch/ebookReaderNX/%s", book);
+	sprintf(path, "/switch/ebookViewerNX/%s", book);
 
 	init_mupdf();
 

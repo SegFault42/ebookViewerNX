@@ -12,7 +12,7 @@ static int	count_files_number(void)
 	DIR				*dir = NULL;
 	char			*ext = NULL;
 
-	dir = opendir("/switch/ebookReaderNX/");
+	dir = opendir("/switch/ebookViewerNX/");
 	if (dir == NULL) {
 		perror("opendir");
 		return (0);
@@ -46,7 +46,7 @@ static char	**get_ebook_list(void)
 		return (NULL);
 	}
 
-	dir = opendir("/switch/ebookReaderNX/");
+	dir = opendir("/switch/ebookViewerNX/");
 	if (dir == NULL) {
 		log_fatal("%s", strerror(errno));
 		return (NULL);
@@ -128,7 +128,7 @@ void	home_page(void)
 	if (nb_books == 0) {
 		free(books);
 		books = NULL;
-		log_fatal("Please put ebook in /switch/ebookReaderNX");
+		log_fatal("Please put ebook in /switch/ebookViewerNX");
 		return ;
 	}
 

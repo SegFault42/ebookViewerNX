@@ -95,14 +95,14 @@ static bool	render_page(char *book, int current_page)
 	char	*path = NULL;
 
 	//draw_loading(1);
-	path = (char *)calloc(sizeof(char) , strlen("/switch/ebookReaderNX/") + strlen(book) + 1);
+	path = (char *)calloc(sizeof(char) , strlen("/switch/ebookViewerNX/") + strlen(book) + 1);
 	if (path == NULL) {
 		log_fatal("calloc [Failure]");
 		return (false);
 	}
 	//draw_loading(128);
 
-	strcat(path, "/switch/ebookReaderNX/");
+	strcat(path, "/switch/ebookViewerNX/");
 	strcat(path, book);
 	//draw_loading(128 * 2);
 

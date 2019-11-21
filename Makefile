@@ -48,7 +48,7 @@ MAJOR		:= 0
 MINOR		:= 0
 MICRO		:= 0
 
-APP_TITLE	:=	EbookReaderNX
+APP_TITLE	:=	EbookViewerNX
 APP_AUTHOR	:=	SegFault42
 APP_VERSION	:=	${MAJOR}.${MINOR}.${MICRO}
 
@@ -169,7 +169,7 @@ endif
 all: $(BUILD)
 
 pc:
-	clang -g source/*.c libs/log.c/src/*.c -I include -I ./libs/log.c/src -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -DLOG_USE_COLOR -o EbookReaderNX_pc
+	clang -g source/*.c libs/log.c/src/*.c -I include -I ./libs/log.c/src -L/usr/local/lib -lmupdf -lmupdf-third -I/usr/include/SDL2 -D_REENTRANT -pthread -lSDL2 -lm -DLOG_USE_COLOR -o EbookViewerNX_pc
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
