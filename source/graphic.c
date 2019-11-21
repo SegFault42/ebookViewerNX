@@ -56,7 +56,7 @@ bool	init_graphic(void)
 		return (false);
 	}
 
-	graphic->renderer = SDL_CreateRenderer(graphic->win, 0, 0);
+	graphic->renderer = SDL_CreateRenderer(graphic->win, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (graphic->renderer == NULL) {
 		log_fatal("SDL_CreateRenderer(): %s\n", SDL_GetError());
 		SDL_DestroyWindow(graphic->win);
@@ -64,6 +64,8 @@ bool	init_graphic(void)
 		free(graphic);
 		return (false);
 	}
+
+	SDL_SetRenderDrawBlendMode(graphic->renderer, SDL_BLENDMODE_BLEND);
 
 	log_info("init_graphic() [Success]");
 	return (true);
@@ -409,7 +411,6 @@ void	print_help(void)
 	int			w, h;
 
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 200);
-	SDL_SetRenderDrawBlendMode(graphic->renderer, SDL_BLENDMODE_BLEND);
 
 	// draw background
 	SDL_RenderFillRect(graphic->renderer, &rect);
@@ -463,16 +464,18 @@ void	draw_home_menu(char *book)
 	log_info("draw_home_menu() [Success]");
 }
 
-void	draw_loading(int percent)
+void	draw_loading(void)
 {
-	if (percent == 1) {
-		SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
-		SDL_RenderClear(graphic->renderer);
-	}
+	SDL_Color	color = {255, 255, 255, 255};
 
-	SDL_Rect	rect = {0, 0, percent, 2};
-	SDL_SetRenderDrawColor(graphic->renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(graphic->renderer, &rect);
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(graphic->renderer);
+
+	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		draw_text(graphic->renderer, -50, 600, "Loading ...", graphic->ttf->font_medium, color, 90);
+	} else {
+		draw_text(graphic->renderer, 1100, 680, "Loading ...", graphic->ttf->font_medium, color, 0);
+	}
 
 	SDL_RenderPresent(graphic->renderer);
 

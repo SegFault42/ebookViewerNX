@@ -169,6 +169,7 @@ void	home_page(void)
 
 		// draw only if needed
 		if (refresh == true) {
+			/*draw_loading();*/
 			load_last_page(books[index]);
 			draw_home_menu(books[index]);
 			if (help == true) {

@@ -38,6 +38,6 @@ bool	init_ttf(void);
 void	deinit_ttf(void);
 void	print_help(void);
 void	draw_bar(void);
-void	draw_loading(int percent);
+void	draw_loading(void);
 
 #endif
