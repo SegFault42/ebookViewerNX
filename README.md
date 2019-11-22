@@ -19,6 +19,23 @@ Ebook reader for nintendo switch using mupdf library
 - Warning : ebook title must not have '='
 - Enjoy !
 
+## Control :
+- Home menu :
+	Launch ebook : A
+	Next book : Right ( with Right joystick )
+	Previous book : Left ( with Right joystick )
+	Quit : Start button
+	Help : X button
+- Reading :
+	Hide/Show bar : A
+	Portrait/Landscape : ZR
+	Next page : Right ( with Right joystick )
+	Previous page : Left ( with Right joystick )
+	Next 10 pages : Up ( with Right joystick )
+	Previous 10 pages : Down ( with Right joystick )
+	Quit : Start button
+	Help : X button
+
 ## Progress roadmap :
 - [x] Read ebook (.pdf, .epub)
 - [x] landscape/portrait
