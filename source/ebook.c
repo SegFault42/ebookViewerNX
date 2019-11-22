@@ -221,13 +221,13 @@ void	ebook_reader(char *book)
 
 		hidTouchRead(&touch, 0);
 
-		if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
+		if (kDown & controller->quit || (layout->show_bar == true && touch_button(touch, e_exit) == true)) {
 			ebook->read_mode = false;
 			break;
-		} else if (kDown & controller->help || touch_button(touch, e_help) == true) {
+		} else if (kDown & controller->help || (layout->show_bar == true && touch_button(touch, e_help) == true)) {
 			help = help == true ? false : true;
 			refresh = true;
-		} else if (kDown & controller->layout || touch_button(touch, e_rotate) == true) {
+		} else if (kDown & controller->layout || (layout->show_bar == true && touch_button(touch, e_rotate) == true)) {
 			ebook->layout_orientation = !ebook->layout_orientation;
 			refresh = true;
 			help = false;
