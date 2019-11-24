@@ -46,6 +46,7 @@ Ebook reader for nintendo switch using mupdf library
 - [x] info screen
 - [x] menu bar
 - [ ] Portrait view in home menu
+- [ ] Night mode
 - [ ] .cbr support
 - [ ] Sort by last read
 - [ ] print current page (10/250)

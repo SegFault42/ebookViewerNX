@@ -345,7 +345,7 @@ static void	draw_help_button(void)
 
 	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
 		layout->help_home.x = 1240;
-		layout->help_home.y = 550;
+		layout->help_home.y = 545;
 		layout->help_home.w = 34;
 		layout->help_home.h = 58;
 
@@ -389,7 +389,11 @@ static void	draw_rotate_button(void)
 void	draw_bar(void)
 {
 	draw_line();
-	draw_app_name();
+	if (ebook->read_mode == false) {
+		draw_app_name();
+	} else {
+		draw_page_number();
+	}
 	draw_exit_button();
 	draw_help_button();
 	if (ebook->read_mode == true) {
@@ -401,31 +405,54 @@ void	draw_bar(void)
 
 void	draw_page_number(void)
 {
-	int			progression_x = 0;
-	char		page_number[20] = {0};
 	SDL_Color	color = {255, 255, 255, 255};
-	SDL_Rect	rect = {layout->cover.x, 700, layout->cover.w, 2};
-
-	count_page_number();
+	char		page_number[20] = {0};
+	SDL_Rect	rect = {0};
+	int			x = 0;
+	int			w = 0;
+	int			h = 0;
+	float		percentage = 0;
 
 	// Draw page number
 	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
-	progression_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH_MEDIUM * strlen(page_number)) / 2));
-	draw_text(graphic->renderer, progression_x, 660, page_number, graphic->ttf->font_medium, color, 0);
+	TTF_SizeText(graphic->ttf->font_medium, page_number, &w, &h);
+	x = (WIN_WIDTH / 2) - (w / 2);
+	if (ebook->read_mode == false) {
+		draw_text(graphic->renderer, x, 660, page_number, graphic->ttf->font_medium, color, 0);
+	} else if (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true) {
+		draw_text(graphic->renderer, x, 10, page_number, graphic->ttf->font_medium, color, 0);
+	} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		draw_text(graphic->renderer, 1205, (WIN_HEIGHT / 2) - (h / 2), page_number, graphic->ttf->font_medium, color, 90);
+	}
 
-	//Draw bar
+	// Draw bar
 	// Background
-	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == false) {
-		// TODO : calculate this value 
-		rect.h = 0;
+	if (ebook->read_mode == false) {
+		rect.x = layout->cover.x;
+		rect.y = 700;
+		rect.w = layout->cover.w;
+		rect.h = 2;
+	} else if (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true) {
+		rect.x = (WIN_WIDTH / 2) - (400 / 2);
+		rect.y = 50;
+		rect.w = 400;
+		rect.h = 2;
+	} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		rect.x = 1243;
+		rect.y = (WIN_HEIGHT / 2) - (300 / 2);
+		rect.w = 2;
+		rect.h = 300;
 	}
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 150, 0, 255);
 	SDL_RenderFillRect(graphic->renderer, &rect);
 
 	//Foreground
-	float percentage = ((float)layout->cover.w / (float)ebook->total_page) * (float)ebook->last_page;
-	percentage = round(percentage);
-	rect.w = (int)percentage;
+	percentage = round(((float)layout->cover.w / (float)ebook->total_page) * (float)ebook->last_page);
+	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		rect.h = (int)percentage;
+	} else {
+		rect.w = (int)percentage;
+	}
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, 255);
 	SDL_RenderFillRect(graphic->renderer, &rect);
 
@@ -475,6 +502,7 @@ void	draw_home_menu(char *book)
 	}
 
 	// Draw Page number
+	count_page_number();
 	draw_page_number();
 
 	deinit_mupdf();

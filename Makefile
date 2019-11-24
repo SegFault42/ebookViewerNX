@@ -73,7 +73,7 @@ LIBS	:=	-lSDL2 -lSDL2_ttf -lSDL2_image -lwebp -lEGL -lglapi -ldrm_nouveau `sdl2-
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX) /opt/devkitpro/twili-libnx $(CURDIR)/libs/mupdf
+LIBDIRS	:= $(PORTLIBS) $(LIBNX) /opt/devkitpro/twili-libnx $(CURDIR)/libs/mupdf 
 
 
 #---------------------------------------------------------------------------------

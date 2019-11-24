@@ -114,10 +114,6 @@ static bool	render_page(char *book, int current_page)
 	free(path);
 	path = NULL;
 
-	if (count_page_number() == false) {
-		deinit_mupdf();
-		return (false);
-	}
 	// check out of range index
 	if (ebook->total_page < 0 || current_page >= ebook->total_page) {
 		log_fatal("page number out of range: %d (page count %d)\n", ebook->total_page + 1, current_page);

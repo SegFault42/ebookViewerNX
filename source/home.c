@@ -176,7 +176,6 @@ void	home_page(void)
 			touch.py = 0;
 			refresh = false;
 		}
-
 	}
 
 	// free list
