@@ -404,12 +404,31 @@ void	draw_page_number(void)
 	int			progression_x = 0;
 	char		page_number[20] = {0};
 	SDL_Color	color = {255, 255, 255, 255};
+	SDL_Rect	rect = {layout->cover.x, 700, layout->cover.w, 2};
 
 	count_page_number();
 
+	// Draw page number
 	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
 	progression_x = ((WIN_WIDTH / 2) - ((CHAR_WIDTH_MEDIUM * strlen(page_number)) / 2));
 	draw_text(graphic->renderer, progression_x, 660, page_number, graphic->ttf->font_medium, color, 0);
+
+	//Draw bar
+	// Background
+	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == false) {
+		// TODO : calculate this value 
+		rect.h = 0;
+	}
+	SDL_SetRenderDrawColor(graphic->renderer, 0, 150, 0, 255);
+	SDL_RenderFillRect(graphic->renderer, &rect);
+
+	//Foreground
+	float percentage = ((float)layout->cover.w / (float)ebook->total_page) * (float)ebook->last_page;
+	percentage = round(percentage);
+	SDL_Rect	rect.w = (int)percentage;
+	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, 255);
+	SDL_RenderFillRect(graphic->renderer, &rect1);
+
 	log_info("draw_page_number() [Success]");
 }
 
