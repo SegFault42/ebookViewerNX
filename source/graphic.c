@@ -345,7 +345,7 @@ static void	draw_help_button(void)
 
 	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
 		layout->help_home.x = 1240;
-		layout->help_home.y = 550;
+		layout->help_home.y = 545;
 		layout->help_home.w = 34;
 		layout->help_home.h = 58;
 
