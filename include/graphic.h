@@ -40,5 +40,6 @@ void	print_help(void);
 void	draw_bar(void);
 void	draw_loading(void);
 void	draw_error(char *msg);
+void	draw_page_number(void);
 
 #endif
