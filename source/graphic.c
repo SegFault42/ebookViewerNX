@@ -425,9 +425,9 @@ void	draw_page_number(void)
 	//Foreground
 	float percentage = ((float)layout->cover.w / (float)ebook->total_page) * (float)ebook->last_page;
 	percentage = round(percentage);
-	SDL_Rect	rect.w = (int)percentage;
+	rect.w = (int)percentage;
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, 255);
-	SDL_RenderFillRect(graphic->renderer, &rect1);
+	SDL_RenderFillRect(graphic->renderer, &rect);
 
 	log_info("draw_page_number() [Success]");
 }
