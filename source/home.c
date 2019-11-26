@@ -133,7 +133,6 @@ void	home_page(void)
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 		touchPosition touch = {0};
-		ebook->layout_orientation = LANDSCAPE;
 
 		hidTouchRead(&touch, 0);
 
@@ -147,6 +146,9 @@ void	home_page(void)
 			ebook_reader(books[index]);
 			refresh = true;
 			help = false;
+		} else if (kDown & controller->layout || touch_button(touch, e_rotate) == true) {
+			ebook->layout_orientation = !ebook->layout_orientation;
+			refresh = true;
 		} else if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
 			index++;
 			if (index == nb_books) {
