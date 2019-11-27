@@ -142,10 +142,10 @@ void	home_page(void)
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 		u64 kUp = hidKeysUp(CONTROLLER_P1_AUTO);
 		touchPosition touch = {0};
-		ebook->layout_orientation = LANDSCAPE;
 
 		hidTouchRead(&touch, 0);
 
+<<<<<<< HEAD
 		if (touch.px != 0 && touch.py != 0) {
 			memcpy(&clicked.touch, &touch, sizeof(touchPosition));
 		}
@@ -174,6 +174,32 @@ void	home_page(void)
 				}
 				help = false;
 				refresh = true;
+=======
+		// Draw the cover and book informations
+		if (kDown & controller->help || touch_button(touch, e_help) == true) {
+			help = help == true ? false : true;
+			refresh = true;
+		} else if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
+			break ;
+		} else if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
+			ebook_reader(books[index]);
+			refresh = true;
+			help = false;
+		} else if (kDown & controller->layout || touch_button(touch, e_rotate) == true) {
+			ebook->layout_orientation = !ebook->layout_orientation;
+			refresh = true;
+		} else if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
+			index++;
+			if (index == nb_books) {
+				index = 0;
+			}
+			help = false;
+			refresh = true;
+		} else if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
+			index--;
+			if (index < 0) {
+				index = nb_books -1;
+>>>>>>> c3b71130e1fb9f711fa658440ab1e23f5a13f439
 			}
 			memset(&clicked.touch, 0, sizeof(touchPosition));
 		}
