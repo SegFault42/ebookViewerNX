@@ -29,5 +29,6 @@
 #include "array.h"
 #include "get_next_line.h"
 #include "controller.h"
+#include "init.h"
 
 #endif
