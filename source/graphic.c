@@ -439,7 +439,7 @@ void	draw_page_number(void)
 	x = (WIN_WIDTH / 2) - (w / 2);
 	if (ebook->read_mode == false && ebook->layout_orientation == LANDSCAPE) {
 		draw_text(graphic->renderer, x, 660, page_number, graphic->ttf->font_medium, color, 0);
-	if (ebook->read_mode == false && ebook->layout_orientation == LANDSCAPE) {
+	} else if (ebook->read_mode == false && ebook->layout_orientation == LANDSCAPE) {
 		//TODO : here
 		draw_text(graphic->renderer, x, 660, page_number, graphic->ttf->font_medium, color, 0);
 	} else if (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true) {
