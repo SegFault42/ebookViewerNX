@@ -18,7 +18,6 @@ jobs:
         DEVKITPRO: /opt/devkitpro
         DEVKITARM: /opt/devkitpro/devkitARM
         DEVKITPPC: /opt/devkitpro/devkitPPC
-        DEVKITA64: /opt/devkitpro/devkitA64
     - name: make lib
       run: env && cd libs && make -f Makefile.mupdf && cd ..
     - name: make project
