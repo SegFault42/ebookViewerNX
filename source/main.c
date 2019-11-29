@@ -11,6 +11,7 @@ t_layout			*layout = NULL;
 int main(void)
 {
 	init_all();
+	extract_cbr("/a.cbr");
 
 	home_page();
 
