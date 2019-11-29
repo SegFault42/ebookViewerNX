@@ -40,7 +40,7 @@ static void	draw_text(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font
 {
 	SDL_Surface	*surface_message = NULL;
 	SDL_Texture	*message = NULL;
-	SDL_Rect	rect;
+	SDL_Rect	rect = {0};
 	SDL_Point	point = {0};
 
 	surface_message = TTF_RenderUTF8_Blended(font, text, color);
@@ -114,8 +114,8 @@ static bool	draw_cover(char *book)
 	fz_drop_pixmap(ebook->ctx, ebook->ppm);
 
 	// Draw rect around cover
-	/*SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);*/
-	/*SDL_RenderDrawRect(graphic->renderer, &layout->cover);*/
+	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawRect(graphic->renderer, &layout->cover);
 
 	log_info("draw_cover() [Success]");
 	return (true);
@@ -350,17 +350,16 @@ void	draw_page_number(void)
 
 	// Draw page number
 	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
+
 	TTF_SizeText(graphic->ttf->font_medium, page_number, &w, &h);
 	x = (WIN_WIDTH / 2) - (w / 2);
+
 	if (ebook->read_mode == false && ebook->layout_orientation == LANDSCAPE) {
-		draw_text(graphic->renderer, x, 660, page_number, graphic->ttf->font_medium, color, 0);
-	} else if (ebook->read_mode == false && ebook->layout_orientation == LANDSCAPE) {
-		//TODO : here
 		draw_text(graphic->renderer, x, 660, page_number, graphic->ttf->font_medium, color, 0);
 	} else if (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true) {
 		draw_text(graphic->renderer, x, 10, page_number, graphic->ttf->font_medium, color, 0);
 	} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
-		draw_text(graphic->renderer, 1205, 400, page_number, graphic->ttf->font_medium, color, 90);
+		draw_text(graphic->renderer, 1280, (WIN_HEIGHT / 2) - (w  /2), page_number, graphic->ttf->font_medium, color, 90);
 	}
 
 	// Draw bar
@@ -385,12 +384,14 @@ void	draw_page_number(void)
 	SDL_RenderFillRect(graphic->renderer, &rect);
 
 	//Foreground
-	percentage = round(((float)layout->cover.w / (float)ebook->total_page) * (float)ebook->last_page);
 	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		percentage = round(((float)rect.h / (float)ebook->total_page) * (float)ebook->last_page);
 		rect.h = (int)percentage;
 	} else {
+		percentage = round(((float)rect.w / (float)ebook->total_page) * (float)ebook->last_page);
 		rect.w = (int)percentage;
 	}
+
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, 255);
 	SDL_RenderFillRect(graphic->renderer, &rect);
 

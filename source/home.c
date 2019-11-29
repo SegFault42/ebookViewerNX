@@ -109,13 +109,6 @@ static void	load_last_page(char *book)
 	log_info("load_last_page() [Success]");
 }
 
-typedef struct	s_touch
-{
-	touchPosition touch;
-	/*bool		pressed;*/
-	/*bool		release;*/
-}				t_touch;
-
 void	home_page(void)
 {
 	char	**books = NULL;
@@ -123,7 +116,6 @@ void	home_page(void)
 	int		nb_books = 0;
 	bool	refresh = true;
 	bool	help = false;
-	t_touch	clicked = {0};
 
 	// get all books
 	books = get_ebook_list();
@@ -137,7 +129,6 @@ void	home_page(void)
 	}
 
 	while (appletMainLoop()) {
-		ebook->layout_orientation == PORTRAIT;
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
@@ -146,43 +137,35 @@ void	home_page(void)
 
 		hidTouchRead(&touch, 0);
 
-		if (touch.px != 0 && touch.py != 0) {
-			memcpy(&clicked.touch, &touch, sizeof(touchPosition));
-		}
-
 		/*Draw the cover and book informations*/
-		if (touch.px == 0 && touch.py == 0) {
-			memcpy(&touch, &clicked.touch, sizeof(touchPosition));
-			if (kDown & controller->help || touch_button(touch, e_help) == true) {
-				help = help == true ? false : true;
-				refresh = true;
-			} else if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
-				ebook_reader(books[index]);
-				refresh = true;
-				help = false;
-			} else if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
-				index++;
-				if (index == nb_books) {
-					index = 0;
-				}
-				help = false;
-				refresh = true;
-			} else if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
-				index--;
-				if (index < 0) {
-					index = nb_books -1;
-				}
-				help = false;
-				refresh = true;
-			}
-			memset(&clicked.touch, 0, sizeof(touchPosition));
-		}
 		if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
 			break ;
+		} else if (kDown & controller->help || touch_button(touch, e_help) == true) {
+			help = help == true ? false : true;
+			refresh = true;
+		} else if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
+			ebook_reader(books[index]);
+			refresh = true;
+			help = false;
+		} else if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
+			index++;
+			if (index == nb_books) {
+				index = 0;
+			}
+			help = false;
+			refresh = true;
+		} else if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
+			index--;
+			if (index < 0) {
+				index = nb_books -1;
+			}
+			help = false;
+			refresh = true;
 		}
 
 		// draw only if needed
 		if (refresh == true) {
+			ebook->layout_orientation = LANDSCAPE;
 			/*draw_loading();*/
 			load_last_page(books[index]);
 			draw_home_menu(books[index]);
