@@ -14,6 +14,6 @@ jobs:
     - name: update
       run: sudo apt-get update && sudo apt-get -y install build-essential && source /etc/profile.d/devkit-env.sh && export DEVKITA64=/opt/devkitpro/devkitA64 && export DEVKITPRO=/opt/devkitpro && export DEVKITARM=/opt/devkitpro/devkitARM && export DEVKITPPC=/opt/devkitpro/devkitPPC && export DEVKITA64=/opt/devkitpro/devkitA64
     - name: make lib
-      run: cd libs && make -f Makefile.mupdf && cd ..
+      run: env && cd libs && make -f Makefile.mupdf && cd ..
     - name: make project
       run: make 
