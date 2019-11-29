@@ -21,7 +21,7 @@ static int	count_files_number(void)
 	while ((entry = readdir(dir)) != NULL) {
 		if (entry->d_type == DT_REG) {
 			ext = strrchr(entry->d_name, '.');
-			if (ext != NULL && (!strcmp(ext, ".pdf") || !strcmp(ext, ".epub"))) {
+			if (ext != NULL && (!strcmp(ext, ".pdf") || !strcmp(ext, ".epub") || !strcmp(ext, ".cbz"))) {
 				nb++;
 			}
 		}
@@ -62,7 +62,7 @@ static char	**get_ebook_list(void)
 	for (int i = 0; (entry = readdir(dir)) != NULL;) {
 		if (entry->d_type == DT_REG) {
 			ext = strrchr(entry->d_name, '.');
-			if (ext != NULL && ( !strcmp(ext, ".pdf") || !strcmp(ext, ".epub"))) {
+			if (ext != NULL && ( !strcmp(ext, ".pdf") || !strcmp(ext, ".epub") || !strcmp(ext, ".cbz"))) {
 				file_list[i] = strdup(entry->d_name);
 				i++;
 			}
@@ -121,10 +121,10 @@ void	home_page(void)
 	books = get_ebook_list();
 	nb_books = count_2d_array(books);
 	if (nb_books == 0) {
-		free(books);
-		books = NULL;
 		draw_error("No books found. Please put ebook in /switch/ebookViewerNX");
 		log_fatal("Please put ebook in /switch/ebookViewerNX");
+		free(books);
+		books = NULL;
 		return ;
 	}
 
@@ -132,17 +132,17 @@ void	home_page(void)
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+		u64 kUp = hidKeysUp(CONTROLLER_P1_AUTO);
 		touchPosition touch = {0};
-		ebook->layout_orientation = LANDSCAPE;
 
 		hidTouchRead(&touch, 0);
 
-		// Draw the cover and book informations
-		if (kDown & controller->help || touch_button(touch, e_help) == true) {
+		/*Draw the cover and book informations*/
+		if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
+			break ;
+		} else if (kDown & controller->help || touch_button(touch, e_help) == true) {
 			help = help == true ? false : true;
 			refresh = true;
-		} else if (kDown & controller->quit || touch_button(touch, e_exit) == true) {
-			break ;
 		} else if (kDown & controller->launch_book || touch_button(touch, e_cover) == true) {
 			ebook_reader(books[index]);
 			refresh = true;
@@ -165,6 +165,7 @@ void	home_page(void)
 
 		// draw only if needed
 		if (refresh == true) {
+			ebook->layout_orientation = LANDSCAPE;
 			/*draw_loading();*/
 			load_last_page(books[index]);
 			draw_home_menu(books[index]);

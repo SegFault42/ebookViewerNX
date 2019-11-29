@@ -41,12 +41,6 @@ void	set_layout(void)
 
 bool	init_layout(void)
 {
-	trans = (t_transform *)calloc(sizeof(t_transform), 1);
-	if (trans == NULL) {
-		log_info("init_layout() [Failure]");
-		return (false);
-	}
-
 	// Cover position in home menu
 	layout->cover.w = COVER_WIDTH;
 	layout->cover.h = COVER_HEIGHT;
