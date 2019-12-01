@@ -11,6 +11,11 @@ t_layout			*layout = NULL;
 int main(void)
 {
 	init_all();
+	/*extract_cbr("/a.cbr");*/
+
+	lblInitialize();
+	lblSetCurrentBrightnessSetting(1.0);
+	lblExit();
 
 	home_page();
 

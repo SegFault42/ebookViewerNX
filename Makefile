@@ -41,7 +41,7 @@ TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source ./libs/log.c/src
 DATA		:=	data
-INCLUDES	:=	include ./libs/log.c/src ./libs/mupdf/include ./libs/mupdf/source/fitz
+INCLUDES	:=	include ./libs/log.c/src ./libs/mupdf/include ./libs/mupdf/source/fitz ./libs/archive/include
 ROMFS		:=	romfs
 
 MAJOR		:= 0
@@ -67,13 +67,13 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:=	-lSDL2 -lSDL2_ttf -lSDL2_image -lwebp -lEGL -lglapi -ldrm_nouveau `sdl2-config --libs` -lstdc++ -lnx -lmupdf -lmupdf-third -lm -ltwili -lfreetype -ljpeg -lpng -lbz2
+LIBS	:=	-lSDL2 -lSDL2_ttf -lSDL2_image -lwebp -lEGL -lglapi -ldrm_nouveau `sdl2-config --libs` -larchive -llzma -lz -lstdc++ -lnx -lmupdf -lmupdf-third -lm -ltwili -lfreetype -ljpeg -lpng -lbz2
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX) /opt/devkitpro/twili-libnx $(CURDIR)/libs/mupdf 
+LIBDIRS	:= $(PORTLIBS) $(LIBNX) /opt/devkitpro/twili-libnx $(CURDIR)/libs/mupdf $(CURDIR)/libs/archive
 
 
 #---------------------------------------------------------------------------------
