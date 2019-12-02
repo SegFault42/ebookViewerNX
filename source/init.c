@@ -70,6 +70,8 @@ void	init_all(void)
 	}
 
 	create_requiered_folder();
+
+	log_info("init_all() [Success]");
 }
 
 void	deinit_all(void)
@@ -94,6 +96,8 @@ void	deinit_all(void)
 	#ifdef __TWILI__
 		twiliExit();
 	#endif
+
+	log_info("deinit_all() [Success]");
 }
 
 bool	init_ttf(void)

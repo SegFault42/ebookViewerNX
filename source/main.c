@@ -11,11 +11,14 @@ t_layout			*layout = NULL;
 int main(void)
 {
 	init_all();
-	/*extract_cbr("/a.cbr");*/
+	if (extract_cbr("/a.cbr", 0) == NULL) {
+		log_warn("Extract cbr failed");
+		draw_error("Extract cbr failed");
+	}
 
-	lblInitialize();
-	lblSetCurrentBrightnessSetting(1.0);
-	lblExit();
+	/*lblInitialize();*/
+	/*lblSetCurrentBrightnessSetting(1.0);*/
+	/*lblExit();*/
 
 	home_page();
 

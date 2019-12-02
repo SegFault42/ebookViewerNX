@@ -1,64 +1,10 @@
 #include "common.h"
 
-static u64 count_files(const char *path)
-{
-	struct archive	*handle = NULL;
-	u64				count = 0;
-	int				ret = 0;
-
-	handle = archive_read_new();
-	if (handle == NULL) {
-		log_warn("%s", archive_error_string(handle));
-		return (-1);
-	}
-
-	ret = archive_read_support_format_all(handle);
-	if (ret != ARCHIVE_OK) {
-		log_warn("%s", archive_error_string(handle));
-		return (-1);
-	}
-
-	ret = archive_read_open_filename(handle, path, 1024);
-	if (ret != ARCHIVE_OK) {
-		printf("%s\n", archive_error_string(handle));
-		printf("archive_read_open_filename%d\n", ret);
-		return 1;
-	}
-
-	for (;;) {
-		struct archive_entry *entry = NULL;
-
-		ret = archive_read_next_header(handle, &entry);
-		if (ret == ARCHIVE_EOF) {
-			break;
-		}
-
-		count++;
-	}
-
-	ret = archive_read_free(handle);
-
-	return (count);
-}
-
-typedef struct		s_cbr
-{
-	struct archive	*handle;
-	struct archive	*dst;
-	u64				max;
-}					t_cbr;
-
-static bool	init_cbr(t_cbr *cbr, char *path)
+static bool	init_cbr(t_cbr *cbr, const char *path)
 {
 	int	ret = 0;
 
 	cbr->handle = archive_read_new();
-	if (cbr->handle == NULL) {
-		log_warn("%s", archive_error_string(cbr->handle));
-		return (false);
-	}
-
-	cbr->dst = archive_write_disk_new();
 	if (cbr->handle == NULL) {
 		log_warn("%s", archive_error_string(cbr->handle));
 		return (false);
@@ -76,60 +22,222 @@ static bool	init_cbr(t_cbr *cbr, char *path)
 		return (false);
 	}
 
+	log_info("init_cbr() [Success]");
+
 	return (true);
 }
 
-bool	extract_cbr(char *path)
+static void	deinit_cbr(t_cbr *cbr)
 {
-	t_cbr	cbr = {0};
+	archive_read_free(cbr->handle);
+
+	log_info("deinit_cbr() [Success]");
+}
+
+static u64 count_files(t_cbr *cbr, const char *path)
+{
 	int		ret = 0;
+	size_t	count = 0;
 
-	cbr.max = count_files(path);
-
-	if (init_cbr(&cbr, path) == false) {
-		return (false);
+	if (init_cbr(cbr, path) == false) {
+		return (-1);
 	}
-
-	mkdir("/tmp", 0777);
 
 	for (;;) {
 		struct archive_entry *entry = NULL;
-		ret = archive_read_next_header(handle, &cbr.entry);
+
+		ret = archive_read_next_header(cbr->handle, &entry);
 		if (ret == ARCHIVE_EOF) {
 			break;
 		}
 
-		if (ret != ARCHIVE_OK) {
-			Menu_DisplayError("archive_read_next_header failed:", ret);
+		count++;
+	}
+
+	deinit_cbr(cbr);
+
+	log_info("count_files() [Success]");
+	return (count);
+}
+
+/*void	write_image_in_file(char **image, size_t length)*/
+/*{*/
+	/*int	fd = 0;*/
+
+	/*fd = open("/hello.jpg", O_CREAT | O_RDWR, 0777);*/
+	/*if (fd == -1) {*/
+		/*perror("");*/
+	/*}*/
+
+	/*write(fd, *image, length);*/
+
+	/*free(*image);*/
+	/**image = NULL;*/
+/*}*/
+
+static int write_data(t_cbr *cbr)
+{
+	int		ret = 0;
+	size_t	total_length = 0;
+
+	for (;;) {
+		const void	*chunk = NULL;
+		size_t		length = 0;
+		s64			offset = 0;
+
+		ret = archive_read_data_block(cbr->handle, &chunk, &length, &offset);
+		if (ret == ARCHIVE_EOF) {
+			/*write_image_in_file(&cbr->image, total_length);*/
+			return (ARCHIVE_OK);
+		}
+
+		if (ret != ARCHIVE_OK)
+			return ret;
+
+		// concat all chunks in one array
+		total_length += length;
+		cbr->image = (char *)realloc(cbr->image, total_length);
+		if (cbr->image == NULL) {
+			perror("");
+			free(cbr->image);
+			cbr->image = NULL;
+			return (-1);
+		}
+
+		memcpy(&cbr->image[total_length - length], chunk, length);
+	}
+
+
+	log_info("write_data() [Success]");
+	return -1;
+}
+
+static int myCompare(const void* a, const void* b)
+{
+	return (strcmp(*(const char**)a, *(const char**)b));
+}
+
+char	**get_archive_content_file_name(char *path, t_cbr *cbr)
+{
+	u64				count = 0;
+	int				ret = 0;
+	char			**array = NULL;
+
+	array = (char **)calloc(sizeof(char *), cbr->max + 1);
+	if (array == NULL) {
+		log_warn("calloc error\n");
+		return (NULL);
+	}
+
+	if (init_cbr(cbr, path) == false) {
+		return (NULL);
+	}
+
+	for (;;) {
+		struct archive_entry *entry = NULL;
+
+		ret = archive_read_next_header(cbr->handle, &entry);
+		if (ret == ARCHIVE_EOF) {
+			break;
+		}
+
+		const char *entry_path = archive_entry_pathname(entry);
+		if (entry_path == NULL) {
+			log_warn("%s", archive_error_string(cbr->handle));
+			break ;
+		}
+		array[count] = strdup(entry_path);
+
+		count++;
+	}
+
+	deinit_cbr(cbr);
+
+	// Sort files name
+	qsort(array, cbr->max, sizeof(const char *), myCompare);
+
+	log_info("get_archive_content_file_name() [Success]");
+
+	return (array);
+}
+
+char	*extract_cbr(char *path, int page_number)
+{
+	char	**array = NULL;
+	t_cbr	cbr = {0};
+	int		ret = 0;
+	u64		count = 0;
+
+	// create temp directory
+	if (isFileExist("/tmp") == false) {
+		if (mkdir("/tmp", 0777) == -1) {
+			log_warn("%s", strerror(errno));
+			return (NULL);
+		}
+	}
+
+	// Count files number in archive
+	cbr.max = count_files(&cbr, path);
+	if (page_number > cbr.max) {
+		log_warn("page %d not exist", page_number);
+		return (NULL);
+	} else if (cbr.max == -1) {
+		log_warn("count_files [Failure]");
+		return (NULL);
+	}
+
+	// Sort and store all filename in char **
+	array = get_archive_content_file_name(path, &cbr);
+	if (array == NULL) {
+		return (NULL);
+	}
+
+	if (init_cbr(&cbr, path) == false) {
+		free_2d_array(array);
+		return (NULL);
+	}
+
+	for (;;) {
+		struct archive_entry	*entry = NULL;
+		char					new_path[1024] = {0};
+
+		ret = archive_read_next_header(cbr.handle, &entry);
+		if (ret == ARCHIVE_EOF) {
+			break;
+		} else if (ret != ARCHIVE_OK) {
+			log_warn("%s", archive_error_string(cbr.handle));
 			if (ret != ARCHIVE_WARN) {
 				break;
 			}
 		}
 
 		const char *entry_path = archive_entry_pathname(entry);
-		char new_path[1024];
-
-		ret = snprintf(new_path, sizeof(new_path), "%s/%s", dest_path, entry_path);
-		ret = archive_entry_update_pathname_utf8(entry, new_path);
-		if (!ret) {
-			Menu_DisplayError("archive_entry_update_pathname_utf8:", ret);
-			break;
+		if (entry_path == NULL) {
+			log_warn("%s", archive_error_string(cbr.handle));
+			ret = -1;
+			break ;
 		}
 
-		ret = archive_write_disk_set_options(dst, ARCHIVE_EXTRACT_UNLINK);
-		ret = archive_write_header(dst, entry);
-		if (ret != ARCHIVE_OK) {
-			Menu_DisplayError("archive_write_header failed:", ret);
-			break;
+		if (!strcmp(array[page_number], entry_path)) {
+			snprintf(new_path, sizeof(new_path), "%s/%s", "/tmp", entry_path);
+			ret = archive_entry_update_pathname_utf8(entry, new_path);
+			if (!ret) {
+				log_warn("%s", archive_error_string(cbr.handle));
+				break;
+			}
+
+			ret = write_data(&cbr);
+
+			break ;
 		}
 
-		ret = Archive_WriteData(handle, dst);
-		ret = archive_write_finish_entry(dst);
 		count++;
 	}
 
-	ret = archive_write_free(cbr.dst);
-	ret = archive_read_free(cbr.handle);
+	free_2d_array(array);
 
-	return (true);
+	deinit_cbr(&cbr);
+
+	log_info("extract_cbr() [Success]");
+	return (cbr.image);
 }
