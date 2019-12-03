@@ -21,7 +21,7 @@ static int	count_files_number(void)
 	while ((entry = readdir(dir)) != NULL) {
 		if (entry->d_type == DT_REG) {
 			ext = strrchr(entry->d_name, '.');
-			if (ext != NULL && (!strcmp(ext, ".pdf") || !strcmp(ext, ".epub") || !strcmp(ext, ".cbz"))) {
+			if (ext != NULL && ( !strcmp(ext, ".pdf") || !strcmp(ext, ".epub") || !strcmp(ext, ".cbz") || !strcmp(ext, ".cbr"))) {
 				nb++;
 			}
 		}
@@ -62,7 +62,7 @@ static char	**get_ebook_list(void)
 	for (int i = 0; (entry = readdir(dir)) != NULL;) {
 		if (entry->d_type == DT_REG) {
 			ext = strrchr(entry->d_name, '.');
-			if (ext != NULL && ( !strcmp(ext, ".pdf") || !strcmp(ext, ".epub") || !strcmp(ext, ".cbz"))) {
+			if (ext != NULL && ( !strcmp(ext, ".pdf") || !strcmp(ext, ".epub") || !strcmp(ext, ".cbz") || !strcmp(ext, ".cbr"))) {
 				file_list[i] = strdup(entry->d_name);
 				i++;
 			}

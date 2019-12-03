@@ -15,6 +15,9 @@
 #define COVER		0
 #define READ		1
 
+#define DEFAULT		0
+#define CBR			1
+
 typedef struct		s_ttf
 {
 	TTF_Font		*font_small;
@@ -36,6 +39,7 @@ void	print_help(void);
 void	draw_bar(void);
 void	draw_loading(void);
 void	draw_error(char *msg);
-void	draw_page_number(void);
+void	draw_page_number(int type);
+void	draw_message_box(char *msg);
 
 #endif

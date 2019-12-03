@@ -5,6 +5,7 @@ extern t_transform	*trans;
 extern t_ebook		*ebook;
 extern t_controller	*controller;
 extern t_layout		*layout;
+extern t_cbr		*cbr;
 
 static void	create_requiered_folder(void)
 {
@@ -44,13 +45,15 @@ void	init_all(void)
 	controller = (t_controller *)calloc(sizeof(t_controller), 1);
 	layout = (t_layout *)calloc(sizeof(t_layout), 1);
 	trans = (t_transform *)calloc(sizeof(t_transform), 1);
-	if (graphic == NULL || graphic->ttf == NULL || ebook == NULL || controller == NULL || layout == NULL || trans == NULL) {
+	cbr = (t_cbr *)calloc(sizeof(t_cbr), 1);
+	if (graphic == NULL || graphic->ttf == NULL || ebook == NULL || controller == NULL || layout == NULL || trans == NULL || cbr == NULL) {
 		free(graphic);
 		free(graphic->ttf);
 		free(ebook);
 		free(controller);
 		free(layout);
 		free(trans);
+		free(cbr);
 		log_fatal("init_all() : calloc [Failure]");
 		exit (-1);
 	}
@@ -142,7 +145,7 @@ bool	init_graphic(void)
 		free(graphic);
 		return (false);
 	}
-	if (IMG_Init(IMG_INIT_PNG) < 0) {
+	if (IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG) < 0) {
 		log_fatal("IMG_Init(): %s\n", IMG_GetError());
 		SDL_Quit();
 		free(graphic);

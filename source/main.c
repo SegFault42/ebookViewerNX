@@ -7,14 +7,11 @@ t_transform			*trans = NULL;
 t_ebook				*ebook = NULL;
 t_controller		*controller = NULL;
 t_layout			*layout = NULL;
+t_cbr			*cbr = NULL;
 
 int main(void)
 {
 	init_all();
-	if (extract_cbr("/a.cbr", 0) == NULL) {
-		log_warn("Extract cbr failed");
-		draw_error("Extract cbr failed");
-	}
 
 	/*lblInitialize();*/
 	/*lblSetCurrentBrightnessSetting(1.0);*/

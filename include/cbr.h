@@ -7,10 +7,11 @@
 typedef struct		s_cbr
 {
 	struct archive	*handle;
-	char			*image;
-	int				max;
+	struct archive	*dst;
+	int				total_page; // total page number
+	char			*path;
 }					t_cbr;
 
-char	*extract_cbr(char *path, int page_number);
+bool	extract_cbr(char *path, int page_number);
 
 #endif
