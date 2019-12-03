@@ -69,21 +69,6 @@ static u64 count_files(t_cbr *cbr, const char *path)
 	return (count);
 }
 
-void	write_image_in_file(char **image, size_t length)
-{
-	int	fd = 0;
-
-	fd = open("/hello.jpg", O_CREAT | O_RDWR, 0777);
-	if (fd == -1) {
-		perror("");
-	}
-
-	write(fd, *image, length);
-
-	free(*image);
-	*image = NULL;
-}
-
 // TODO: review return value
 static int write_data(t_cbr *cbr)
 {
@@ -106,32 +91,6 @@ static int write_data(t_cbr *cbr)
 		if (ret != ARCHIVE_OK)
 			return ret;
 	}
-
-	/*for (;;) {*/
-		/*const void	*chunk = NULL;*/
-		/*size_t		length = 0;*/
-		/*s64			offset = 0;*/
-
-		/*ret = archive_read_data_block(cbr->handle, &chunk, &length, &offset);*/
-		/*if (ret == ARCHIVE_EOF) {*/
-			/*write_image_in_file(&cbr->image, total_length);*/
-			/*return (ARCHIVE_OK);*/
-		/*}*/
-
-		/*if (ret != ARCHIVE_OK)*/
-			/*return ret;*/
-
-		/*// concat all chunks in one array*/
-		/*total_length += length;*/
-		/*cbr->image = (char *)realloc(cbr->image, total_length);*/
-		/*if (cbr->image == NULL) {*/
-			/*perror("");*/
-			/*return (-1);*/
-		/*}*/
-
-		/*memcpy(&cbr->image[total_length - length], chunk, length);*/
-	/*}*/
-
 
 	log_info("write_data() [Success]");
 	return -1;
@@ -202,7 +161,6 @@ bool	extract_cbr(char *path, int page_number)
 
 	// Count files number in archive
 	cbr->total_page = count_files(cbr, path);
-	printf("%d\n", cbr->total_page);
 	if (page_number > cbr->total_page) {
 		log_warn("page %d not exist", page_number);
 		return (false);

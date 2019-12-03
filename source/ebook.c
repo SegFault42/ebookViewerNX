@@ -5,6 +5,7 @@ extern t_ebook		*ebook;
 extern t_transform	*trans;
 extern t_controller	*controller;
 extern t_layout		*layout;
+extern t_cbr		*cbr;
 
 bool	init_mupdf(void)
 {
@@ -94,13 +95,13 @@ static bool	render_page(char *book, int current_page)
 {
 	char	*path = NULL;
 
-	path = (char *)calloc(sizeof(char) , strlen("/switch/ebookViewerNX/") + strlen(book) + 1);
+	path = (char *)calloc(sizeof(char) , strlen(EBOOK_PATH) + strlen(book) + 1);
 	if (path == NULL) {
 		log_fatal("calloc [Failure]");
 		return (false);
 	}
 
-	strcat(path, "/switch/ebookViewerNX/");
+	strcat(path, EBOOK_PATH);
 	strcat(path, book);
 
 	init_mupdf();
@@ -162,7 +163,7 @@ void	save_last_page(char *book, int current_page)
 		return ;
 	}
 
-	fd_tmp = open("/tmp", O_CREAT | O_RDWR | O_TRUNC, 0777);
+	fd_tmp = open(EBOOK_PATH"tmp", O_CREAT | O_RDWR | O_TRUNC, 0777);
 	if (fd_tmp == -1) {
 		log_warn("open : %s", strerror(errno));
 		close(fd);
@@ -201,6 +202,53 @@ void	save_last_page(char *book, int current_page)
 	}
 
 	log_info("save_last_page() [Success]");
+}
+
+void	render_cbr_page(char *book, int last_page)
+{
+	SDL_Surface	*image = NULL;
+	SDL_Texture	*texture = NULL;
+	char		cbr_path[PATH_MAX] = {0};
+	SDL_Rect	dstrect = {
+		(WIN_WIDTH / 2) - (COVER_WIDTH / 2),
+		(WIN_HEIGHT / 2) - (COVER_HEIGHT / 2),
+		COVER_WIDTH,
+		COVER_HEIGHT
+	};
+
+	// get path
+	sprintf(cbr_path, EBOOK_PATH"%s", book);
+
+	if (extract_cbr(cbr_path, last_page) == false) {
+		log_warn("extract_cbr() [Failure]");
+		return ;
+	}
+
+	image = IMG_Load(cbr->path);
+	if (image == NULL) {
+		log_warn("%s", IMG_GetError());
+		return ;
+	}
+
+	texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+	if (texture == NULL) {
+		log_warn("%s", IMG_GetError());
+		return ;
+	}
+
+	SDL_FreeSurface(image);
+
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(graphic->renderer);
+
+	// Render cover
+	SDL_RenderCopy(graphic->renderer, texture, NULL, &dstrect);
+	SDL_DestroyTexture(texture);
+
+	remove(cbr->path);
+
+	free(cbr->path);
+	cbr->path = NULL;
 }
 
 void	ebook_reader(char *book)
@@ -260,8 +308,13 @@ void	ebook_reader(char *book)
 		// printing
 		if (refresh == true) {
 			/*draw_loading();*/
-			if (render_page(book, ebook->last_page) == false) {
-				break ;
+			char *ext = get_file_extension(book);
+			if (!strcmp(ext, ".cbr")) {
+				render_cbr_page(book, ebook->last_page);
+			} else {
+				if (render_page(book, ebook->last_page) == false) {
+					break ;
+				}
 			}
 			if (layout->show_bar == true) {
 				draw_bar();
