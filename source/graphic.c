@@ -4,6 +4,7 @@ extern t_graphic	*graphic;
 extern t_transform	*trans;
 extern t_ebook		*ebook;
 extern t_layout		*layout;
+extern t_cbr		*cbr;
 
 void	draw_ppm(fz_pixmap *ppm, bool cover)
 {
@@ -70,6 +71,63 @@ static void	draw_text(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font
 	SDL_DestroyTexture(message);
 	message = NULL;
 	log_info("draw_text() [Success]");
+}
+
+void	draw_cover_cbr(char *book)
+{
+	SDL_Surface	*image = NULL;
+	SDL_Texture	*texture = NULL;
+	char		cbr_path[PATH_MAX] = {0};
+
+	// get path
+	sprintf(cbr_path, EBOOK_PATH"%s", book);
+
+	// save image cover in /tmp
+	if (extract_cbr(cbr_path, 0) == false) {
+		log_warn("extract_cbr() [Failure]");
+		return ;
+	}
+
+	image = IMG_Load(cbr->path);
+	if (image == NULL) {
+		log_warn("%s", IMG_GetError());
+		return ;
+	}
+
+	texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+	if (texture == NULL) {
+		log_warn("%s", IMG_GetError());
+		return ;
+	}
+
+	SDL_FreeSurface(image);
+
+	if (ebook->layout_orientation == LANDSCAPE) {
+		layout->cover.w = COVER_WIDTH;
+		layout->cover.h = COVER_HEIGHT;
+		layout->cover.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);
+		layout->cover.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;
+	} else {
+		layout->cover.w = COVER_WIDTH * 1.5;
+		layout->cover.h = COVER_HEIGHT * 1.5;
+		layout->cover.x = (WIN_WIDTH / 2) - (layout->cover.w / 2);
+		layout->cover.y = (WIN_HEIGHT / 2) - (layout->cover.h / 2) + 10;
+	}
+
+	// Render cover
+	SDL_RenderCopy(graphic->renderer, texture, NULL, &layout->cover);
+	SDL_DestroyTexture(texture);
+
+	// Draw rect around cover
+	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawRect(graphic->renderer, &layout->cover);
+
+	remove(cbr->path);
+
+	free(cbr->path);
+	cbr->path = NULL;
+
+	log_info("print_cover_cbr() [Success]");
 }
 
 static bool	draw_cover(char *book)
@@ -329,7 +387,7 @@ void	draw_bar(void)
 	if (ebook->read_mode == false) {
 		draw_app_name();
 	} else {
-		draw_page_number();
+		draw_page_number(DEFAULT);
 	}
 	draw_exit_button();
 	draw_help_button();
@@ -338,18 +396,22 @@ void	draw_bar(void)
 	log_info("draw_bar() [Success]");
 }
 
-void	draw_page_number(void)
+void	draw_page_number(int type)
 {
 	SDL_Color	color = {255, 255, 255, 255};
-	char		page_number[20] = {0};
 	SDL_Rect	rect = {0};
+	char		page_number[20] = {0};
 	int			x = 0;
 	int			w = 0;
 	int			h = 0;
 	float		percentage = 0;
 
 	// Draw page number
-	sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
+	if (type == CBR) {
+		sprintf(page_number, "%d/%d", ebook->last_page + 1, cbr->total_page);
+	} else {
+		sprintf(page_number, "%d/%d", ebook->last_page + 1, ebook->total_page);
+	}
 
 	TTF_SizeText(graphic->ttf->font_medium, page_number, &w, &h);
 	x = (WIN_WIDTH / 2) - (w / 2);
@@ -425,6 +487,7 @@ void	print_help(void)
 
 void	draw_home_menu(char *book)
 {
+	char	*ext = NULL;
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
 	SDL_RenderClear(graphic->renderer);
 
@@ -435,16 +498,25 @@ void	draw_home_menu(char *book)
 	draw_title(book);
 
 	// Draw Cover
-	if (draw_cover(book) == false) {
-		deinit_mupdf();
+	ext = get_file_extension(book);
+	if (ext == NULL) {
 		return ;
 	}
+	if (!strcmp(ext, ".cbr")) {
+		draw_cover_cbr(book);
+		draw_page_number(CBR);
+	} else {
+		if (draw_cover(book) == false) {
+			deinit_mupdf();
+			return ;
+		}
+		// Draw Page number
+		count_page_number();
+		draw_page_number(DEFAULT);
 
-	// Draw Page number
-	count_page_number();
-	draw_page_number();
+		deinit_mupdf();
+	}
 
-	deinit_mupdf();
 	log_info("draw_home_menu() [Success]");
 }
 
@@ -464,6 +536,41 @@ void	draw_loading(void)
 	SDL_RenderPresent(graphic->renderer);
 
 	log_info("draw_loading() [Success]");
+}
+
+// TODO: refactor this func
+void	draw_message_box(char *msg)
+{
+	SDL_Color	color = {255, 255, 255, 255};
+	SDL_Rect	rect = {
+		(WIN_WIDTH / 2) - 300,
+		(WIN_HEIGHT / 2) - 150,
+		600,
+		300
+	};
+	int			w = 0;
+	int			h = 0;
+
+	SDL_SetRenderDrawColor(graphic->renderer, 60, 60, 60, SDL_ALPHA_OPAQUE);
+	/*SDL_RenderClear(graphic->renderer);*/
+
+	SDL_RenderFillRect(graphic->renderer, &rect);
+	TTF_SizeText(graphic->ttf->font_small, msg, &w, &h);
+
+	draw_text(graphic->renderer, (WIN_WIDTH / 2) - (w / 2), (WIN_HEIGHT / 2) - (h / 2), msg, graphic->ttf->font_small, color, 0);
+
+	while (appletMainLoop()) {
+		hidScanInput();
+
+		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
+
+		if (kDown & KEY_PLUS) {
+			break ;
+		}
+
+		SDL_RenderPresent(graphic->renderer);
+	}
+	
 }
 
 void	draw_error(char *msg)

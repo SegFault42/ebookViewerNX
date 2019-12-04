@@ -31,5 +31,6 @@
 #include "controller.h"
 #include "init.h"
 #include "cbr.h"
+#include "file.h"
 
 #endif

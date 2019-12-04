@@ -4,6 +4,14 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-bool	extract_cbr(char *path);
+typedef struct		s_cbr
+{
+	struct archive	*handle;
+	struct archive	*dst;
+	int				total_page; // total page number
+	char			*path;
+}					t_cbr;
+
+bool	extract_cbr(char *path, int page_number);
 
 #endif

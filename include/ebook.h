@@ -6,6 +6,7 @@
 #define PORTRAIT	false
 #define LANDSCAPE	true
 #define CONFIG_PATH	"/switch/ebookViewerNX/config"
+#define EBOOK_PATH	"/switch/ebookViewerNX/"
 
 typedef struct	s_ebook
 {

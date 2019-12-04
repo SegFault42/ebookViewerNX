@@ -5,14 +5,15 @@ extern t_transform	*trans;
 extern t_ebook		*ebook;
 extern t_controller	*controller;
 extern t_layout		*layout;
+extern t_cbr		*cbr;
 
 static void	create_requiered_folder(void)
 {
-	if (mkdir("/switch/ebookViewerNX", 0777) != -1) {
+	if (mkdir(EBOOK_PATH, 0777) != -1) {
 		log_info("/switch/ebookViewerNX created !");
 	}
 
-	int fd = open("/switch/ebookViewerNX/config", O_CREAT, 0777);
+	int fd = open(EBOOK_PATH"config", O_CREAT, 0777);
 	if (fd == -1) {
 		log_warn("create config failed : %s", strerror(errno));
 	}
@@ -44,13 +45,15 @@ void	init_all(void)
 	controller = (t_controller *)calloc(sizeof(t_controller), 1);
 	layout = (t_layout *)calloc(sizeof(t_layout), 1);
 	trans = (t_transform *)calloc(sizeof(t_transform), 1);
-	if (graphic == NULL || graphic->ttf == NULL || ebook == NULL || controller == NULL || layout == NULL || trans == NULL) {
+	cbr = (t_cbr *)calloc(sizeof(t_cbr), 1);
+	if (graphic == NULL || graphic->ttf == NULL || ebook == NULL || controller == NULL || layout == NULL || trans == NULL || cbr == NULL) {
 		free(graphic);
 		free(graphic->ttf);
 		free(ebook);
 		free(controller);
 		free(layout);
 		free(trans);
+		free(cbr);
 		log_fatal("init_all() : calloc [Failure]");
 		exit (-1);
 	}
@@ -70,6 +73,8 @@ void	init_all(void)
 	}
 
 	create_requiered_folder();
+
+	log_info("init_all() [Success]");
 }
 
 void	deinit_all(void)
@@ -94,6 +99,8 @@ void	deinit_all(void)
 	#ifdef __TWILI__
 		twiliExit();
 	#endif
+
+	log_info("deinit_all() [Success]");
 }
 
 bool	init_ttf(void)
@@ -138,7 +145,7 @@ bool	init_graphic(void)
 		free(graphic);
 		return (false);
 	}
-	if (IMG_Init(IMG_INIT_PNG) < 0) {
+	if (IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG) < 0) {
 		log_fatal("IMG_Init(): %s\n", IMG_GetError());
 		SDL_Quit();
 		free(graphic);
