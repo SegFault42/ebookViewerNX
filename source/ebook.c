@@ -255,6 +255,7 @@ void	ebook_reader(char *book)
 {
 	bool	refresh = true;
 	bool	help = false;
+	bool	first = true;
 
 	ebook->read_mode = true;
 	while (appletMainLoop()) {
@@ -263,7 +264,9 @@ void	ebook_reader(char *book)
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 		touchPosition touch = {0};
 
-		hidTouchRead(&touch, 0);
+		if (first == false) {
+			hidTouchRead(&touch, 0);
+		}
 
 		if (kDown & controller->quit || (layout->show_bar == true && touch_button(touch, e_exit) == true)) {
 			ebook->read_mode = false;
@@ -326,6 +329,7 @@ void	ebook_reader(char *book)
 			save_last_page(book, ebook->last_page);
 			refresh = false;
 		}
+		first = false;
 	}
 
 	log_info("ebook_reader() [Success]");
