@@ -9,11 +9,11 @@ extern t_cbr		*cbr;
 
 static void	create_requiered_folder(void)
 {
-	if (mkdir("/switch/ebookViewerNX", 0777) != -1) {
+	if (mkdir(EBOOK_PATH, 0777) != -1) {
 		log_info("/switch/ebookViewerNX created !");
 	}
 
-	int fd = open("/switch/ebookViewerNX/config", O_CREAT, 0777);
+	int fd = open(EBOOK_PATH"config", O_CREAT, 0777);
 	if (fd == -1) {
 		log_warn("create config failed : %s", strerror(errno));
 	}
