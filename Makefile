@@ -45,7 +45,7 @@ INCLUDES	:=	include ./libs/log.c/src ./libs/mupdf/include ./libs/mupdf/source/fi
 ROMFS		:=	romfs
 
 MAJOR		:= 0
-MINOR		:= 1
+MINOR		:= 2
 MICRO		:= 0
 
 APP_TITLE	:=	EbookViewerNX

@@ -209,12 +209,7 @@ void	render_cbr_page(char *book, int last_page)
 	SDL_Surface	*image = NULL;
 	SDL_Texture	*texture = NULL;
 	char		cbr_path[PATH_MAX] = {0};
-	SDL_Rect	dstrect = {
-		(WIN_WIDTH / 2) - (COVER_WIDTH / 2),
-		(WIN_HEIGHT / 2) - (COVER_HEIGHT / 2),
-		COVER_WIDTH,
-		COVER_HEIGHT
-	};
+	float		ratio = 0;
 
 	// get path
 	sprintf(cbr_path, EBOOK_PATH"%s", book);
@@ -236,13 +231,34 @@ void	render_cbr_page(char *book, int last_page)
 		return ;
 	}
 
+	if (ebook->layout_orientation == PORTRAIT) {
+		ratio = (float)image->w / (float)WIN_HEIGHT;
+
+		layout->cover.h = image->h / ratio;
+		layout->cover.w = image->w / ratio;
+		layout->cover.x = (WIN_WIDTH / 2) - (layout->cover.w / 2);
+		layout->cover.y = (WIN_HEIGHT /2) - (layout->cover.h / 2);
+	} else if (ebook->layout_orientation == LANDSCAPE) {
+		ratio = (float)image->h / (float)WIN_HEIGHT;
+
+		layout->cover.h = image->h / ratio;
+		layout->cover.w = image->w / ratio;
+		layout->cover.x = (WIN_WIDTH / 2) - (layout->cover.w / 2);
+		layout->cover.y = 0;
+	}
+
 	SDL_FreeSurface(image);
 
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(graphic->renderer);
 
 	// Render cover
-	SDL_RenderCopy(graphic->renderer, texture, NULL, &dstrect);
+	if (ebook->layout_orientation == PORTRAIT) {
+		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->cover), 90, NULL, SDL_FLIP_NONE);
+	} else {
+		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->cover), 0, NULL, SDL_FLIP_NONE);
+	}
+
 	SDL_DestroyTexture(texture);
 
 	remove(cbr->path);
@@ -255,6 +271,9 @@ void	ebook_reader(char *book)
 {
 	bool	refresh = true;
 	bool	help = false;
+	char	*ext = NULL;
+
+	ext = get_file_extension(book);
 
 	ebook->read_mode = true;
 	while (appletMainLoop()) {
@@ -308,7 +327,6 @@ void	ebook_reader(char *book)
 		// printing
 		if (refresh == true) {
 			/*draw_loading();*/
-			char *ext = get_file_extension(book);
 			if (!strcmp(ext, ".cbr")) {
 				render_cbr_page(book, ebook->last_page);
 			} else {

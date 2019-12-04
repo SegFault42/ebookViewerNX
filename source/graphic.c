@@ -78,12 +78,6 @@ void	draw_cover_cbr(char *book)
 	SDL_Surface	*image = NULL;
 	SDL_Texture	*texture = NULL;
 	char		cbr_path[PATH_MAX] = {0};
-	SDL_Rect	dstrect = {
-		(WIN_WIDTH / 2) - (COVER_WIDTH / 2),
-		(WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20,
-		COVER_WIDTH,
-		COVER_HEIGHT
-	};
 
 	// get path
 	sprintf(cbr_path, EBOOK_PATH"%s", book);
@@ -108,13 +102,25 @@ void	draw_cover_cbr(char *book)
 
 	SDL_FreeSurface(image);
 
+	if (ebook->layout_orientation == LANDSCAPE) {
+		layout->cover.w = COVER_WIDTH;
+		layout->cover.h = COVER_HEIGHT;
+		layout->cover.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);
+		layout->cover.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;
+	} else {
+		layout->cover.w = COVER_WIDTH * 1.5;
+		layout->cover.h = COVER_HEIGHT * 1.5;
+		layout->cover.x = (WIN_WIDTH / 2) - (layout->cover.w / 2);
+		layout->cover.y = (WIN_HEIGHT / 2) - (layout->cover.h / 2) + 10;
+	}
+
 	// Render cover
-	SDL_RenderCopy(graphic->renderer, texture, NULL, &dstrect);
+	SDL_RenderCopy(graphic->renderer, texture, NULL, &layout->cover);
 	SDL_DestroyTexture(texture);
 
 	// Draw rect around cover
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawRect(graphic->renderer, &dstrect);
+	SDL_RenderDrawRect(graphic->renderer, &layout->cover);
 
 	remove(cbr->path);
 
@@ -393,8 +399,8 @@ void	draw_bar(void)
 void	draw_page_number(int type)
 {
 	SDL_Color	color = {255, 255, 255, 255};
-	char		page_number[20] = {0};
 	SDL_Rect	rect = {0};
+	char		page_number[20] = {0};
 	int			x = 0;
 	int			w = 0;
 	int			h = 0;

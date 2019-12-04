@@ -10,7 +10,7 @@
 #define COVER_WIDTH		350
 #define COVER_HEIGHT	500
 
-#define APP_NAME	"ebookViewerNX v0.1"
+#define APP_NAME	"ebookViewerNX v0.2.0"
 
 #define COVER		0
 #define READ		1
