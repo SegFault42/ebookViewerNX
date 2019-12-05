@@ -7,7 +7,7 @@ t_transform			*trans = NULL;
 t_ebook				*ebook = NULL;
 t_controller		*controller = NULL;
 t_layout			*layout = NULL;
-t_cbr			*cbr = NULL;
+t_cbr				*cbr = NULL;
 
 int main(void)
 {

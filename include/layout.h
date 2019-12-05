@@ -26,6 +26,7 @@ typedef struct		s_layout
 	SDL_Rect		help_button;
 	SDL_Rect		rotate_button;
 	SDL_Rect		bar;
+	SDL_Rect		page;
 }					t_layout;
 
 bool	init_layout(void);
