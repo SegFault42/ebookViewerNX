@@ -19,16 +19,17 @@ typedef struct		s_bar
 
 typedef struct		s_layout
 {
+	t_bar			bar;
+
 	// home
 	SDL_Rect		cover;
+	SDL_Rect		progress_bar;
 	SDL_Rect		exit_home;
 	SDL_Rect		help_home;
 
-	t_bar			bar;
 	SDL_Point		app_title;
 	bool			show_bar;
 
-	// refacto
 	SDL_Rect		help_button;
 	SDL_Rect		rotate_button;
 	SDL_Rect		page;

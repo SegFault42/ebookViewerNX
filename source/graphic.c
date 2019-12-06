@@ -368,32 +368,32 @@ void	draw_page_number(int type)
 
 	// Draw bar
 	// Background
-	if (ebook->read_mode == false) {
-		rect.x = layout->cover.x;
-		rect.y = 700;
-		rect.w = layout->cover.w;
-		rect.h = 2;
-	} else if (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true) {
-		rect.x = (WIN_WIDTH / 2) - (400 / 2);
-		rect.y = 50;
-		rect.w = 400;
-		rect.h = 2;
-	} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
-		rect.x = 1243;
-		rect.y = (WIN_HEIGHT / 2) - (300 / 2);
-		rect.w = 2;
-		rect.h = 300;
-	}
+	/*if (ebook->read_mode == false) {*/
+		/*rect.x = layout->cover.x;*/
+		/*rect.y = 700;*/
+		/*rect.w = layout->cover.w;*/
+		/*rect.h = 2;*/
+	/*} else if (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true) {*/
+		/*rect.x = (WIN_WIDTH / 2) - (400 / 2);*/
+		/*rect.y = 50;*/
+		/*rect.w = 400;*/
+		/*rect.h = 2;*/
+	/*} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {*/
+		/*rect.x = 1243;*/
+		/*rect.y = (WIN_HEIGHT / 2) - (300 / 2);*/
+		/*rect.w = 2;*/
+		/*rect.h = 300;*/
+	/*}*/
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 150, 0, 255);
-	SDL_RenderFillRect(graphic->renderer, &rect);
+	SDL_RenderFillRect(graphic->renderer, &layout->progress_bar);
 
 	//Foreground
 	if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
-		percentage = round(((float)rect.h / (float)ebook->total_page) * (float)ebook->last_page);
-		rect.h = (int)percentage;
+		percentage = round(((float)layout->progress_bar.h / (float)ebook->total_page) * (float)ebook->last_page);
+		layout->progress_bar.h = (int)percentage;
 	} else {
-		percentage = round(((float)rect.w / (float)ebook->total_page) * (float)ebook->last_page);
-		rect.w = (int)percentage;
+		percentage = round(((float)layout->progress_bar.w / (float)ebook->total_page) * (float)ebook->last_page);
+		layout->progress_bar.w = (int)percentage;
 	}
 
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, 255);
@@ -430,6 +430,7 @@ void	print_help(void)
 void	draw_home_menu(char *book)
 {
 	char	*ext = NULL;
+
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
 	SDL_RenderClear(graphic->renderer);
 
@@ -444,6 +445,7 @@ void	draw_home_menu(char *book)
 	if (ext == NULL) {
 		return ;
 	}
+
 	if (!strcmp(ext, ".cbr")) {
 		draw_cover_cbr(book);
 		draw_page_number(CBR);

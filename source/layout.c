@@ -31,6 +31,24 @@ void	set_layout(void)
 		layout->bar.back_bar.w = WIN_WIDTH - layout->bar.line.x;
 		layout->bar.back_bar.h = WIN_HEIGHT;
 	}
+
+	// Progress bar coord
+	if (ebook->read_mode == false) {
+		layout->progress_bar.x = layout->cover.x;
+		layout->progress_bar.y = 700;
+		layout->progress_bar.w = layout->cover.w;
+		layout->progress_bar.h = 2;
+	} else if (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true) {
+		layout->progress_bar.x = (WIN_WIDTH / 2) - (400 / 2);
+		layout->progress_bar.y = 50;
+		layout->progress_bar.w = 400;
+		layout->progress_bar.h = 2;
+	} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
+		layout->progress_bar.x = 1243;
+		layout->progress_bar.y = (WIN_HEIGHT / 2) - (300 / 2);
+		layout->progress_bar.w = 2;
+		layout->progress_bar.h = 300;
+	}
 }
 
 bool	init_layout(void)

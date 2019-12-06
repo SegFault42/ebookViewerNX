@@ -167,6 +167,7 @@ void	home_page(void)
 		if (refresh == true) {
 			ebook->layout_orientation = LANDSCAPE;
 			/*draw_loading();*/
+			set_layout();
 			load_last_page(books[index]);
 			draw_home_menu(books[index]);
 			if (help == true) {
