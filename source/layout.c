@@ -7,47 +7,46 @@ extern t_graphic	*graphic;
 
 void	set_layout(void)
 {
-	if (ebook->read_mode == true && ebook->layout_orientation == PORTRAIT) {
-		layout->help_button.w = 34;
-		layout->help_button.h = 58;
-		layout->help_button.x = 1240;
-		layout->help_button.y = 550;
-
-		
-	} else if ((ebook->read_mode == true && ebook->layout_orientation == LANDSCAPE) || ebook->read_mode == false) {
-		// line
-		layout->line.x = WIN_WIDTH - (WIN_WIDTH / 28);
-		layout->line.y = WIN_HEIGHT / 20;
-		layout->line.w = 2;
-		layout->line.h = WIN_HEIGHT - (layout->line.y * 2);
-
-		// help button
-		layout->help_home.w = WIN_WIDTH / 14;
-		layout->help_home.h = layout->line.y / 1.30;
-		layout->help_home.x = 0.8203125 * WIN_WIDTH;
-		layout->help_home.y = (layout->line.y - layout->help_home.h) / 2;
-
-		// exit button
-		layout->exit_home.w = WIN_WIDTH / 14;
-		layout->exit_home.h = layout->line.y / 1.30;
-		layout->exit_home.x = 0.8984375 * WIN_WIDTH;
-		layout->exit_home.y = (layout->line.y - layout->exit_home.h) / 2;
-
-		// app title
-		layout->app_title.x = 1090;
-		layout->app_title.y = (WIN_HEIGHT / 2);
-	}
-}
-
-bool	init_layout(void)
-{
 	// Cover position in home menu
 	layout->cover.w = COVER_WIDTH;
 	layout->cover.h = COVER_HEIGHT;
 	layout->cover.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);
 	layout->cover.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;
 
-	/*set_layout();*/
+	/*if (ebook->read_mode == true && ebook->layout_orientation == PORTRAIT) {*/
+		/*layout->help_button.w = 34;*/
+		/*layout->help_button.h = 58;*/
+		/*layout->help_button.x = 1240;*/
+		/*layout->help_button.y = 550;*/
+
+	/*} else if ((ebook->read_mode == true && ebook->layout_orientation == LANDSCAPE) || ebook->read_mode == false) {*/
+		/*// line*/
+		/*layout->line.x = WIN_WIDTH - (WIN_WIDTH / 28);*/
+		/*layout->line.y = WIN_HEIGHT / 20;*/
+		/*layout->line.w = 2;*/
+		/*layout->line.h = WIN_HEIGHT - (layout->line.y * 2);*/
+
+		/*// help button*/
+		/*layout->help_home.w = WIN_WIDTH / 14;*/
+		/*layout->help_home.h = layout->line.y / 1.30;*/
+		/*layout->help_home.x = 0.8203125 * WIN_WIDTH;*/
+		/*layout->help_home.y = (layout->line.y - layout->help_home.h) / 2;*/
+
+		/*// exit button*/
+		/*layout->exit_home.w = WIN_WIDTH / 14;*/
+		/*layout->exit_home.h = layout->line.y / 1.30;*/
+		/*layout->exit_home.x = 0.8984375 * WIN_WIDTH;*/
+		/*layout->exit_home.y = (layout->line.y - layout->exit_home.h) / 2;*/
+
+		/*// app title*/
+		/*layout->app_title.x = 1090;*/
+		/*layout->app_title.y = (WIN_HEIGHT / 2);*/
+	/*}*/
+}
+
+bool	init_layout(void)
+{
+	set_layout();
 
 	// show bar default
 	layout->show_bar = true;

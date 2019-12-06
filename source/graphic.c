@@ -102,18 +102,6 @@ void	draw_cover_cbr(char *book)
 
 	SDL_FreeSurface(image);
 
-	/*if (ebook->layout_orientation == LANDSCAPE) {*/
-		/*layout->cover.w = COVER_WIDTH;*/
-		/*layout->cover.h = COVER_HEIGHT;*/
-		/*layout->cover.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);*/
-		/*layout->cover.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;*/
-	/*} else {*/
-		/*layout->cover.w = COVER_WIDTH * 1.5;*/
-		/*layout->cover.h = COVER_HEIGHT * 1.5;*/
-		/*layout->cover.x = (WIN_WIDTH / 2) - (layout->cover.w / 2);*/
-		/*layout->cover.y = (WIN_HEIGHT / 2) - (layout->cover.h / 2) + 10;*/
-	/*}*/
-
 	// Render cover
 	SDL_RenderCopy(graphic->renderer, texture, NULL, &layout->cover);
 	SDL_DestroyTexture(texture);
@@ -143,18 +131,6 @@ static bool	draw_cover(char *book)
 	}
 
 	get_page_info(0);
-
-	/*if (ebook->layout_orientation == LANDSCAPE) {*/
-		/*layout->cover.w = COVER_WIDTH;*/
-		/*layout->cover.h = COVER_HEIGHT;*/
-		/*layout->cover.x = (WIN_WIDTH / 2) - (COVER_WIDTH / 2);*/
-		/*layout->cover.y = (WIN_HEIGHT / 2) - (COVER_HEIGHT / 2) + 20;*/
-	/*} else {*/
-		/*layout->cover.w = COVER_WIDTH * 1.5;*/
-		/*layout->cover.h = COVER_HEIGHT * 1.5;*/
-		/*layout->cover.x = (WIN_WIDTH / 2) - (layout->cover.w / 2);*/
-		/*layout->cover.y = (WIN_HEIGHT / 2) - (layout->cover.h / 2) + 10;*/
-	/*}*/
 
 	//scale to fit 100%
 	trans->zoom = 100 / (trans->bounds.y1 / layout->cover.h);
