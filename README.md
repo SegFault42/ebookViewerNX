@@ -59,6 +59,13 @@ Ebook reader for nintendo switch using mupdf library
 
 ## Building (For developers) :
 
+### Dependency :
+
+```
+sudo pacman -S libnx switch-tools switch-sdl2 switch-sdl2_image switch-sdl2_ttf switch-liblzma
+yay ltwili
+```
+
 ```
 git clone --recursive https://github.com/SegFault42/ebookViewerNX
 cd ebookViewerNX/libs
