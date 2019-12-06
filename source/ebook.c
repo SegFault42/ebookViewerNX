@@ -231,21 +231,21 @@ void	render_cbr_page(char *book, int last_page)
 		return ;
 	}
 
-	if (ebook->layout_orientation == PORTRAIT) {
-		ratio = (float)image->w / (float)WIN_HEIGHT;
+	/*if (ebook->layout_orientation == PORTRAIT) {*/
+		/*ratio = (float)image->w / (float)WIN_HEIGHT;*/
 
-		layout->cover.h = image->h / ratio;
-		layout->cover.w = image->w / ratio;
-		layout->cover.x = (WIN_WIDTH / 2) - (layout->cover.w / 2);
-		layout->cover.y = (WIN_HEIGHT /2) - (layout->cover.h / 2);
-	} else if (ebook->layout_orientation == LANDSCAPE) {
-		ratio = (float)image->h / (float)WIN_HEIGHT;
+		/*layout->cover.h = image->h / ratio;*/
+		/*layout->cover.w = image->w / ratio;*/
+		/*layout->cover.x = (WIN_WIDTH / 2) - (layout->cover.w / 2);*/
+		/*layout->cover.y = (WIN_HEIGHT /2) - (layout->cover.h / 2);*/
+	/*} else if (ebook->layout_orientation == LANDSCAPE) {*/
+		/*ratio = (float)image->h / (float)WIN_HEIGHT;*/
 
-		layout->cover.h = image->h / ratio;
-		layout->cover.w = image->w / ratio;
-		layout->cover.x = (WIN_WIDTH / 2) - (layout->cover.w / 2);
-		layout->cover.y = 0;
-	}
+		/*layout->cover.h = image->h / ratio;*/
+		/*layout->cover.w = image->w / ratio;*/
+		/*layout->cover.x = (WIN_WIDTH / 2) - (layout->cover.w / 2);*/
+		/*layout->cover.y = 0;*/
+	/*}*/
 
 	SDL_FreeSurface(image);
 
