@@ -276,6 +276,7 @@ void	ebook_reader(char *book)
 			refresh = true;
 		} else if (kDown & controller->layout || (layout->show_bar == true && touch_button(touch, e_rotate) == true)) {
 			ebook->layout_orientation = !ebook->layout_orientation;
+			set_layout();
 			refresh = true;
 			help = false;
 		} else if (kDown & KEY_A || (touch_button(touch, e_bar) == true)) {

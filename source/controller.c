@@ -38,7 +38,7 @@ void	default_controller_layout(void)
 bool	touch_next_page_home(touchPosition touch)
 {
 	if (touch.px >= (u32)(layout->cover.x + layout->cover.w) &&
-			touch.py > (u32)(layout->line.y)) {
+			touch.py > (u32)(layout->bar.line.y)) {
 		return (true);
 	}
 
@@ -48,7 +48,7 @@ bool	touch_next_page_home(touchPosition touch)
 bool	touch_prev_page_home(touchPosition touch)
 {
 	if (touch.px > 0 && touch.px <= (u32)(layout->cover.x) &&
-			touch.py > (u32)(layout->line.y)) {
+			touch.py > (u32)(layout->bar.line.y)) {
 		return (true);
 	}
 
@@ -65,7 +65,7 @@ bool	touch_button(touchPosition touch, int button_id)
 		return (true);
 	} else if (button_id == e_rotate && button_touch(touch, layout->rotate_button) == true) {
 		return (true);
-	} else if (button_id == e_bar && button_touch(touch, layout->bar) == true) {
+	} else if (button_id == e_bar && button_touch(touch, layout->bar.back_bar) == true) {
 		return (true);
 	}
 

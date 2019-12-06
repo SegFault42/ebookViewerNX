@@ -11,6 +11,12 @@ typedef struct	s_transform
 	SDL_Rect	dstrect;
 }				t_transform;
 
+typedef struct		s_bar
+{
+	SDL_Rect		line;
+	SDL_Rect		back_bar;
+}					t_bar;
+
 typedef struct		s_layout
 {
 	// home
@@ -18,14 +24,13 @@ typedef struct		s_layout
 	SDL_Rect		exit_home;
 	SDL_Rect		help_home;
 
-	SDL_Rect		line;
+	t_bar			bar;
 	SDL_Point		app_title;
 	bool			show_bar;
 
 	// refacto
 	SDL_Rect		help_button;
 	SDL_Rect		rotate_button;
-	SDL_Rect		bar;
 	SDL_Rect		page;
 }					t_layout;
 
@@ -33,5 +38,6 @@ bool	init_layout(void);
 void	deinit_layout(void);
 void	landscape_default(void);
 void	portrait_default(void);
+void	set_layout(void);
 
 #endif

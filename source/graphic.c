@@ -182,47 +182,13 @@ void	draw_title(char *book)
 
 void	draw_line(void)
 {
-	SDL_Rect	rect = {0};
-	
-	if (ebook->layout_orientation == LANDSCAPE) {
-		layout->line.x = WIN_WIDTH / 32;
-		layout->line.y = WIN_HEIGHT / 12;
-		layout->line.w = WIN_WIDTH - (layout->line.x * 2);
-		layout->line.h = 2;
-
-		rect.x = 0;
-		rect.h = layout->line.y;
-
-		// coord to touch bar
-		layout->bar.x = 0;
-		layout->bar.y = 0;
-		layout->bar.w = WIN_WIDTH;
-		layout->bar.h = layout->line.y;
-	} else if (ebook->layout_orientation == PORTRAIT) {
-		layout->line.x = WIN_WIDTH - (WIN_WIDTH / 28);
-		layout->line.y = WIN_HEIGHT / 20;
-		layout->line.w = 2;
-		layout->line.h = WIN_HEIGHT - (layout->line.y * 2);
-
-		rect.x = layout->line.x;
-		rect.h = WIN_HEIGHT;
-
-		// coord to touch bar
-		layout->bar.x = layout->line.x;
-		layout->bar.y = 0;
-		layout->bar.w = WIN_WIDTH - layout->line.x;
-		layout->bar.h = WIN_HEIGHT;
-	}
-
-	rect.y = 0;
-	rect.w = WIN_WIDTH;
-
 	// draw background bar
 	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, 255);
-	SDL_RenderFillRect(graphic->renderer, &rect);
+	SDL_RenderFillRect(graphic->renderer, &layout->bar.back_bar);
 
+	// draw green line
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(graphic->renderer, &layout->line);
+	SDL_RenderFillRect(graphic->renderer, &layout->bar.line);
 
 	log_info("draw_line() [Success]");
 }
@@ -299,9 +265,9 @@ static void	draw_exit_button(void)
 		draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 90);
 	} else {
 		layout->exit_home.w = WIN_WIDTH / 14;
-		layout->exit_home.h = layout->line.y / 1.30;
+		layout->exit_home.h = layout->bar.line.y / 1.30;
 		layout->exit_home.x = 0.8984375 * WIN_WIDTH;
-		layout->exit_home.y = (layout->line.y - layout->exit_home.h) / 2;
+		layout->exit_home.y = (layout->bar.line.y - layout->exit_home.h) / 2;
 
 		draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 0);
 	}
@@ -323,9 +289,9 @@ static void	draw_help_button(void)
 		draw_button(layout->help_home, "Help", 0, background_color, text_color, 90);
 	} else {
 		layout->help_home.w = WIN_WIDTH / 14;
-		layout->help_home.h = layout->line.y / 1.30;
+		layout->help_home.h = layout->bar.line.y / 1.30;
 		layout->help_home.x = 0.8203125 * WIN_WIDTH;
-		layout->help_home.y = (layout->line.y - layout->help_home.h) / 2;
+		layout->help_home.y = (layout->bar.line.y - layout->help_home.h) / 2;
 
 		draw_button(layout->help_home, "Help", 0, background_color, text_color, 0);
 	}
@@ -347,9 +313,9 @@ static void	draw_rotate_button(void)
 		draw_button(layout->rotate_button, "Rotate", 0, background_color, text_color, 90);
 	} else {
 		layout->rotate_button.w = WIN_WIDTH / 14;
-		layout->rotate_button.h = layout->line.y / 1.30;
+		layout->rotate_button.h = layout->bar.line.y / 1.30;
 		layout->rotate_button.x = 0.739125 * WIN_WIDTH;
-		layout->rotate_button.y = (layout->line.y - layout->rotate_button.h) / 2;
+		layout->rotate_button.y = (layout->bar.line.y - layout->rotate_button.h) / 2;
 
 		draw_button(layout->rotate_button, "Rotate", 0, background_color, text_color, 0);
 	}
