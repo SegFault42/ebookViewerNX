@@ -7,8 +7,10 @@ extern t_graphic	*graphic;
 
 void	set_layout(void)
 {
-	// Bar coord
+	int w = 0, h = 0;
+
 	if (ebook->layout_orientation == LANDSCAPE) {
+		// Bar coord
 		layout->bar.line.x = WIN_WIDTH / 32;
 		layout->bar.line.y = WIN_HEIGHT / 12;
 		layout->bar.line.w = WIN_WIDTH - (layout->bar.line.x * 2);
@@ -16,9 +18,22 @@ void	set_layout(void)
 
 		// coord to touch bar
 		layout->bar.back_bar.x = 0;
-		/*layout->bar.back_bar.y = 0;*/
+		layout->bar.back_bar.y = 0;
 		layout->bar.back_bar.w = WIN_WIDTH;
 		layout->bar.back_bar.h = layout->bar.line.y;
+
+		// coord app title
+		TTF_SizeText(graphic->ttf->font_large, APP_NAME, &w, &h);
+		layout->app_title.x = (WIN_WIDTH / 2) - (w / 2);
+		layout->app_title.y = WIN_HEIGHT / 90;
+
+		// progress bar coord
+		if (ebook->read_mode == true) {
+			layout->progress_bar.x = (WIN_WIDTH / 2) - (400 / 2);
+			layout->progress_bar.y = 50;
+			layout->progress_bar.w = 400;
+			layout->progress_bar.h = 2;
+		}
 	} else if (ebook->layout_orientation == PORTRAIT) {
 		layout->bar.line.x = WIN_WIDTH - (WIN_WIDTH / 28);
 		layout->bar.line.y = WIN_HEIGHT / 20;
@@ -27,9 +42,22 @@ void	set_layout(void)
 
 		// coord to touch bar
 		layout->bar.back_bar.x = layout->bar.line.x;
-		/*layout->bar.back_bar.y = 0;*/
+		layout->bar.back_bar.y = 0;
 		layout->bar.back_bar.w = WIN_WIDTH - layout->bar.line.x;
 		layout->bar.back_bar.h = WIN_HEIGHT;
+
+		// coord app title
+		TTF_SizeText(graphic->ttf->font_medium, APP_NAME, &w, &h);
+		layout->app_title.x = 1274;
+		layout->app_title.y = (WIN_HEIGHT / 2) - (w /2);
+
+		// progress bar coord
+		if (ebook->read_mode == true) {
+			layout->progress_bar.x = 1243;
+			layout->progress_bar.y = (WIN_HEIGHT / 2) - (300 / 2);
+			layout->progress_bar.w = 2;
+			layout->progress_bar.h = 300;
+		}
 	}
 
 	// Progress bar coord
@@ -38,16 +66,6 @@ void	set_layout(void)
 		layout->progress_bar.y = 700;
 		layout->progress_bar.w = layout->cover.w;
 		layout->progress_bar.h = 2;
-	} else if (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true) {
-		layout->progress_bar.x = (WIN_WIDTH / 2) - (400 / 2);
-		layout->progress_bar.y = 50;
-		layout->progress_bar.w = 400;
-		layout->progress_bar.h = 2;
-	} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {
-		layout->progress_bar.x = 1243;
-		layout->progress_bar.y = (WIN_HEIGHT / 2) - (300 / 2);
-		layout->progress_bar.w = 2;
-		layout->progress_bar.h = 300;
 	}
 }
 

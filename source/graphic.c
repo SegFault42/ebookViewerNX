@@ -196,21 +196,11 @@ void	draw_line(void)
 void	draw_app_name(void)
 {
 	SDL_Color	color = {255, 255, 255, 255};
-	int			w = 0;
-	int			h = 0;
 
 	// in home menu
 	if (ebook->layout_orientation == LANDSCAPE) {
-		TTF_SizeText(graphic->ttf->font_large, APP_NAME, &w, &h);
-		layout->app_title.x = (WIN_WIDTH / 2) - (w / 2);
-		layout->app_title.y = WIN_HEIGHT / 90;
-
 		draw_text(graphic->renderer, layout->app_title.x, layout->app_title.y, APP_NAME, graphic->ttf->font_large, color, 0);
 	} else {
-		TTF_SizeText(graphic->ttf->font_medium, APP_NAME, &w, &h);
-		layout->app_title.x = 1274;
-		layout->app_title.y = (WIN_HEIGHT / 2) - (w /2);
-
 		draw_text(graphic->renderer, layout->app_title.x, layout->app_title.y, APP_NAME, graphic->ttf->font_medium, color, 90);
 	}
 
@@ -366,24 +356,6 @@ void	draw_page_number(int type)
 		draw_text(graphic->renderer, 1280, (WIN_HEIGHT / 2) - (w  /2), page_number, graphic->ttf->font_medium, color, 90);
 	}
 
-	// Draw bar
-	// Background
-	/*if (ebook->read_mode == false) {*/
-		/*rect.x = layout->cover.x;*/
-		/*rect.y = 700;*/
-		/*rect.w = layout->cover.w;*/
-		/*rect.h = 2;*/
-	/*} else if (ebook->layout_orientation == LANDSCAPE && ebook->read_mode == true) {*/
-		/*rect.x = (WIN_WIDTH / 2) - (400 / 2);*/
-		/*rect.y = 50;*/
-		/*rect.w = 400;*/
-		/*rect.h = 2;*/
-	/*} else if (ebook->layout_orientation == PORTRAIT && ebook->read_mode == true) {*/
-		/*rect.x = 1243;*/
-		/*rect.y = (WIN_HEIGHT / 2) - (300 / 2);*/
-		/*rect.w = 2;*/
-		/*rect.h = 300;*/
-	/*}*/
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 150, 0, 255);
 	SDL_RenderFillRect(graphic->renderer, &layout->progress_bar);
 
