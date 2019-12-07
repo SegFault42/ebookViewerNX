@@ -29,7 +29,7 @@ void	draw_ppm(fz_pixmap *ppm, bool cover)
 			SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->cover), 0, NULL, SDL_FLIP_NONE);
 		}
 	} else {
-		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(trans->dstrect), 0, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->page), 0, NULL, SDL_FLIP_NONE);
 	}
 	// Free texture
 	SDL_DestroyTexture(texture);

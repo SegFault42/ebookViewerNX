@@ -8,7 +8,6 @@ typedef struct	s_transform
 	fz_rect		bounds;
 	float		zoom;
 	float		rotate;
-	SDL_Rect	dstrect;
 }				t_transform;
 
 typedef struct		s_bar
@@ -37,8 +36,8 @@ typedef struct		s_layout
 
 bool	init_layout(void);
 void	deinit_layout(void);
-void	landscape_default(void);
-void	portrait_default(void);
+void	landscape_default(int type);
+void	portrait_default(int type);
 void	set_layout(void);
 
 #endif

@@ -114,6 +114,8 @@ char	**get_archive_content_file_name(char *path, t_cbr *cbr)
 	}
 
 	if (init_cbr(cbr, path) == false) {
+		free(array);
+		array = NULL;
 		return (NULL);
 	}
 

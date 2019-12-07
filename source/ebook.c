@@ -125,9 +125,9 @@ static bool	render_page(char *book, int current_page)
 	get_page_info(current_page);
 
 	if (ebook->layout_orientation == PORTRAIT) {
-		portrait_default();
+		portrait_default(DEFAULT);
 	} else if (ebook->layout_orientation == LANDSCAPE) {
-		landscape_default();
+		landscape_default(DEFAULT);
 	}
 
 	if (convert_page_to_ppm(current_page) == false) {
@@ -144,6 +144,56 @@ static bool	render_page(char *book, int current_page)
 
 	log_info("render_page() [Success]");
 	return (true);
+}
+
+void	render_cbr_page(char *book, int last_page)
+{
+	char		cbr_path[PATH_MAX] = {0};
+
+	// get path
+	sprintf(cbr_path, EBOOK_PATH"%s", book);
+
+	if (extract_cbr(cbr_path, last_page) == false) {
+		log_warn("extract_cbr() [Failure]");
+		return ;
+	}
+
+	cbr->image = IMG_Load(cbr->path);
+	if (cbr->image == NULL) {
+		log_warn("%s", IMG_GetError());
+		return ;
+	}
+
+	cbr->texture = SDL_CreateTextureFromSurface(graphic->renderer, cbr->image);
+	if (cbr->texture == NULL) {
+		log_warn("%s", IMG_GetError());
+		return ;
+	}
+
+	if (ebook->layout_orientation == PORTRAIT) {
+		portrait_default(CBR);
+	} else if (ebook->layout_orientation == LANDSCAPE) {
+		landscape_default(CBR);
+	}
+
+	SDL_FreeSurface(cbr->image);
+
+	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(graphic->renderer);
+
+	// Render page
+	if (ebook->layout_orientation == PORTRAIT) {
+		SDL_RenderCopyEx(graphic->renderer, cbr->texture, NULL, &(layout->page), 90, NULL, SDL_FLIP_NONE);
+	} else {
+		SDL_RenderCopyEx(graphic->renderer, cbr->texture, NULL, &(layout->page), 0, NULL, SDL_FLIP_NONE);
+	}
+
+	SDL_DestroyTexture(cbr->texture);
+
+	remove(cbr->path);
+
+	free(cbr->path);
+	cbr->path = NULL;
 }
 
 void	save_last_page(char *book, int current_page)
@@ -202,53 +252,6 @@ void	save_last_page(char *book, int current_page)
 	}
 
 	log_info("save_last_page() [Success]");
-}
-
-void	render_cbr_page(char *book, int last_page)
-{
-	SDL_Surface	*image = NULL;
-	SDL_Texture	*texture = NULL;
-	char		cbr_path[PATH_MAX] = {0};
-	float		ratio = 0;
-
-	// get path
-	sprintf(cbr_path, EBOOK_PATH"%s", book);
-
-	if (extract_cbr(cbr_path, last_page) == false) {
-		log_warn("extract_cbr() [Failure]");
-		return ;
-	}
-
-	image = IMG_Load(cbr->path);
-	if (image == NULL) {
-		log_warn("%s", IMG_GetError());
-		return ;
-	}
-
-	texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
-	if (texture == NULL) {
-		log_warn("%s", IMG_GetError());
-		return ;
-	}
-
-	SDL_FreeSurface(image);
-
-	SDL_SetRenderDrawColor(graphic->renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
-	SDL_RenderClear(graphic->renderer);
-
-	// Render cover
-	if (ebook->layout_orientation == PORTRAIT) {
-		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->cover), 90, NULL, SDL_FLIP_NONE);
-	} else {
-		SDL_RenderCopyEx(graphic->renderer, texture, NULL, &(layout->cover), 0, NULL, SDL_FLIP_NONE);
-	}
-
-	SDL_DestroyTexture(texture);
-
-	remove(cbr->path);
-
-	free(cbr->path);
-	cbr->path = NULL;
 }
 
 void	ebook_reader(char *book)

@@ -4,6 +4,7 @@ extern t_transform	*trans;
 extern t_ebook		*ebook;
 extern t_layout		*layout;
 extern t_graphic	*graphic;
+extern t_cbr		*cbr;
 
 void	set_layout(void)
 {
@@ -96,35 +97,57 @@ void	deinit_layout(void)
 	log_info("deinit_layout() [Success]");
 }
 
-void	portrait_default(void)
+void	portrait_default(int type)
 {
-	trans->zoom = (WIN_HEIGHT * 100) / trans->bounds.x1;
+	float	ratio = 0;
 
-	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
-	trans->ctm = fz_pre_rotate(trans->ctm, 90);
+	if (type == CBR) {
+		ratio = (float)cbr->image->w / (float)WIN_HEIGHT;
 
-	trans->dstrect.x = (WIN_WIDTH - ((trans->zoom /100) * trans->bounds.y1)) / 2;	// calculate middle of X
-	trans->dstrect.y = 0;															// y pos must to begin in 0
-	trans->dstrect.w = (trans->zoom / 100) * trans->bounds.y1;						// add zoom percentage
-	trans->dstrect.h = (trans->zoom / 100) * trans->bounds.x1;						// add zoom percentage
+		layout->page.h = cbr->image->h / ratio;
+		layout->page.w = cbr->image->w / ratio;
+		layout->page.x = (WIN_WIDTH / 2) - (layout->page.w / 2);
+		layout->page.y = (WIN_HEIGHT /2) - (layout->page.h / 2);
+	} else {
+		trans->zoom = (WIN_HEIGHT * 100) / trans->bounds.x1;
+
+		trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
+		trans->ctm = fz_pre_rotate(trans->ctm, 90);
+
+		layout->page.x = (WIN_WIDTH - ((trans->zoom /100) * trans->bounds.y1)) / 2;	// calculate middle of X
+		layout->page.y = 0;															// y pos must to begin in 0
+		layout->page.w = (trans->zoom / 100) * trans->bounds.y1;						// add zoom percentage
+		layout->page.h = (trans->zoom / 100) * trans->bounds.x1;						// add zoom percentage
+	}
 
 	log_info("portrait_default() [Success]");
 }
 
-void	landscape_default(void)
+void	landscape_default(int type)
 {
+	float	ratio = 0;
+
+	if (type == CBR) {
+		ratio = (float)cbr->image->h / (float)WIN_HEIGHT;
+
+		layout->page.h = cbr->image->h / ratio;
+		layout->page.w = cbr->image->w / ratio;
+		layout->page.x = (WIN_WIDTH / 2) - (layout->page.w / 2);
+		layout->page.y = 0;
+	} else {
 	// calculate to fit in Y (Default zoom)
-	trans->zoom = (WIN_HEIGHT * 100) / trans->bounds.y1;
+		trans->zoom = (WIN_HEIGHT * 100) / trans->bounds.y1;
 
-	// set zoom and rotation
-	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
-	trans->ctm = fz_pre_rotate(trans->ctm, 0);
+		// set zoom and rotation
+		trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
+		trans->ctm = fz_pre_rotate(trans->ctm, 0);
 
-	// Center in middle of the screen X and Y
-	trans->dstrect.x = (WIN_WIDTH - ((trans->zoom /100) * trans->bounds.x1)) / 2;	// calculate middle of X
-	trans->dstrect.y = 0;															// y pos must to begin in 0
-	trans->dstrect.w = (trans->zoom / 100) * trans->bounds.x1;						// add zoom percentage
-	trans->dstrect.h = (trans->zoom / 100) * trans->bounds.y1;						// add zoom percentage
+		// Center in middle of the screen X and Y
+		layout->page.x = (WIN_WIDTH - ((trans->zoom /100) * trans->bounds.x1)) / 2;	// calculate middle of X
+		layout->page.y = 0;															// y pos must to begin in 0
+		layout->page.w = (trans->zoom / 100) * trans->bounds.x1;						// add zoom percentage
+		layout->page.h = (trans->zoom / 100) * trans->bounds.y1;						// add zoom percentage
+	}
 
 	log_info("landscape_default() [Success]");
 }
