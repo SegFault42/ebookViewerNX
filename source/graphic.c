@@ -320,10 +320,10 @@ void	draw_bar(void)
 		draw_app_name();
 	} else {
 		draw_page_number(DEFAULT);
+		draw_rotate_button();
 	}
 	draw_exit_button();
 	draw_help_button();
-	draw_rotate_button();
 
 	log_info("draw_bar() [Success]");
 }
