@@ -20,7 +20,6 @@ static void	create_requiered_folder(void)
 	close(fd);
 }
 
-
 void	init_all(void)
 {
 	Result	ret = 0;

@@ -147,14 +147,14 @@ void	home_page(void)
 			ebook_reader(books[index]);
 			refresh = true;
 			help = false;
-		} else if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
+		} else if (kDown & controller->next_page || touch_button(touch, e_next_page) == true) {
 			index++;
 			if (index == nb_books) {
 				index = 0;
 			}
 			help = false;
 			refresh = true;
-		} else if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
+		} else if (kDown & controller->prev_page || touch_button(touch, e_prev_page) == true) {
 			index--;
 			if (index < 0) {
 				index = nb_books -1;
@@ -167,11 +167,13 @@ void	home_page(void)
 		if (refresh == true) {
 			ebook->layout_orientation = LANDSCAPE;
 			/*draw_loading();*/
+			set_layout();
 			load_last_page(books[index]);
 			draw_home_menu(books[index]);
 			if (help == true) {
 				print_help();
 			}
+			/*debug_draw_hitbox();*/
 			SDL_RenderPresent(graphic->renderer);
 			touch.px = 0;
 			touch.py = 0;

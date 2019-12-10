@@ -32,5 +32,6 @@
 #include "init.h"
 #include "cbr.h"
 #include "file.h"
+#include "debug.h"
 
 #endif

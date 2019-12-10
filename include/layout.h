@@ -8,30 +8,38 @@ typedef struct	s_transform
 	fz_rect		bounds;
 	float		zoom;
 	float		rotate;
-	SDL_Rect	dstrect;
 }				t_transform;
+
+typedef struct		s_bar
+{
+	SDL_Rect		line;
+	SDL_Rect		back_bar;
+}					t_bar;
 
 typedef struct		s_layout
 {
+	t_bar			bar;
+
 	// home
 	SDL_Rect		cover;
+	SDL_Rect		progress_bar;
 	SDL_Rect		exit_home;
 	SDL_Rect		help_home;
 
-	SDL_Rect		line;
 	SDL_Point		app_title;
 	bool			show_bar;
 
-	// refacto
 	SDL_Rect		help_button;
 	SDL_Rect		rotate_button;
-	SDL_Rect		bar;
 	SDL_Rect		page;
+	SDL_Rect		next_page_button;
+	SDL_Rect		prev_page_button;
 }					t_layout;
 
 bool	init_layout(void);
 void	deinit_layout(void);
-void	landscape_default(void);
-void	portrait_default(void);
+void	landscape_default(int type);
+void	portrait_default(int type);
+void	set_layout(void);
 
 #endif
