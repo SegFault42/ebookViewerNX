@@ -7,15 +7,32 @@ extern t_layout		*layout;
 
 bool	button_touch(touchPosition touch, SDL_Rect rect)
 {
+	touchPosition	released = {0};
+	touchPosition	released_save = {0};
+
 	if (touch.px == 0 || touch.py == 0) {
 		return (false);
 	}
 
-	if (touch.px >= (u32)(rect.x) &&
-			touch.px <= (u32)(rect.x + rect.w) &&
-			touch.py >= (u32)(rect.y) &&
-			touch.py <= (u32)(rect.y + rect.h)) {
-		return (true);
+	while (true) {
+		hidScanInput();
+		hidTouchRead(&released, 0);
+
+		/*printf("orig = %d, %d\n", released.px, released.py);*/
+		/*printf("save = %d, %d\n", released_save.px, released_save.py);*/
+		if (released_save.px >= rect.x && released_save.py >= rect.y && released_save.px <= (u32)(rect.x + rect.w) && released_save.py <= (u32)(rect.y + rect.h)) {
+		if (released.px == 0 && released.py == 0 &&
+				touch.px >= (u32)(rect.x) &&
+				touch.px <= (u32)(rect.x + rect.w) &&
+				touch.py >= (u32)(rect.y) &&
+				touch.py <= (u32)(rect.y + rect.h)) {
+			return (true);
+		}
+		if (released.px == 0 && released.py == 0) {
+			return (false);
+		}
+		}
+		memcpy(&released_save, &released, sizeof(touchPosition));
 	}
 
 	return (false);
