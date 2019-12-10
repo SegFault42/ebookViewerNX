@@ -25,7 +25,8 @@ enum button_id
 	e_cover = 2,
 	e_bar = 3,
 	e_rotate = 4,
-	e_next_page = 5
+	e_next_page = 5,
+	e_prev_page = 6
 };
 
 void			default_controller_layout(void);

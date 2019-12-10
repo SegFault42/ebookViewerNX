@@ -154,7 +154,7 @@ void	home_page(void)
 			}
 			help = false;
 			refresh = true;
-		} else if (kDown & controller->prev_page || touch_prev_page_home(touch) == true) {
+		} else if (kDown & controller->prev_page || touch_button(touch, e_prev_page) == true) {
 			index--;
 			if (index < 0) {
 				index = nb_books -1;
@@ -173,6 +173,7 @@ void	home_page(void)
 			if (help == true) {
 				print_help();
 			}
+			/*debug_draw_hitbox();*/
 			SDL_RenderPresent(graphic->renderer);
 			touch.px = 0;
 			touch.py = 0;

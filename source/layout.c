@@ -61,21 +61,26 @@ void	set_layout(void)
 		}
 	}
 
-	// Progress bar coord
 	if (ebook->read_mode == false) {
+		// Progress bar coord
 		layout->progress_bar.x = layout->cover.x;
 		layout->progress_bar.y = 700;
 		layout->progress_bar.w = layout->cover.w;
 		layout->progress_bar.h = 2;
-	}
 
-	// coord touch next_page
-	if (ebook->read_mode == false) {
+		// coord touch next_page
 		layout->next_page_button.x = layout->cover.x + layout->cover.w;
 		layout->next_page_button.y = layout->bar.line.y;
-		layout->next_page_button.w = WIN_HEIGHT - layout->bar.line.y;
-		layout->next_page_button.h = WIN_WIDTH - layout->next_page_button.x;
+		layout->next_page_button.w = WIN_WIDTH - (layout->cover.x + layout->cover.w);
+		layout->next_page_button.h = WIN_HEIGHT - layout->bar.line.y;
+
+		// coord touch prev_page
+		layout->prev_page_button.x = 0;
+		layout->prev_page_button.y = layout->bar.line.y;
+		layout->prev_page_button.w = layout->cover.x;
+		layout->prev_page_button.h = WIN_HEIGHT - layout->bar.line.y;
 	}
+
 }
 
 bool	init_layout(void)

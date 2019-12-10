@@ -33,6 +33,7 @@ typedef struct		s_layout
 	SDL_Rect		rotate_button;
 	SDL_Rect		page;
 	SDL_Rect		next_page_button;
+	SDL_Rect		prev_page_button;
 }					t_layout;
 
 bool	init_layout(void);

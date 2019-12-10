@@ -15,10 +15,10 @@ bool	button_touch(touchPosition touch, SDL_Rect rect)
 	}
 
 	while (true) {
-
 		hidScanInput();
 		hidTouchRead(&released, 0);
 
+		// check if button is pressed and released not outside de hitbox
 		if (released.px == 0 && released.py == 0) {
 			if (touch.px >= (u32)(rect.x) &&
 				touch.px <= (u32)(rect.x + rect.w) &&
@@ -57,15 +57,15 @@ void	default_controller_layout(void)
 	controller->layout = KEY_ZR;
 }
 
-bool	touch_prev_page_home(touchPosition touch)
-{
-	if (touch.px > 0 && touch.px <= (u32)(layout->cover.x) &&
-			touch.py > (u32)(layout->bar.line.y)) {
-		return (true);
-	}
+/*bool	touch_prev_page_home(touchPosition touch)*/
+/*{*/
+	/*if (touch.px > 0 && touch.px <= (u32)(layout->cover.x) &&*/
+			/*touch.py > (u32)(layout->bar.line.y)) {*/
+		/*return (true);*/
+	/*}*/
 
-	return (false);
-}
+	/*return (false);*/
+/*}*/
 
 bool	touch_button(touchPosition touch, int button_id)
 {
@@ -80,6 +80,8 @@ bool	touch_button(touchPosition touch, int button_id)
 	} else if (button_id == e_bar && button_touch(touch, layout->bar.back_bar) == true) {
 		return (true);
 	} else if (button_id == e_next_page && button_touch(touch, layout->next_page_button) == true) {
+		return (true);
+	} else if (button_id == e_prev_page && button_touch(touch, layout->prev_page_button) == true) {
 		return (true);
 	}
 
