@@ -7,7 +7,7 @@ extern t_layout		*layout;
 
 bool	button_touch(touchPosition touch, SDL_Rect rect)
 {
-	touchPosition	released = {0};
+	touchPosition			released = {0};
 	static touchPosition	released_save = {0};
 
 	if (touch.px == 0 || touch.py == 0) {
@@ -57,16 +57,6 @@ void	default_controller_layout(void)
 	controller->layout = KEY_ZR;
 }
 
-bool	touch_next_page_home(touchPosition touch)
-{
-	if (touch.px >= (u32)(layout->cover.x + layout->cover.w) &&
-			touch.py > (u32)(layout->bar.line.y)) {
-		return (true);
-	}
-
-	return (false);
-}
-
 bool	touch_prev_page_home(touchPosition touch)
 {
 	if (touch.px > 0 && touch.px <= (u32)(layout->cover.x) &&
@@ -88,6 +78,8 @@ bool	touch_button(touchPosition touch, int button_id)
 	} else if (button_id == e_rotate && button_touch(touch, layout->rotate_button) == true) {
 		return (true);
 	} else if (button_id == e_bar && button_touch(touch, layout->bar.back_bar) == true) {
+		return (true);
+	} else if (button_id == e_next_page && button_touch(touch, layout->next_page_button) == true) {
 		return (true);
 	}
 

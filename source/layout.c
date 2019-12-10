@@ -68,6 +68,14 @@ void	set_layout(void)
 		layout->progress_bar.w = layout->cover.w;
 		layout->progress_bar.h = 2;
 	}
+
+	// coord touch next_page
+	if (ebook->read_mode == false) {
+		layout->next_page_button.x = layout->cover.x + layout->cover.w;
+		layout->next_page_button.y = layout->bar.line.y;
+		layout->next_page_button.w = WIN_HEIGHT - layout->bar.line.y;
+		layout->next_page_button.h = WIN_WIDTH - layout->next_page_button.x;
+	}
 }
 
 bool	init_layout(void)

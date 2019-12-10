@@ -147,7 +147,7 @@ void	home_page(void)
 			ebook_reader(books[index]);
 			refresh = true;
 			help = false;
-		} else if (kDown & controller->next_page || touch_next_page_home(touch) == true) {
+		} else if (kDown & controller->next_page || touch_button(touch, e_next_page) == true) {
 			index++;
 			if (index == nb_books) {
 				index = 0;
