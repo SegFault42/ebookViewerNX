@@ -80,7 +80,6 @@ void	set_layout(void)
 		layout->prev_page_button.w = layout->cover.x;
 		layout->prev_page_button.h = WIN_HEIGHT - layout->bar.line.y;
 	}
-
 }
 
 bool	init_layout(void)
