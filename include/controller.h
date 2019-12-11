@@ -42,6 +42,6 @@ bool			touch_next_page_read(touchPosition touch);
 bool			touch_prev_page_read(touchPosition touch);
 
 bool			touch_button(touchPosition touch, int button_id);
-bool	button_touch(touchPosition touch, SDL_Rect rect);
+bool			button_touch(touchPosition touch, SDL_Rect rect);
 
 #endif

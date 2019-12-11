@@ -82,33 +82,3 @@ bool	touch_button(touchPosition touch, int button_id)
 
 	return (false);
 }
-
-bool	touch_next_page_read(touchPosition touch)
-{
-	if (ebook->layout_orientation == LANDSCAPE &&
-			touch.px >= WIN_WIDTH / 2
-			) {
-		return (true);
-	} else if (ebook->layout_orientation == PORTRAIT &&
-			touch.py >= WIN_HEIGHT / 2
-			) {
-		return (true);
-	}
-
-	return (false);
-}
-
-bool	touch_prev_page_read(touchPosition touch)
-{
-	if (ebook->layout_orientation == LANDSCAPE &&
-			touch.px <= WIN_WIDTH / 2 && touch.px > 0) {
-		return (true);
-	} else if (ebook->layout_orientation == PORTRAIT &&
-			touch.py <= WIN_HEIGHT / 2 &&
-			touch.py > 0
-			) {
-		return (true);
-	}
-
-	return (false);
-}
