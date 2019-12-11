@@ -19,6 +19,7 @@ void	debug_draw_hitbox(void)
 	draw_hitbox(layout->exit_home);
 	draw_hitbox(layout->next_page_button);
 	draw_hitbox(layout->prev_page_button);
+	draw_hitbox(layout->rotate_button);
 
 	if (ebook->read_mode == false) {
 		draw_hitbox(layout->cover);

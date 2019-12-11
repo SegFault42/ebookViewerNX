@@ -247,18 +247,8 @@ static void	draw_exit_button(void)
 	SDL_Color	text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT) {
-		layout->exit_home.x = 1240;
-		layout->exit_home.y = 600;
-		layout->exit_home.w = 34;
-		layout->exit_home.h = 58;
-
 		draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 90);
 	} else {
-		layout->exit_home.w = WIN_WIDTH / 14;
-		layout->exit_home.h = layout->bar.line.y / 1.30;
-		layout->exit_home.x = 0.8984375 * WIN_WIDTH;
-		layout->exit_home.y = (layout->bar.line.y - layout->exit_home.h) / 2;
-
 		draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 0);
 	}
 
@@ -295,18 +285,8 @@ static void	draw_rotate_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT) {
-		layout->rotate_button.x = 1240;
-		layout->rotate_button.y = 105;
-		layout->rotate_button.w = 34;
-		layout->rotate_button.h = 58;
-
 		draw_button(layout->rotate_button, "Rotate", 0, background_color, text_color, 90);
 	} else {
-		layout->rotate_button.w = WIN_WIDTH / 14;
-		layout->rotate_button.h = layout->bar.line.y / 1.30;
-		layout->rotate_button.x = 0.739125 * WIN_WIDTH;
-		layout->rotate_button.y = (layout->bar.line.y - layout->rotate_button.h) / 2;
-
 		draw_button(layout->rotate_button, "Rotate", 0, background_color, text_color, 0);
 	}
 
