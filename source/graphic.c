@@ -207,7 +207,7 @@ void	draw_app_name(void)
 	log_info("draw_app_name() [Success]");
 }
 
-void	draw_button(SDL_Rect *rect, char *text, uint8_t prop, SDL_Color button_color, SDL_Color text_color, int angle)
+void	draw_button(SDL_Rect *rect, char *text, SDL_Color button_color, SDL_Color text_color, int angle)
 {
 	int	rect_text_w = 0;
 	int	rect_text_h = 0;
@@ -216,14 +216,14 @@ void	draw_button(SDL_Rect *rect, char *text, uint8_t prop, SDL_Color button_colo
 
 	TTF_SizeText(graphic->ttf->font_small, text, &rect_text_w, &rect_text_h);
 
-	if (angle == 90 && rect->w < rect_text_w) {
-		if (rect->w < rect_text_w) {
-			rect->h = rect_text_w + 8;
-		}
-		if (rect->h < rect_text_h) {
-			rect->w = rect_text_h + 4;
-		}
-	}
+	/*if (angle == 90) {*/
+		/*if (rect->w < rect_text_w) {*/
+			/*rect->h = rect_text_w + 8;*/
+		/*}*/
+		/*if (rect->h < rect_text_h) {*/
+			/*rect->w = rect_text_h + 4;*/
+		/*}*/
+	/*}*/
 
 	SDL_SetRenderDrawColor(graphic->renderer, button_color.r, button_color.g, button_color.b, button_color.a);
 	SDL_RenderDrawRect(graphic->renderer, rect);
@@ -247,9 +247,9 @@ static void	draw_exit_button(void)
 	SDL_Color	text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT) {
-		draw_button(&layout->exit_button, "Exit", 0, background_color, text_color, 90);
+		draw_button(&layout->exit_button, "Exit", background_color, text_color, 90);
 	} else {
-		draw_button(&layout->exit_button, "Exit", 0, background_color, text_color, 0);
+		draw_button(&layout->exit_button, "Exit", background_color, text_color, 0);
 	}
 
 	log_info("draw_exit_button() [Success]");
@@ -261,9 +261,9 @@ static void	draw_help_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT) {
-		draw_button(&layout->help_button, "Help", 0, background_color, text_color, 90);
+		draw_button(&layout->help_button, "Help", background_color, text_color, 90);
 	} else {
-		draw_button(&layout->help_button, "Help", 0, background_color, text_color, 0);
+		draw_button(&layout->help_button, "Help", background_color, text_color, 0);
 	}
 
 	log_info("draw_help_button() [Success]");
@@ -275,9 +275,9 @@ static void	draw_rotate_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT) {
-		draw_button(&layout->rotate_button, "Rotate", 0, background_color, text_color, 90);
+		draw_button(&layout->rotate_button, "Rotate", background_color, text_color, 90);
 	} else {
-		draw_button(&layout->rotate_button, "Rotate", 0, background_color, text_color, 0);
+		draw_button(&layout->rotate_button, "Rotate", background_color, text_color, 0);
 	}
 
 	log_info("draw_rotate_button() [Success]");
