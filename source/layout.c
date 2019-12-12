@@ -29,16 +29,16 @@ void	set_layout(void)
 		layout->app_title.y = WIN_HEIGHT / 90;
 
 		// coord exit button
-		layout->exit_home.w = WIN_WIDTH / 14;
-		layout->exit_home.h = layout->bar.line.y / 1.30;
-		layout->exit_home.x = 0.8984375 * WIN_WIDTH;
-		layout->exit_home.y = (layout->bar.line.y - layout->exit_home.h) / 2;
+		layout->exit_button.w = WIN_WIDTH / 14;
+		layout->exit_button.h = layout->bar.line.y / 1.30;
+		layout->exit_button.x = 0.8984375 * WIN_WIDTH;
+		layout->exit_button.y = (layout->bar.line.y - layout->exit_button.h) / 2;
 
 		// coord help button
-		layout->help_home.w = WIN_WIDTH / 14;
-		layout->help_home.h = layout->bar.line.y / 1.30;
-		layout->help_home.x = 0.8203125 * WIN_WIDTH;
-		layout->help_home.y = (layout->bar.line.y - layout->help_home.h) / 2;
+		layout->help_button.w = WIN_WIDTH / 14;
+		layout->help_button.h = layout->bar.line.y / 1.30;
+		layout->help_button.x = 0.8203125 * WIN_WIDTH;
+		layout->help_button.y = (layout->bar.line.y - layout->help_button.h) / 2;
 
 		if (ebook->read_mode == true) {
 			// progress bar coord
@@ -83,10 +83,10 @@ void	set_layout(void)
 		layout->app_title.y = (WIN_HEIGHT / 2) - (w /2);
 
 		// coord help_button
-		layout->help_home.x = 1240;
-		layout->help_home.y = 525;
-		layout->help_home.w = 34;
-		layout->help_home.h = 58;
+		layout->help_button.x = 1240;
+		layout->help_button.y = 525;
+		layout->help_button.w = 34;
+		layout->help_button.h = 58;
 
 		if (ebook->read_mode == true) {
 			// progress bar coord
@@ -114,10 +114,10 @@ void	set_layout(void)
 			layout->rotate_button.h = 58;
 
 			// coord exit button
-			layout->exit_home.x = 1240;
-			layout->exit_home.y = 600;
-			layout->exit_home.w = 34;
-			layout->exit_home.h = 58;
+			layout->exit_button.x = 1240;
+			layout->exit_button.y = 600;
+			layout->exit_button.w = 34;
+			layout->exit_button.h = 58;
 		}
 	}
 

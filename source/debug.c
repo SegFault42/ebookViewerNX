@@ -21,8 +21,8 @@ void	debug_draw_hitbox(void)
 	draw_hitbox(layout->bar.back_bar);
 
 	if (layout->show_bar == true) {
-		draw_hitbox(layout->help_home);
-		draw_hitbox(layout->exit_home);
+		draw_hitbox(layout->help_button);
+		draw_hitbox(layout->exit_button);
 		if (ebook->read_mode == true) {
 			draw_hitbox(layout->rotate_button);
 		} else {
