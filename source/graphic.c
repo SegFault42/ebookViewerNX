@@ -261,18 +261,8 @@ static void	draw_help_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT) {
-		layout->help_home.x = 1240;
-		layout->help_home.y = 525;
-		layout->help_home.w = 34;
-		layout->help_home.h = 58;
-
 		draw_button(layout->help_home, "Help", 0, background_color, text_color, 90);
 	} else {
-		layout->help_home.w = WIN_WIDTH / 14;
-		layout->help_home.h = layout->bar.line.y / 1.30;
-		layout->help_home.x = 0.8203125 * WIN_WIDTH;
-		layout->help_home.y = (layout->bar.line.y - layout->help_home.h) / 2;
-
 		draw_button(layout->help_home, "Help", 0, background_color, text_color, 0);
 	}
 
