@@ -173,7 +173,7 @@ void	home_page(void)
 			if (help == true) {
 				print_help();
 			}
-			debug_draw_hitbox();
+			/*debug_draw_hitbox();*/
 			SDL_RenderPresent(graphic->renderer);
 			touch.px = 0;
 			touch.py = 0;

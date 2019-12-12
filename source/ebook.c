@@ -328,7 +328,7 @@ void	ebook_reader(char *book)
 			if (help == true) {
 				print_help();
 			}
-			debug_draw_hitbox();
+			/*debug_draw_hitbox();*/
 			SDL_RenderPresent(graphic->renderer);
 			save_last_page(book, ebook->last_page);
 			refresh = false;

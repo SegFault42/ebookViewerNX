@@ -301,7 +301,6 @@ void	draw_bar(void)
 void	draw_page_number(int type)
 {
 	SDL_Color	color = {255, 255, 255, 255};
-	SDL_Rect	rect = {0};
 	char		page_number[20] = {0};
 	int			x = 0;
 	int			w = 0;
@@ -326,6 +325,7 @@ void	draw_page_number(int type)
 		draw_text(graphic->renderer, 1280, (WIN_HEIGHT / 2) - (w  /2), page_number, graphic->ttf->font_medium, color, 90);
 	}
 
+	// Background
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 150, 0, 255);
 	SDL_RenderFillRect(graphic->renderer, &layout->progress_bar);
 
@@ -339,7 +339,7 @@ void	draw_page_number(int type)
 	}
 
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, 255);
-	SDL_RenderFillRect(graphic->renderer, &rect);
+	SDL_RenderFillRect(graphic->renderer, &layout->progress_bar);
 
 	log_info("draw_page_number() [Success]");
 }
