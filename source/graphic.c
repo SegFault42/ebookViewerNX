@@ -118,34 +118,121 @@ void	draw_cover_cbr(char *book)
 	log_info("print_cover_cbr() [Success]");
 }
 
+bool	load_from_cache(char *book)
+{
+	SDL_Surface	*image = NULL;
+	SDL_Texture	*texture = NULL;
+	char		path[PATH_MAX] = {0};
+
+	sprintf(path, "/switch/ebookViewerNX/cache/%s", book);
+
+	if (isFileExist(path) == false) {
+		return (false);
+	}
+
+	printf("%s\n", path);
+	image = IMG_Load(cbr->path);
+	if (image == NULL) {
+		log_warn("%s", IMG_GetError());
+		return (false);
+	}
+	printf("%s\n", path);
+
+	texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+	if (texture == NULL) {
+		log_warn("%s", IMG_GetError());
+		return (false);
+	}
+	printf("%s\n", path);
+
+	SDL_FreeSurface(image);
+
+	// Render cover
+	SDL_RenderCopy(graphic->renderer, texture, NULL, &layout->cover);
+	SDL_DestroyTexture(texture);
+
+	log_info("load_from_cache() [Success]");
+	return (true);
+}
+
+void	save_in_cache(fz_pixmap *ppm, char *book)
+{
+	char	*image = NULL;
+	int		len = 0;
+	char	path[PATH_MAX] = {0};
+
+	sprintf(path, "/switch/ebookViewerNX/cache/%s", book);
+
+	printf("len = %ld\n", strlen(ppm->samples));
+	image = (char *)calloc(sizeof(char), 1000000);
+	if (image == NULL) {
+		return ;
+	}
+
+	len += sprintf(image, "P3\n%d %d\n255\n", ppm->w, ppm->h);
+	for (int y = 0; y < ppm->h; ++y)
+	{
+		unsigned char *p = &ppm->samples[y * ppm->stride];
+		for (int x = 0; x < ppm->w; ++x)
+		{
+			if (x > 0)
+				len += sprintf(&image[len], "  ");
+			len += sprintf(&image[len], "%3d %3d %3d", p[0], p[1], p[2]);
+			p += ppm->n;
+		}
+		len += sprintf(&image[len], "\n");
+		printf("len = %d\n", len);
+	}
+
+	int fd = open(path, O_CREAT | O_RDWR, 0777);
+	if (fd == -1) {
+		free(image);
+		image = NULL;
+		return ;
+	}
+
+	printf("hello\n");
+	write(fd, image, len);
+
+	close(fd);
+	free(image);
+	image = NULL;
+
+	log_info("save_in_cache() [Success]");
+}
+
 static bool	draw_cover(char *book)
 {
 	char	path[PATH_MAX] = {0};
 
 	sprintf(path, "/switch/ebookViewerNX/%s", book);
 
-	init_mupdf();
+	if (load_from_cache(book) == false) {
+		init_mupdf();
 
-	if (open_ebook(path) == false) {
-		return (false);
+		if (open_ebook(path) == false) {
+			return (false);
+		}
+
+		get_page_info(0);
+
+		//scale to fit 100%
+		trans->zoom = 100 / (trans->bounds.y1 / layout->cover.h);
+
+		// set zoom and rotation
+		trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
+		trans->ctm = fz_pre_rotate(trans->ctm, 0);
+
+		if (convert_page_to_ppm(0) == false) {
+			return (false);
+		}
+
+		draw_ppm(ebook->ppm, COVER);
+
+		save_in_cache(ebook->ppm, book);
+
+		fz_drop_pixmap(ebook->ctx, ebook->ppm);
 	}
-
-	get_page_info(0);
-
-	//scale to fit 100%
-	trans->zoom = 100 / (trans->bounds.y1 / layout->cover.h);
-
-	// set zoom and rotation
-	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
-	trans->ctm = fz_pre_rotate(trans->ctm, 0);
-
-	if (convert_page_to_ppm(0) == false) {
-		return (false);
-	}
-
-	draw_ppm(ebook->ppm, COVER);
-
-	fz_drop_pixmap(ebook->ctx, ebook->ppm);
 
 	// Draw rect around cover
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);

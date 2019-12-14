@@ -12,6 +12,9 @@ static void	create_requiered_folder(void)
 	if (mkdir(EBOOK_PATH, 0777) != -1) {
 		log_info("/switch/ebookViewerNX created !");
 	}
+	if (mkdir(EBOOK_PATH"/cache", 0777) != -1) {
+		log_info("/switch/ebookViewerNX created !");
+	}
 
 	int fd = open(EBOOK_PATH"config", O_CREAT, 0777);
 	if (fd == -1) {
