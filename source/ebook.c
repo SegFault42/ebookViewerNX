@@ -285,11 +285,11 @@ void	ebook_reader(char *book)
 			layout->show_bar = !layout->show_bar;
 			refresh = true;
 			help = false;
-		} else if (kDown & controller->next_page || touch_next_page_read(touch)) {
+		} else if (kDown & controller->next_page || touch_button(touch, e_next_page)) {
 			ebook->last_page++;
 			refresh = true;
 			help = false;
-		} else if (kDown & controller->prev_page || touch_prev_page_read(touch)) {
+		} else if (kDown & controller->prev_page || touch_button(touch, e_prev_page)) {
 			ebook->last_page--;
 			refresh = true;
 			help = false;
@@ -328,6 +328,7 @@ void	ebook_reader(char *book)
 			if (help == true) {
 				print_help();
 			}
+			/*debug_draw_hitbox();*/
 			SDL_RenderPresent(graphic->renderer);
 			save_last_page(book, ebook->last_page);
 			refresh = false;

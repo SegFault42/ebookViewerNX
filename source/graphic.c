@@ -118,34 +118,121 @@ void	draw_cover_cbr(char *book)
 	log_info("print_cover_cbr() [Success]");
 }
 
+bool	load_from_cache(char *book)
+{
+	SDL_Surface	*image = NULL;
+	SDL_Texture	*texture = NULL;
+	char		path[PATH_MAX] = {0};
+
+	sprintf(path, "/switch/ebookViewerNX/cache/%s", book);
+
+	if (isFileExist(path) == false) {
+		return (false);
+	}
+
+	printf("%s\n", path);
+	image = IMG_Load(cbr->path);
+	if (image == NULL) {
+		log_warn("%s", IMG_GetError());
+		return (false);
+	}
+	printf("%s\n", path);
+
+	texture = SDL_CreateTextureFromSurface(graphic->renderer, image);
+	if (texture == NULL) {
+		log_warn("%s", IMG_GetError());
+		return (false);
+	}
+	printf("%s\n", path);
+
+	SDL_FreeSurface(image);
+
+	// Render cover
+	SDL_RenderCopy(graphic->renderer, texture, NULL, &layout->cover);
+	SDL_DestroyTexture(texture);
+
+	log_info("load_from_cache() [Success]");
+	return (true);
+}
+
+void	save_in_cache(fz_pixmap *ppm, char *book)
+{
+	char	*image = NULL;
+	int		len = 0;
+	char	path[PATH_MAX] = {0};
+
+	sprintf(path, "/switch/ebookViewerNX/cache/%s", book);
+
+	printf("len = %ld\n", strlen(ppm->samples));
+	image = (char *)calloc(sizeof(char), 1000000);
+	if (image == NULL) {
+		return ;
+	}
+
+	len += sprintf(image, "P3\n%d %d\n255\n", ppm->w, ppm->h);
+	for (int y = 0; y < ppm->h; ++y)
+	{
+		unsigned char *p = &ppm->samples[y * ppm->stride];
+		for (int x = 0; x < ppm->w; ++x)
+		{
+			if (x > 0)
+				len += sprintf(&image[len], "  ");
+			len += sprintf(&image[len], "%3d %3d %3d", p[0], p[1], p[2]);
+			p += ppm->n;
+		}
+		len += sprintf(&image[len], "\n");
+		printf("len = %d\n", len);
+	}
+
+	int fd = open(path, O_CREAT | O_RDWR, 0777);
+	if (fd == -1) {
+		free(image);
+		image = NULL;
+		return ;
+	}
+
+	printf("hello\n");
+	write(fd, image, len);
+
+	close(fd);
+	free(image);
+	image = NULL;
+
+	log_info("save_in_cache() [Success]");
+}
+
 static bool	draw_cover(char *book)
 {
 	char	path[PATH_MAX] = {0};
 
 	sprintf(path, "/switch/ebookViewerNX/%s", book);
 
-	init_mupdf();
+	if (load_from_cache(book) == false) {
+		init_mupdf();
 
-	if (open_ebook(path) == false) {
-		return (false);
+		if (open_ebook(path) == false) {
+			return (false);
+		}
+
+		get_page_info(0);
+
+		//scale to fit 100%
+		trans->zoom = 100 / (trans->bounds.y1 / layout->cover.h);
+
+		// set zoom and rotation
+		trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
+		trans->ctm = fz_pre_rotate(trans->ctm, 0);
+
+		if (convert_page_to_ppm(0) == false) {
+			return (false);
+		}
+
+		draw_ppm(ebook->ppm, COVER);
+
+		save_in_cache(ebook->ppm, book);
+
+		fz_drop_pixmap(ebook->ctx, ebook->ppm);
 	}
-
-	get_page_info(0);
-
-	//scale to fit 100%
-	trans->zoom = 100 / (trans->bounds.y1 / layout->cover.h);
-
-	// set zoom and rotation
-	trans->ctm = fz_scale(trans->zoom / 100, trans->zoom / 100);
-	trans->ctm = fz_pre_rotate(trans->ctm, 0);
-
-	if (convert_page_to_ppm(0) == false) {
-		return (false);
-	}
-
-	draw_ppm(ebook->ppm, COVER);
-
-	fz_drop_pixmap(ebook->ctx, ebook->ppm);
 
 	// Draw rect around cover
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
@@ -207,7 +294,7 @@ void	draw_app_name(void)
 	log_info("draw_app_name() [Success]");
 }
 
-void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color, SDL_Color text_color, int angle)
+void	draw_button(SDL_Rect *rect, char *text, SDL_Color button_color, SDL_Color text_color, int angle)
 {
 	int	rect_text_w = 0;
 	int	rect_text_h = 0;
@@ -216,24 +303,24 @@ void	draw_button(SDL_Rect rect, char *text, uint8_t prop, SDL_Color button_color
 
 	TTF_SizeText(graphic->ttf->font_small, text, &rect_text_w, &rect_text_h);
 
-	if (angle == 90 && rect.w < rect_text_w) {
-		if (rect.w < rect_text_w) {
-			rect.h = rect_text_w + 8;
-		}
-		if (rect.h < rect_text_h) {
-			rect.w = rect_text_h + 4;
-		}
-	}
+	/*if (angle == 90) {*/
+		/*if (rect->w < rect_text_w) {*/
+			/*rect->h = rect_text_w + 8;*/
+		/*}*/
+		/*if (rect->h < rect_text_h) {*/
+			/*rect->w = rect_text_h + 4;*/
+		/*}*/
+	/*}*/
 
 	SDL_SetRenderDrawColor(graphic->renderer, button_color.r, button_color.g, button_color.b, button_color.a);
-	SDL_RenderDrawRect(graphic->renderer, &rect);
+	SDL_RenderDrawRect(graphic->renderer, rect);
 
 	if (angle == 90) {
-		text_x = rect.x + ((rect.w) - ((rect.w - rect_text_h) / 2));
-		text_y = rect.y + ((rect.h - rect_text_w) / 2);
+		text_x = rect->x + ((rect->w) - ((rect->w - rect_text_h) / 2));
+		text_y = rect->y + ((rect->h - rect_text_w) / 2);
 	} else {
-		text_x = ((rect.w / 2) - (rect_text_w / 2)) + rect.x;
-		text_y = ((rect.h / 2) - (rect_text_h / 2)) + rect.y;
+		text_x = ((rect->w / 2) - (rect_text_w / 2)) + rect->x;
+		text_y = ((rect->h / 2) - (rect_text_h / 2)) + rect->y;
 	}
 
 	draw_text(graphic->renderer, text_x, text_y, text, graphic->ttf->font_small, text_color, angle);
@@ -247,19 +334,9 @@ static void	draw_exit_button(void)
 	SDL_Color	text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT) {
-		layout->exit_home.x = 1240;
-		layout->exit_home.y = 600;
-		layout->exit_home.w = 34;
-		layout->exit_home.h = 58;
-
-		draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 90);
+		draw_button(&layout->exit_button, "Exit", background_color, text_color, 90);
 	} else {
-		layout->exit_home.w = WIN_WIDTH / 14;
-		layout->exit_home.h = layout->bar.line.y / 1.30;
-		layout->exit_home.x = 0.8984375 * WIN_WIDTH;
-		layout->exit_home.y = (layout->bar.line.y - layout->exit_home.h) / 2;
-
-		draw_button(layout->exit_home, "Exit", 0, background_color, text_color, 0);
+		draw_button(&layout->exit_button, "Exit", background_color, text_color, 0);
 	}
 
 	log_info("draw_exit_button() [Success]");
@@ -271,19 +348,9 @@ static void	draw_help_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT) {
-		layout->help_home.x = 1240;
-		layout->help_home.y = 525;
-		layout->help_home.w = 34;
-		layout->help_home.h = 58;
-
-		draw_button(layout->help_home, "Help", 0, background_color, text_color, 90);
+		draw_button(&layout->help_button, "Help", background_color, text_color, 90);
 	} else {
-		layout->help_home.w = WIN_WIDTH / 14;
-		layout->help_home.h = layout->bar.line.y / 1.30;
-		layout->help_home.x = 0.8203125 * WIN_WIDTH;
-		layout->help_home.y = (layout->bar.line.y - layout->help_home.h) / 2;
-
-		draw_button(layout->help_home, "Help", 0, background_color, text_color, 0);
+		draw_button(&layout->help_button, "Help", background_color, text_color, 0);
 	}
 
 	log_info("draw_help_button() [Success]");
@@ -295,19 +362,9 @@ static void	draw_rotate_button(void)
 	SDL_Color text_color = {255, 255, 255, 255};
 
 	if (ebook->layout_orientation == PORTRAIT) {
-		layout->rotate_button.x = 1240;
-		layout->rotate_button.y = 105;
-		layout->rotate_button.w = 34;
-		layout->rotate_button.h = 58;
-
-		draw_button(layout->rotate_button, "Rotate", 0, background_color, text_color, 90);
+		draw_button(&layout->rotate_button, "Rotate", background_color, text_color, 90);
 	} else {
-		layout->rotate_button.w = WIN_WIDTH / 14;
-		layout->rotate_button.h = layout->bar.line.y / 1.30;
-		layout->rotate_button.x = 0.739125 * WIN_WIDTH;
-		layout->rotate_button.y = (layout->bar.line.y - layout->rotate_button.h) / 2;
-
-		draw_button(layout->rotate_button, "Rotate", 0, background_color, text_color, 0);
+		draw_button(&layout->rotate_button, "Rotate", background_color, text_color, 0);
 	}
 
 	log_info("draw_rotate_button() [Success]");
@@ -331,7 +388,6 @@ void	draw_bar(void)
 void	draw_page_number(int type)
 {
 	SDL_Color	color = {255, 255, 255, 255};
-	SDL_Rect	rect = {0};
 	char		page_number[20] = {0};
 	int			x = 0;
 	int			w = 0;
@@ -356,6 +412,7 @@ void	draw_page_number(int type)
 		draw_text(graphic->renderer, 1280, (WIN_HEIGHT / 2) - (w  /2), page_number, graphic->ttf->font_medium, color, 90);
 	}
 
+	// Background
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 150, 0, 255);
 	SDL_RenderFillRect(graphic->renderer, &layout->progress_bar);
 
@@ -369,7 +426,7 @@ void	draw_page_number(int type)
 	}
 
 	SDL_SetRenderDrawColor(graphic->renderer, 0, 255, 0, 255);
-	SDL_RenderFillRect(graphic->renderer, &rect);
+	SDL_RenderFillRect(graphic->renderer, &layout->progress_bar);
 
 	log_info("draw_page_number() [Success]");
 }
@@ -379,7 +436,7 @@ void	print_help(void)
 	SDL_Surface	*image = NULL;
 
 	if (ebook->read_mode == false) {
-		image = IMG_Load("romfs:/help_home_landscape.png");
+		image = IMG_Load("romfs:/help_button_landscape.png");
 	} else if (ebook->read_mode == true && ebook->layout_orientation == LANDSCAPE) {
 		image = IMG_Load("romfs:/help_read_landscape.png");
 	} else if (ebook->read_mode == true && ebook->layout_orientation == PORTRAIT) {

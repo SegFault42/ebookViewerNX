@@ -132,7 +132,6 @@ void	home_page(void)
 		hidScanInput();
 
 		u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-		u64 kUp = hidKeysUp(CONTROLLER_P1_AUTO);
 		touchPosition touch = {0};
 
 		hidTouchRead(&touch, 0);

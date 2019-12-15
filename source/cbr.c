@@ -73,7 +73,6 @@ static u64 count_files(t_cbr *cbr, const char *path)
 static int write_data(t_cbr *cbr)
 {
 	int		ret = 0;
-	size_t	total_length = 0;
 
 	for (;;) {
 		const void *chunk = NULL;

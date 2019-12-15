@@ -5,6 +5,18 @@ extern t_ebook		*ebook;
 extern t_graphic	*graphic;
 extern t_layout		*layout;
 
+static bool	check_hitbox(touchPosition touch, SDL_Rect button)
+{
+	if (touch.px >= (u32)button.x &&
+		touch.py >= (u32)button.y &&
+		touch.px <= (u32)(button.x + button.w) &&
+		touch.py <= (u32)(button.y + button.h)) {
+		return (true);
+	}
+
+	return (false);
+}
+
 bool	button_touch(touchPosition touch, SDL_Rect rect)
 {
 	touchPosition			released = {0};
@@ -20,14 +32,7 @@ bool	button_touch(touchPosition touch, SDL_Rect rect)
 
 		// check if button is pressed and released not outside de hitbox
 		if (released.px == 0 && released.py == 0) {
-			if (touch.px >= (u32)(rect.x) &&
-				touch.px <= (u32)(rect.x + rect.w) &&
-				touch.py >= (u32)(rect.y) &&
-				touch.py <= (u32)(rect.y + rect.h) &&
-				released_save.px >= (u32)(rect.x) &&
-				released_save.px <= (u32)(rect.x + rect.w) &&
-				released_save.py >= (u32)(rect.y) &&
-				released_save.py <= (u32)(rect.y + rect.h)) {
+			if (check_hitbox(touch, rect) == true && check_hitbox(released_save, rect) == true) {
 				return (true);
 			}
 		}
@@ -57,23 +62,13 @@ void	default_controller_layout(void)
 	controller->layout = KEY_ZR;
 }
 
-/*bool	touch_prev_page_home(touchPosition touch)*/
-/*{*/
-	/*if (touch.px > 0 && touch.px <= (u32)(layout->cover.x) &&*/
-			/*touch.py > (u32)(layout->bar.line.y)) {*/
-		/*return (true);*/
-	/*}*/
-
-	/*return (false);*/
-/*}*/
-
 bool	touch_button(touchPosition touch, int button_id)
 {
-	if (button_id == e_exit && button_touch(touch, layout->exit_home) == true) {
+	if (button_id == e_exit && button_touch(touch, layout->exit_button) == true) {
 		return (true);
 	} else if (button_id == e_cover && button_touch(touch, layout->cover) == true) {
 		return (true);
-	} else if (button_id == e_help && button_touch(touch, layout->help_home) == true) {
+	} else if (button_id == e_help && button_touch(touch, layout->help_button) == true) {
 		return (true);
 	} else if (button_id == e_rotate && button_touch(touch, layout->rotate_button) == true) {
 		return (true);
@@ -82,36 +77,6 @@ bool	touch_button(touchPosition touch, int button_id)
 	} else if (button_id == e_next_page && button_touch(touch, layout->next_page_button) == true) {
 		return (true);
 	} else if (button_id == e_prev_page && button_touch(touch, layout->prev_page_button) == true) {
-		return (true);
-	}
-
-	return (false);
-}
-
-bool	touch_next_page_read(touchPosition touch)
-{
-	if (ebook->layout_orientation == LANDSCAPE &&
-			touch.px >= WIN_WIDTH / 2
-			) {
-		return (true);
-	} else if (ebook->layout_orientation == PORTRAIT &&
-			touch.py >= WIN_HEIGHT / 2
-			) {
-		return (true);
-	}
-
-	return (false);
-}
-
-bool	touch_prev_page_read(touchPosition touch)
-{
-	if (ebook->layout_orientation == LANDSCAPE &&
-			touch.px <= WIN_WIDTH / 2 && touch.px > 0) {
-		return (true);
-	} else if (ebook->layout_orientation == PORTRAIT &&
-			touch.py <= WIN_HEIGHT / 2 &&
-			touch.py > 0
-			) {
 		return (true);
 	}
 

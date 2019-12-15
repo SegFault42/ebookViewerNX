@@ -28,15 +28,45 @@ void	set_layout(void)
 		layout->app_title.x = (WIN_WIDTH / 2) - (w / 2);
 		layout->app_title.y = WIN_HEIGHT / 90;
 
-		// progress bar coord
+		// coord exit button
+		layout->exit_button.w = WIN_WIDTH / 14;
+		layout->exit_button.h = layout->bar.line.y / 1.30;
+		layout->exit_button.x = 0.8984375 * WIN_WIDTH;
+		layout->exit_button.y = (layout->bar.line.y - layout->exit_button.h) / 2;
+
+		// coord help button
+		layout->help_button.w = WIN_WIDTH / 14;
+		layout->help_button.h = layout->bar.line.y / 1.30;
+		layout->help_button.x = 0.8203125 * WIN_WIDTH;
+		layout->help_button.y = (layout->bar.line.y - layout->help_button.h) / 2;
+
 		if (ebook->read_mode == true) {
+			// progress bar coord
 			layout->progress_bar.x = (WIN_WIDTH / 2) - (400 / 2);
 			layout->progress_bar.y = 50;
 			layout->progress_bar.w = 400;
 			layout->progress_bar.h = 2;
+
+			// coord touch next_page
+			layout->next_page_button.x = WIN_WIDTH / 2;
+			layout->next_page_button.y = layout->bar.line.y;
+			layout->next_page_button.w = WIN_WIDTH - (WIN_WIDTH / 2);
+			layout->next_page_button.h = WIN_HEIGHT - layout->bar.line.y;
+
+			// coord touch prev_page
+			layout->prev_page_button.x = 0;
+			layout->prev_page_button.y = layout->bar.line.y;
+			layout->prev_page_button.w = WIN_WIDTH/2;
+			layout->prev_page_button.h = WIN_HEIGHT - layout->bar.line.y;
+
+			// coord rotate button
+			layout->rotate_button.w = WIN_WIDTH / 14;
+			layout->rotate_button.h = layout->bar.line.y / 1.30;
+			layout->rotate_button.x = 0.739125 * WIN_WIDTH;
+			layout->rotate_button.y = (layout->bar.line.y - layout->rotate_button.h) / 2;
 		}
 	} else if (ebook->layout_orientation == PORTRAIT) {
-		layout->bar.line.x = WIN_WIDTH - (WIN_WIDTH / 28);
+		layout->bar.line.x = WIN_WIDTH - (WIN_WIDTH / 24);
 		layout->bar.line.y = WIN_HEIGHT / 20;
 		layout->bar.line.w = 2;
 		layout->bar.line.h = WIN_HEIGHT - (layout->bar.line.y * 2);
@@ -52,12 +82,42 @@ void	set_layout(void)
 		layout->app_title.x = 1274;
 		layout->app_title.y = (WIN_HEIGHT / 2) - (w /2);
 
-		// progress bar coord
+		// coord help_button
+		layout->help_button.w = 40;
+		layout->help_button.h = 90;
+		layout->help_button.x = WIN_WIDTH - (WIN_WIDTH - layout->bar.line.x - (((WIN_WIDTH - layout->bar.line.x) - layout->help_button.w) /2));
+		layout->help_button.y = 525;
+
 		if (ebook->read_mode == true) {
-			layout->progress_bar.x = 1243;
+			// progress bar coord
+			layout->progress_bar.x = 1240;
 			layout->progress_bar.y = (WIN_HEIGHT / 2) - (300 / 2);
 			layout->progress_bar.w = 2;
 			layout->progress_bar.h = 300;
+
+			// coord touch next_page
+			layout->prev_page_button.x = 0;
+			layout->prev_page_button.y = 0;
+			layout->prev_page_button.w = WIN_WIDTH - (WIN_WIDTH - layout->bar.line.x);
+			layout->prev_page_button.h = WIN_HEIGHT / 2;
+
+			// coord touch prev_page
+			layout->next_page_button.x = 0;
+			layout->next_page_button.y = WIN_HEIGHT - (WIN_HEIGHT / 2);
+			layout->next_page_button.w = WIN_WIDTH - (WIN_WIDTH - layout->bar.line.x);
+			layout->next_page_button.h = WIN_HEIGHT / 2;
+		
+			// coord rotate button
+			layout->rotate_button.w = 40;
+			layout->rotate_button.h = 90;
+			layout->rotate_button.x = WIN_WIDTH - (WIN_WIDTH - layout->bar.line.x - (((WIN_WIDTH - layout->bar.line.x) - layout->rotate_button.w) /2));
+			layout->rotate_button.y = 30;
+
+			// coord exit button
+			layout->exit_button.w = 40;
+			layout->exit_button.h = 90;
+			layout->exit_button.x = WIN_WIDTH - (WIN_WIDTH - layout->bar.line.x - (((WIN_WIDTH - layout->bar.line.x) - layout->exit_button.w) /2));
+			layout->exit_button.y = 620;
 		}
 	}
 
@@ -79,8 +139,8 @@ void	set_layout(void)
 		layout->prev_page_button.y = layout->bar.line.y;
 		layout->prev_page_button.w = layout->cover.x;
 		layout->prev_page_button.h = WIN_HEIGHT - layout->bar.line.y;
+	} else if (ebook->read_mode == true) {
 	}
-
 }
 
 bool	init_layout(void)
